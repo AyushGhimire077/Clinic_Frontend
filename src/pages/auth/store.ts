@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { axios_no_auth, getUsernameFromCookies } from "../global/config";
- import type { AuthRequest, AuthState, RegistrationRequest } from "./auth_helper/IAuth";
-import type { IResponse } from "../global/interface";
+import { axios_no_auth, getUsernameFromCookies } from "../../component/global/config";
+import type { IResponse } from "../../component/global/interface";
+import type { AuthRequest, AuthState, RegistrationRequest } from "./auth_helper/IAuth";
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,

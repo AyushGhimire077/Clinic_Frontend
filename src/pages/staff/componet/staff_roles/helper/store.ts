@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { axios_auth } from "../../../../global/config";
+import { axios_auth } from "../../../../../component/global/config";
 import type { IRole, RoleState } from "./interface";
 
 export const useRoleStore = create<RoleState>((set) => ({

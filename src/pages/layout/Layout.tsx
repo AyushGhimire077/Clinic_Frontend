@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import AuthPage from "../auth/AuthPage";
-import { getTokenFromCookies } from "../global/config";
-import Sidebar from "./Sidebar";
+ import Sidebar from "./Sidebar";
 import AppBar from "./AppBar";
+import { getTokenFromCookies } from "../../component/global/config";
 
 const Layout = () => {
   const [token, setToken] = useState<string | null>(null);

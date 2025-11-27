@@ -10,7 +10,10 @@ import Toaster from "./component/toaster/toaster";
 import { useGlobalStore } from "./component/toaster/store";
 import RoleTable from "./pages/staff/componet/staff_roles/Role_Table";
 import AddStaff from "./pages/staff/componet/staff/Add_Staff";
-import StaffTable from "./pages/staff/componet/staff/helper/Staff_Table";
+ import Patient from "./pages/patient/Patient";
+import StaffTable from "./pages/staff/componet/staff/Staff_Table";
+import PatientTable from "./pages/patient/componet/helper/Patient_Table";
+import AddPatient from "./pages/patient/componet/Add_Patient";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -63,6 +66,8 @@ const App = () => {
         >
           <Route index element={<Dashboard />} />
           <Route path="home" element={<Dashboard />} />
+
+          {/* staff section */}
           <Route path="staff">
             <Route index element={<Staff />} />
             <Route path="roles">
@@ -74,6 +79,15 @@ const App = () => {
             <Route path="add-staff" element={<AddStaff />} />
             <Route path="table" element={<StaffTable />} />
           </Route>
+
+          {/* patient section  */}
+
+        <Route path="patient" >
+          <Route index element={<Patient />} />
+          <Route path="add-patient" element={<AddPatient />} />
+          <Route path="view-patients" element={<PatientTable />} />
+        </Route>
+
         </Route>
 
         {/* Catch-all */}

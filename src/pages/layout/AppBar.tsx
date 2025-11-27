@@ -15,10 +15,8 @@ const AppBar = () => {
   };
 
   return (
-    <div className="w-full h-16 bg-white dark:bg-gray-900 shadow-md flex justify-between items-center px-6">
-      <div className="text-2xl font-bold text-gray-800 dark:text-white">
-        
-      </div>
+    <div className="w-full h-16 bg-white mb-4  shadow-md flex justify-between items-center px-6">
+      <div className="text-2xl font-bold text-gray-800 dark:text-white"></div>
 
       <div className="flex items-center gap-4">
         {user ? (

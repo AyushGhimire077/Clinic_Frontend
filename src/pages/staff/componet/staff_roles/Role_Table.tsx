@@ -1,4 +1,4 @@
-import Back from "../../../global/back/back";
+import Back from "../../../../component/global/back/back";
 import { useRoleStore } from "./helper/store";
 
 const RoleTable = () => {

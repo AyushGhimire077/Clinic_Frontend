@@ -9,5 +9,7 @@ type Severity = "success" | "error" | "info" | "warning";
 
 export interface PaginationInfo {
   page: number;
-  pageSize: number;
+  size: number;
 }
+
+export type Gender = "MALE" | "FEMALE" | "OTHER";

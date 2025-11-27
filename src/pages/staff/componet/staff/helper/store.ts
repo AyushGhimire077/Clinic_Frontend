@@ -1,6 +1,6 @@
 import { create } from "zustand";
+import { axios_auth } from "../../../../../component/global/config";
 import type { StaffState } from "./interface";
-import { axios_auth } from "../../../../global/config";
 
 export const useStaffStore = create<StaffState>((set) => ({
   staffList: [],

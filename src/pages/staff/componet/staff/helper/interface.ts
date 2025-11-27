@@ -1,10 +1,13 @@
-import type { IResponse, PaginationInfo } from "../../../../global/interface";
+import type {
+  IResponse,
+  PaginationInfo,
+} from "../../../../../component/global/interface";
 
 export interface StaffState {
-  staffList: Staff[];
-  setStaffList: (staffList: Staff[]) => void;
+  staffList: IStaff[];
+  setStaffList: (staffList: IStaff[]) => void;
 
-  createStaff: (staff: StaffRequest) => Promise<IResponse>;
+  createStaff: (staff: IStaffRequest) => Promise<IResponse>;
   getAllStaff: (pagination: PaginationInfo) => Promise<IResponse>;
   getAllActiveStaff: (pagination: PaginationInfo) => Promise<IResponse>;
   searchStaff: (
@@ -13,7 +16,7 @@ export interface StaffState {
   ) => Promise<IResponse>;
 }
 
-export interface StaffRequest {
+export interface IStaffRequest {
   name: string;
   email: string;
   password: string;
@@ -22,7 +25,7 @@ export interface StaffRequest {
   role: string;
 }
 
-export interface Staff {
+export interface IStaff {
   id: string;
   name: string;
   email: string;
