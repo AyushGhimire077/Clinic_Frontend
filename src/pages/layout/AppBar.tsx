@@ -3,14 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../auth/store";
 
 const AppBar = () => {
-  const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Clear token and user from store
     useAuthStore.setState({ token: null, user: null });
-    // Optionally clear cookies if you use them
     navigate("/sign-in");
   };
 

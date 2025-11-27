@@ -59,7 +59,7 @@ const StaffTable = () => {
               {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gradient-to-r from-blue-50 to-cyan-50">
+                  <thead className="bg-linear-to-r from-blue-50 to-cyan-50">
                     <tr>
                       {["ID", "Name", "Email", "Contact", "Salary", "Role", "Status"].map((header) => (
                         <th key={header} className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-100">
