@@ -10,10 +10,16 @@ import Toaster from "./component/toaster/toaster";
 import { useGlobalStore } from "./component/toaster/store";
 import RoleTable from "./pages/staff/componet/staff_roles/Role_Table";
 import AddStaff from "./pages/staff/componet/staff/Add_Staff";
- import Patient from "./pages/patient/Patient";
+import Patient from "./pages/patient/Patient";
 import StaffTable from "./pages/staff/componet/staff/Staff_Table";
 import PatientTable from "./pages/patient/componet/helper/Patient_Table";
 import AddPatient from "./pages/patient/componet/Add_Patient";
+import Appointment from "./pages/appointment/Appointment";
+import AppointmentTable from "./pages/appointment/component/Appointment_Table";
+import AddAppointment from "./pages/appointment/component/Add_Appointment";
+import Services from "./pages/services/Services";
+import AddServices from "./pages/services/componet/Add_Services";
+import ServiceTable from "./pages/services/componet/Service_Table";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -82,12 +88,23 @@ const App = () => {
 
           {/* patient section  */}
 
-        <Route path="patient" >
-          <Route index element={<Patient />} />
-          <Route path="add-patient" element={<AddPatient />} />
-          <Route path="view-patients" element={<PatientTable />} />
-        </Route>
+          <Route path="patient">
+            <Route index element={<Patient />} />
+            <Route path="add-patient" element={<AddPatient />} />
+            <Route path="view-patients" element={<PatientTable />} />
+          </Route>
 
+          <Route path="appointment">
+            <Route index element={<Appointment />} />
+            <Route path="create" element={<AddAppointment />} />
+            <Route path="view-appointment" element={<AppointmentTable />} />
+          </Route>
+
+          <Route path="services">
+            <Route index element={<Services />} />
+            <Route path="create" element={<AddServices />} />
+            <Route path="view-services" element={<ServiceTable />} />
+          </Route>
         </Route>
 
         {/* Catch-all */}

@@ -15,6 +15,7 @@
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
     "@tailwindcss/vite": "^4.1.17",
+    "axios": "^1.13.2",
     "jwt-decode": "^4.0.0",
     "react": "^19.2.0",
     "react-cookie": "^8.0.1",

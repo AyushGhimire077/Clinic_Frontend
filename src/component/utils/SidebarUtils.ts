@@ -22,6 +22,12 @@ export const baseSidebarItems = [
     key: "appointment",
   },
   {
+    icon: RiProductHuntLine,
+    label: "Services",
+    url: "services",
+    key: "services",
+  },
+  {
     icon: MdOutlinePayments,
     label: "Payments",
     url: "payments",
