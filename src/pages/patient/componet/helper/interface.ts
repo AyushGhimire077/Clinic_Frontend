@@ -13,7 +13,7 @@ export interface IPatientRequest {
   bloodGroup: string;
 }
 
-export interface IPatientResponse {
+export interface IPatient {
   id: string;
   name: string;
   email: string;
@@ -32,8 +32,8 @@ export interface IPatientResponse {
 }
 
 export interface PatientState {
-  patientList: IPatientResponse[];
-  setPatientList: (patientList: IPatientResponse[]) => void;
+  patientList: IPatient[];
+  setPatientList: (patientList: IPatient[]) => void;
 
   createPatient: (patient: IPatientRequest) => Promise<IResponse>;
   getAllPatients: (pagination: PaginationInfo) => Promise<IResponse>;

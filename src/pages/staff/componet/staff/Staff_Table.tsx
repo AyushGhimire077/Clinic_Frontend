@@ -21,6 +21,7 @@ const StaffTable = () => {
   useEffect(() => {
     loadStaff();
   }, [page]);
+ 
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -39,8 +40,12 @@ const StaffTable = () => {
         <div className="bg-white rounded-2xl shadow-sm border border-blue-100 p-6 mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">Staff Members</h1>
-              <p className="text-gray-600">Manage and view all staff accounts</p>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                Staff Members
+              </h1>
+              <p className="text-gray-600">
+                Manage and view all staff accounts
+              </p>
             </div>
             <div className="text-sm text-gray-500">
               Showing {staffList.length} of 50 staff members
@@ -61,8 +66,20 @@ const StaffTable = () => {
                 <table className="w-full">
                   <thead className="bg-linear-to-r from-blue-50 to-cyan-50">
                     <tr>
-                      {["ID", "Name", "Email", "Contact", "Salary", "Role", "Status"].map((header) => (
-                        <th key={header} className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-100">
+                      {[
+                        "SN",
+                        "Name",
+                        "Email",
+                        "Contact",
+                        "Type",
+                        "Salary",
+                        "Role",
+                        "Status",
+                      ].map((header) => (
+                        <th
+                          key={header}
+                          className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider border-b border-blue-100"
+                        >
                           {header}
                         </th>
                       ))}
@@ -73,28 +90,50 @@ const StaffTable = () => {
                       <tr>
                         <td colSpan={7} className="px-6 py-12 text-center">
                           <div className="flex flex-col items-center justify-center text-gray-500">
-                            <svg className="w-16 h-16 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <svg
+                              className="w-16 h-16 mb-4 text-gray-300"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1}
+                                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
                             </svg>
-                            <p className="text-lg font-medium">No staff members found</p>
-                            <p className="text-sm">Staff members will appear here once added</p>
+                            <p className="text-lg font-medium">
+                              No staff members found
+                            </p>
+                            <p className="text-sm">
+                              Staff members will appear here once added
+                            </p>
                           </div>
                         </td>
                       </tr>
                     ) : (
-                      staffList.map((staff) => (
-                        <tr key={staff.id} className="hover:bg-blue-50 transition-colors group">
+                      staffList.map((staff, index) => (
+                        <tr
+                          key={staff.id}
+                          className="hover:bg-blue-50 transition-colors group"
+                        >
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            #{staff.id}
+                            #{index + 1}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                                 <span className="text-sm font-medium text-blue-600">
-                                  {staff.name.split(' ').map(n => n[0]).join('')}
+                                  {staff.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")}
                                 </span>
                               </div>
-                              <span className="font-semibold text-gray-800">{staff.name}</span>
+                              <span className="font-semibold text-gray-800">
+                                {staff.name}
+                              </span>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
@@ -102,6 +141,9 @@ const StaffTable = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                             {staff.contactNumber}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {staff.type}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
                             ${staff.salary?.toLocaleString()}
@@ -112,11 +154,13 @@ const StaffTable = () => {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                              staff.isActive 
-                                ? "bg-green-100 text-green-800" 
-                                : "bg-gray-100 text-gray-800"
-                            }`}>
+                            <span
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                                staff.isActive
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
                               {staff.isActive ? "Active" : "Inactive"}
                             </span>
                           </td>

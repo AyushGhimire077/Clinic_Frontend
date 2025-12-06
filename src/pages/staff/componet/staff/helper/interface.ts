@@ -1,6 +1,8 @@
 import type {
-  IResponse,
+  DoctorType,
+   IResponse,
   PaginationInfo,
+  StaffType,
 } from "../../../../../component/global/interface";
 
 export interface StaffState {
@@ -22,7 +24,9 @@ export interface IStaffRequest {
   password: string;
   contactNumber: number;
   salary: number;
+  type: StaffType | "";
   role: string;
+  doctorSubType?: DoctorType | "";
 }
 
 export interface IStaff {
@@ -32,8 +36,7 @@ export interface IStaff {
   contactNumber: number;
   salary: number;
   role: string;
+  type: StaffType | "";
   isActive: boolean;
+  doctorType: DoctorType | "";
 }
-
-
- 

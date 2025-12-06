@@ -4,7 +4,7 @@ import type { IServicesRequest } from "../helper/interface";
 import { useNavigate } from "react-router-dom";
 import { useGlobalStore } from "../../../component/toaster/store";
 import Back from "../../../component/global/back/back";
-import { Stafftype } from "../../../component/global/interface";
+import { doctorTypeOptions } from "../../../component/global/interface";
 
 const AddServices = () => {
   const { createServices } = userServiceStore();
@@ -16,7 +16,7 @@ const AddServices = () => {
     name: "",
     description: "",
     charge: 0,
-    type: "GENERAL", // default enum
+    type: "", // default enum
   });
 
   const handleChange = (e: any) => {
@@ -131,16 +131,15 @@ const AddServices = () => {
             <label className={labelClasses}>Staff Type</label>
             <select
               name="type"
-              className={inputClasses}
-              onChange={handleChange}
               value={form.type}
+              onChange={handleChange}
+              className={inputClasses}
             >
-              {Stafftype.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt
-                    .replaceAll("_", " ")
-                    .toLowerCase()
-                    .replace(/\b\w/g, (c) => c.toUpperCase())}
+              <option value="">Select type</option>
+
+              {doctorTypeOptions.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
                 </option>
               ))}
             </select>

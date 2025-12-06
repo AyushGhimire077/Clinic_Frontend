@@ -4,36 +4,40 @@ import type {
   IResponse,
   PaginationInfo,
 } from "../../../component/global/interface";
-import type { IPatientResponse } from "../../patient/componet/helper/interface";
+import type { IPatient } from "../../patient/componet/helper/interface";
+ import type { IServices } from "../../services/helper/interface";
 import type { IStaff } from "../../staff/componet/staff/helper/interface";
 
 export interface IAppointment {
   id: string;
-  patient: IPatientResponse;
+  patient: IPatient;
   doctor: IStaff;
-  appointstatus: AppointmentStatus;
-  services: string[];
-  appointmentDate: string;
+  status: AppointmentStatus;
+  services: IServices[];
+  dateTime: string;
   invoiceType: InvoiceType;
 }
 
 export interface IAppointmentRequest {
   patientId: string;
   doctorId: string;
-  appointmentDateTime: string;
+  dateTime: string;
   invoiceType: InvoiceType;
-  services: string[];
-  appointmentStatus: AppointmentStatus;
+  services: String[];
+  status: AppointmentStatus;
 }
 
 export interface AppointmentState {
   appointments: IAppointment[];
 
-  create: (
-    data: IAppointmentRequest
-  ) => Promise<IResponse>;
+  create: (data: IAppointmentRequest) => Promise<IResponse>;
 
   getAllAppointments: (pagination: PaginationInfo) => Promise<IResponse>;
 
-  getByStatus: (stats: string, pagination: PaginationInfo) => Promise<IResponse>;
+  getByStatus: (
+    stats: string,
+    pagination: PaginationInfo
+  ) => Promise<IResponse>;
+
+  update: (id: string, data: Partial<IAppointmentRequest>) => Promise<IResponse>;
 }

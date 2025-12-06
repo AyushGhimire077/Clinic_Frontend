@@ -1,4 +1,4 @@
-import type { IResponse, PaginationInfo, StaffType } from "../../../component/global/interface";
+import type { DoctorType, IResponse, PaginationInfo, StaffType } from "../../../component/global/interface";
  
 export interface IServices {
   id: string;
@@ -13,7 +13,7 @@ export interface IServicesRequest {
   name: string;
   description: string;
   charge: number;
-  type: StaffType;
+  type: DoctorType | "";
 }
 
 export interface ServicesState {
