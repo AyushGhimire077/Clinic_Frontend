@@ -15,7 +15,7 @@ const AddServices = () => {
   const [form, setForm] = useState<IServicesRequest>({
     name: "",
     description: "",
-    charge: 0,
+    charge: 0.00,
     type: "", // default enum
   });
 

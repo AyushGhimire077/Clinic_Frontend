@@ -13,7 +13,7 @@ export interface IAppointment {
   patient: IPatient;
   doctor: IStaff;
   status: AppointmentStatus;
-  services: IServices[];
+  servicesId: IServices[];
   dateTime: string;
   invoiceType: InvoiceType;
 }
@@ -23,7 +23,7 @@ export interface IAppointmentRequest {
   doctorId: string;
   dateTime: string;
   invoiceType: InvoiceType;
-  services: String[];
+  servicesId: String[];
   status: AppointmentStatus;
 }
 

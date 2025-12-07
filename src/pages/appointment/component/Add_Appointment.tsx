@@ -1,15 +1,15 @@
+import type { AlertColor } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useAppointmentStore } from "../helper/store";
-import type { IAppointmentRequest, IAppointment } from "../helper/interface";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import Back from "../../../component/global/back/back";
 import { useGlobalStore } from "../../../component/toaster/store";
-import { useStaffStore } from "../../staff/componet/staff/helper/store";
+import type { IPatient } from "../../patient/componet/helper/interface";
 import { usePatientStore } from "../../patient/componet/helper/store";
 import { userServiceStore } from "../../services/helper/store";
-import Back from "../../../component/global/back/back";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { doctorTypeOptions } from "../../../component/global/interface";
-import type { IPatient } from "../../patient/componet/helper/interface";
 import type { IStaff } from "../../staff/componet/staff/helper/interface";
+import { useStaffStore } from "../../staff/componet/staff/helper/store";
+import type { IAppointment, IAppointmentRequest } from "../helper/interface";
+import { useAppointmentStore } from "../helper/store";
 
 const AddAppointment = () => {
   const { create, update } = useAppointmentStore();
@@ -28,9 +28,9 @@ const AddAppointment = () => {
     patientId: "",
     doctorId: "",
     dateTime: "",
-    invoiceType: "ONE_TIME",
-    services: [],
-    status: "OPEN",
+    invoiceType: "ONE_TIME", // CONTINUOUS
+    servicesId: [],
+    status: "OPEN", // PAID, CANCELLED, PENDING, COMPLETED
   });
 
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -38,16 +38,15 @@ const AddAppointment = () => {
   const [selectedDoctor, setSelectedDoctor] = useState<IStaff | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Color constants for consistent styling
-  const colors = {
-    primary: "#0d9488", // Teal
+   const colors = {
+    primary: "#0d9488",  
     primaryDark: "#0f766e",
-    secondary: "#0369a1", // Blue
+    secondary: "#0369a1", 
     secondaryDark: "#075985",
-    success: "#10b981", // Green
+    success: "#10b981", 
     successDark: "#059669",
-    warning: "#f59e0b", // Amber
-    danger: "#ef4444", // Red
+    warning: "#f59e0b",  
+    danger: "#ef4444", 
     slate: "#64748b",
     slateLight: "#f8fafc",
     slateLighter: "#f1f5f9",
@@ -128,7 +127,7 @@ const AddAppointment = () => {
     try {
       const payload: IAppointmentRequest = {
         ...form,
-        services: selectedServices,
+        servicesId: selectedServices,
       };
 
       let res;
@@ -141,7 +140,7 @@ const AddAppointment = () => {
 
       setToasterData({
         message: res.message,
-        severity: res.severity,
+        severity: res.severity.toLowerCase() as AlertColor,
         open: true,
       });
 
@@ -153,7 +152,7 @@ const AddAppointment = () => {
             doctorId: "",
             dateTime: "",
             invoiceType: "ONE_TIME",
-            services: [],
+            servicesId: [],
             status: "OPEN",
           });
           setSelectedServices([]);
@@ -164,8 +163,7 @@ const AddAppointment = () => {
         setTimeout(() => navigate("/appointments/view-appointment"), 1500);
       }
     } catch (err) {
-      console.error("Appointment submission error:", err);
-      setToasterData({
+       setToasterData({
         message: "Failed to save appointment. Please try again.",
         severity: "error",
         open: true,
@@ -226,10 +224,10 @@ const AddAppointment = () => {
         : editData.dateTime || "",
       invoiceType: editData.invoiceType,
       status: editData.status || "OPEN",
-      services: [],
+      servicesId: [],
     });
 
-    const ids = editData.services.map((s: any) => s.id);
+    const ids = editData.servicesId.map((s: any) => s.id);
     setSelectedServices(ids);
   }, [editData, staffList]);
 
@@ -253,7 +251,6 @@ const AddAppointment = () => {
   const doctors = staffList.filter(
     (staff) => staff.role === "DOCTOR" || staff.type === "DOCTOR"
   );
-  console.log(doctors);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -482,49 +479,23 @@ const AddAppointment = () => {
                         >
                           Doctor Specialization *
                         </label>
-                        <select
+                        <input
                           id="doctorSpecialization"
                           name="doctorSpecialization"
-                          value={selectedDoctor.doctorType || ""}
-                          onChange={(e) => {
-                            const updatedDoctor = {
-                              ...selectedDoctor,
-                              type: e.target.value,
-                            };
-                            setSelectedDoctor(updatedDoctor as IStaff);
-                            // Clear error when specialization is selected
-                            if (errors.doctorSpecialization) {
-                              setErrors((prev) => ({
-                                ...prev,
-                                doctorSpecialization: "",
-                              }));
-                            }
-                          }}
-                          required
-                          className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white ${
-                            errors.doctorSpecialization
-                              ? "border-red-300"
-                              : "border-green-200"
-                          }`}
-                        >
-                          <option value="">Select specialization</option>
-                          {doctorTypeOptions.map((specialization) => (
-                            <option
-                              key={specialization.value}
-                              value={specialization.value}
-                            >
-                              {specialization.label}
-                            </option>
-                          ))}
-                        </select>
+                          type="text"
+                          value={selectedDoctor.doctorSubType || ""}
+                          readOnly
+                          className={inputClasses(
+                            !!errors.doctorSpecialization
+                          )}
+                        />
                         {errors.doctorSpecialization && (
                           <p className="text-red-500 text-sm mt-1">
                             {errors.doctorSpecialization}
                           </p>
                         )}
                         <p className="text-xs text-slate-500 mt-2">
-                          Specify the medical specialization for this
-                          appointment
+                          Specification based on selected doctor profile.
                         </p>
                       </div>
                     </div>
@@ -591,7 +562,6 @@ const AddAppointment = () => {
                     onChange={handleChange}
                     required
                     className={inputClasses(!!errors.dateTime)}
-                   
                   />
                   {errors.dateTime && (
                     <p className="text-red-500 text-sm mt-1">

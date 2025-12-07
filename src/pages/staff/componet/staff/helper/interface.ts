@@ -24,9 +24,11 @@ export interface IStaffRequest {
   password: string;
   contactNumber: number;
   salary: number;
+  // ALL_ROUNDER, DOCTOR, NURSE, FRONT_DESK, HELPER
   type: StaffType | "";
-  role: string;
-  doctorSubType?: DoctorType | "";
+  roleId: string;
+  // only is type is DOCTOR
+  doctorSubType?: DoctorType | "" | null;
 }
 
 export interface IStaff {
@@ -38,5 +40,5 @@ export interface IStaff {
   role: string;
   type: StaffType | "";
   isActive: boolean;
-  doctorType: DoctorType | "";
+  doctorSubType: DoctorType | "";
 }

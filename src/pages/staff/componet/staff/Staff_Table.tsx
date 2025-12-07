@@ -21,7 +21,6 @@ const StaffTable = () => {
   useEffect(() => {
     loadStaff();
   }, [page]);
- 
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);

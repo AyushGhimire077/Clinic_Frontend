@@ -11,7 +11,7 @@ export interface IPatientRequest {
   gender: Gender;
   dob: string;
   bloodGroup: string;
-}
+ }
 
 export interface IPatient {
   id: string;
@@ -23,8 +23,7 @@ export interface IPatient {
   dateOfBirth: string;
   gender: Gender;
   isActive: boolean;
-  oneTimeFlag: boolean;
-
+ 
   staffRegisteredBy: IStaff;
   adminRegisteredBy: IStaff;
   createdAt: string;

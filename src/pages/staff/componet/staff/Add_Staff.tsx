@@ -23,9 +23,9 @@ const AddStaff = () => {
     password: "",
     contactNumber: 0,
     salary: 0,
-    role: "",
+    roleId: "",
     type: "NURSE",
-    doctorSubType: "",
+    doctorSubType: null,
   });
 
   const handleChange = (
@@ -69,16 +69,16 @@ const AddStaff = () => {
     get_all_roles();
   }, []);
 
-  const inputClasses = "w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 bg-white/50 backdrop-blur-sm";
+  const inputClasses =
+    "w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 bg-white/50 backdrop-blur-sm";
   const labelClasses = "block text-sm font-semibold text-slate-700 mb-2";
 
   const isDoctor = form.type === "DOCTOR";
 
- 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
     }).format(amount);
   };
 
@@ -88,14 +88,20 @@ const AddStaff = () => {
         <Back />
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8" style={{
-        background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)"
-      }}>
+      <div
+        className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8"
+        style={{
+          background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+        }}
+      >
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg" style={{
-            background: "linear-gradient(135deg, #0d9488 0%, #0369a1 100%)"
-          }}>
+          <div
+            className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg"
+            style={{
+              background: "linear-gradient(135deg, #0d9488 0%, #0369a1 100%)",
+            }}
+          >
             <svg
               className="w-10 h-10 text-white"
               fill="none"
@@ -124,13 +130,15 @@ const AddStaff = () => {
             onClick={() => navigate("/staff/table")}
             className="w-full px-6 py-4 text-white rounded-xl transition-all duration-300 font-semibold shadow-sm hover:shadow-md flex items-center justify-center gap-3 group"
             style={{
-              background: "linear-gradient(135deg, #475569 0%, #334155 100%)"
+              background: "linear-gradient(135deg, #475569 0%, #334155 100%)",
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.background = "linear-gradient(135deg, #374151 0%, #1f2937 100%)";
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, #374151 0%, #1f2937 100%)";
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.background = "linear-gradient(135deg, #475569 0%, #334155 100%)";
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, #475569 0%, #334155 100%)";
             }}
           >
             <svg
@@ -153,13 +161,20 @@ const AddStaff = () => {
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Personal Information */}
-            <div className="rounded-2xl p-6 border border-slate-100" style={{
-              background: "linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%)"
-            }}>
+            <div
+              className="rounded-2xl p-6 border border-slate-100"
+              style={{
+                background: "linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%)",
+              }}
+            >
               <h3 className="text-lg font-semibold text-slate-800 mb-6 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{
-                  background: "linear-gradient(135deg, #0d9488 0%, #0369a1 100%)"
-                }}>
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #0d9488 0%, #0369a1 100%)",
+                  }}
+                >
                   <svg
                     className="w-4 h-4 text-white"
                     fill="none"
@@ -234,7 +249,7 @@ const AddStaff = () => {
                     id="contactNumber"
                     name="contactNumber"
                     type="tel"
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="+977 9000000000"
                     value={form.contactNumber || ""}
                     onChange={handleChange}
                     required
@@ -245,13 +260,20 @@ const AddStaff = () => {
             </div>
 
             {/* Employment Details */}
-            <div className="rounded-2xl p-6 border border-slate-100" style={{
-              background: "linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%)"
-            }}>
+            <div
+              className="rounded-2xl p-6 border border-slate-100"
+              style={{
+                background: "linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%)",
+              }}
+            >
               <h3 className="text-lg font-semibold text-slate-800 mb-6 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{
-                  background: "linear-gradient(135deg, #0369a1 0%, #7c3aed 100%)"
-                }}>
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #0369a1 0%, #7c3aed 100%)",
+                  }}
+                >
                   <svg
                     className="w-4 h-4 text-white"
                     fill="none"
@@ -276,15 +298,15 @@ const AddStaff = () => {
                   </label>
                   <select
                     id="role"
-                    name="role"
-                    value={form.role}
+                    name="roleId"
+                    value={form.roleId}
                     onChange={handleChange}
                     className={inputClasses}
                     required
                   >
                     <option value="">Select a role</option>
                     {roles.map((role) => (
-                      <option key={role.id} value={role.role}>
+                      <option key={role.id} value={role.id}>
                         {role.role}
                       </option>
                     ))}
@@ -320,20 +342,24 @@ const AddStaff = () => {
                     <select
                       id="doctorSubType"
                       name="doctorSubType"
-                      value={form.doctorSubType}
+                      value={form.doctorSubType ?? ""}
                       onChange={handleChange}
                       className={inputClasses}
                       required={isDoctor}
                     >
                       <option value="">Select specialization</option>
                       {doctorTypeOptions.map((specialization) => (
-                        <option key={specialization.label} value={specialization.value}>
+                        <option
+                          key={specialization.label}
+                          value={specialization.value}
+                        >
                           {specialization.label}
                         </option>
                       ))}
                     </select>
                     <p className="text-xs text-slate-500 mt-2">
-                      Required for medical doctors to specify their area of expertise
+                      Required for medical doctors to specify their area of
+                      expertise
                     </p>
                   </div>
                 )}
@@ -344,12 +370,12 @@ const AddStaff = () => {
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 top-3 text-slate-500">
-                      $
+                      Rs.
                     </span>
                     <input
                       id="salary"
                       name="salary"
-                      type="number"
+                      type="tel"
                       placeholder="0.00"
                       value={form.salary || ""}
                       onChange={handleChange}
@@ -358,7 +384,7 @@ const AddStaff = () => {
                     />
                     <div className="absolute right-3 top-3">
                       <span className="text-sm font-medium text-slate-600">
-                        {form.salary ? formatCurrency(form.salary) : ''}
+                        {form.salary ? formatCurrency(form.salary) : ""}
                       </span>
                     </div>
                   </div>
@@ -367,20 +393,35 @@ const AddStaff = () => {
                 {/* Staff Type Info Card */}
                 <div className="p-4 rounded-xl border border-slate-200 bg-white/50">
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0" style={{
-                      background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
-                    }}>
-                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <div
+                      className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+                      }}
+                    >
+                      <svg
+                        className="w-3 h-3 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-slate-800">Staff Type Information</p>
+                      <p className="text-sm font-medium text-slate-800">
+                        Staff Type Information
+                      </p>
                       <p className="text-sm text-slate-600 mt-1">
-                        {isDoctor 
+                        {isDoctor
                           ? "Doctors require medical specialization to be specified"
-                          : "Select the appropriate staff type for role assignment"
-                        }
+                          : "Select the appropriate staff type for role assignment"}
                       </p>
                     </div>
                   </div>
@@ -389,7 +430,6 @@ const AddStaff = () => {
             </div>
           </div>
 
-         
           {/* Submit Button */}
           <div className="pt-4">
             <button
@@ -397,16 +437,18 @@ const AddStaff = () => {
               disabled={loading || (isDoctor && !form.doctorSubType)}
               className="w-full py-4 text-white rounded-xl transition-all duration-300 font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 group relative overflow-hidden"
               style={{
-                background: "linear-gradient(135deg, #0d9488 0%, #0369a1 100%)"
+                background: "linear-gradient(135deg, #0d9488 0%, #0369a1 100%)",
               }}
               onMouseOver={(e) => {
                 if (!loading && !(isDoctor && !form.doctorSubType)) {
-                  e.currentTarget.style.background = "linear-gradient(135deg, #0f766e 0%, #075985 100%)";
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg, #0f766e 0%, #075985 100%)";
                 }
               }}
               onMouseOut={(e) => {
                 if (!loading && !(isDoctor && !form.doctorSubType)) {
-                  e.currentTarget.style.background = "linear-gradient(135deg, #0d9488 0%, #0369a1 100%)";
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg, #0d9488 0%, #0369a1 100%)";
                 }
               }}
             >
@@ -436,13 +478,13 @@ const AddStaff = () => {
                 )}
               </div>
             </button>
-            
+
             {isDoctor && !form.doctorSubType && (
               <p className="text-center text-sm text-amber-600 mt-3">
                 Please select a medical specialization for the doctor
               </p>
             )}
-            
+
             <p className="text-center text-sm text-slate-500 mt-3">
               Staff member will receive login credentials via email
             </p>

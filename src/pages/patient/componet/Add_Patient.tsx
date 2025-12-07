@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useGlobalStore } from "../../../component/toaster/store";
 import Back from "../../../component/global/back/back";
 import { usePatientStore } from "./helper/store";
+import type { AlertColor } from "@mui/material";
 
 const AddPatient = () => {
   const { createPatient } = usePatientStore();
@@ -18,8 +19,8 @@ const AddPatient = () => {
     address: "",
     gender: "MALE",
     dob: "",
-    bloodGroup: "A+",
-  });
+    bloodGroup: "A+"
+   });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -38,7 +39,7 @@ const AddPatient = () => {
     try {
       const res = await createPatient(form);
       setToasterData({
-        severity: res.severity,
+        severity: res.severity.toLowerCase() as AlertColor,
         message: res.message,
         open: true,
       });
@@ -64,7 +65,6 @@ const AddPatient = () => {
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
         {/* Header */}
         <div className="text-center mb-8">
-         
           <h1 className="text-3xl font-bold text-slate-800 mb-3">
             Register New Patient
           </h1>
@@ -137,7 +137,7 @@ const AddPatient = () => {
                     id="contactNumber"
                     name="contactNumber"
                     type="tel"
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="+977 98XXXXXXXX"
                     value={form.contactNumber}
                     onChange={handleChange}
                     required
@@ -238,7 +238,7 @@ const AddPatient = () => {
                     required
                     className={inputClasses}
                   />
-                </div>
+                </div> 
               </div>
             </div>
           </div>
@@ -270,7 +270,7 @@ const AddPatient = () => {
                       d="M12 4v16m8-8H4"
                     />
                   </svg>
-                  Register Patient  
+                  Register Patient
                 </>
               )}
             </button>
