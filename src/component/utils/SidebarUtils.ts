@@ -1,32 +1,25 @@
-import { AiOutlineStock } from "react-icons/ai";
-import { BsPrescription } from "react-icons/bs";
-import { HiOutlineDocumentReport } from "react-icons/hi";
-import { IoReceiptSharp } from "react-icons/io5";
-import { MdOutlinePayments, MdOutlinePeople } from "react-icons/md";
-import { RiProductHuntLine } from "react-icons/ri";
 import { TbDashboard } from "react-icons/tb";
+import { MdOutlinePeople, MdOutlinePayments } from "react-icons/md";
+import { HiOutlineUser } from "react-icons/hi";
+import { AiOutlineCalendar, AiOutlineStock } from "react-icons/ai";
+import { FaNotesMedical } from "react-icons/fa";
+import { RiServiceLine } from "react-icons/ri";
+import { FiPackage } from "react-icons/fi";
+import { IoReceiptSharp } from "react-icons/io5";
+import { BsPrescription } from "react-icons/bs";
 
 export const baseSidebarItems = [
   { icon: TbDashboard, label: "Dashboard", url: "", key: "dashboard" },
   { icon: MdOutlinePeople, label: "Staff", url: "staff", key: "staff" },
+  { icon: HiOutlineUser, label: "Patient", url: "patient", key: "patient" },
   {
-    icon: HiOutlineDocumentReport,
-    label: "Patient",
-    url: "patient",
-    key: "patient",
-  },
-  {
-    icon: RiProductHuntLine,
+    icon: AiOutlineCalendar,
     label: "Appointment",
     url: "appointment",
     key: "appointment",
   },
-  {
-    icon: RiProductHuntLine,
-    label: "Services",
-    url: "services",
-    key: "services",
-  },
+  { icon: FaNotesMedical, label: "Episode", url: "episode", key: "episode" },
+  { icon: RiServiceLine, label: "Services", url: "services", key: "services" },
   {
     icon: MdOutlinePayments,
     label: "Payments",
@@ -46,4 +39,5 @@ export const baseSidebarItems = [
     url: "inventory",
     key: "inventory",
   },
+  { icon: FiPackage, label: "Pharmacy", url: "pharmacy", key: "pharmacy" },
 ];

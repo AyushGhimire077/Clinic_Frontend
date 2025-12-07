@@ -22,7 +22,10 @@ import AddServices from "./pages/services/componet/Add_Services";
 import ServiceTable from "./pages/services/componet/Service_Table";
 import AppointmentDetail from "./pages/appointment/component/Appointment_Detail";
 import PatientDetail from "./pages/patient/componet/Patient_Detail";
- 
+import Episode from "./pages/episode/Episode";
+import AddEpisode from "./pages/episode/component/Add_Episode";
+import EpisodeTable from "./pages/episode/component/Episode_Table";
+
 interface ProtectedRouteProps {
   children: JSX.Element;
 }
@@ -93,8 +96,7 @@ const App = () => {
             <Route index element={<Patient />} />
             <Route path="add-patient" element={<AddPatient />} />
             <Route path="view-patients" element={<PatientTable />} />
-                        <Route path="detail/:id" element={<PatientDetail />} />
-
+            <Route path="detail/:id" element={<PatientDetail />} />
           </Route>
 
           <Route path="appointment">
@@ -103,13 +105,19 @@ const App = () => {
             <Route path="view-appointment" element={<AppointmentTable />} />
             <Route path="view/:id" element={<AppointmentDetail />} />
             {/* aslo for editing appointment */}
-            <Route path="edit/:id" element={<AddAppointment />} /> 
+            <Route path="edit/:id" element={<AddAppointment />} />
           </Route>
 
           <Route path="services">
             <Route index element={<Services />} />
             <Route path="create" element={<AddServices />} />
             <Route path="view-services" element={<ServiceTable />} />
+          </Route>
+
+          <Route path="episode">
+            <Route index element={<Episode />} />
+            <Route path="view" element={<EpisodeTable />} />
+            <Route path="create" element={<AddEpisode />} />
           </Route>
         </Route>
 
