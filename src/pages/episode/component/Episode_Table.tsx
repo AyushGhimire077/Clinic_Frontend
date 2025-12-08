@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGlobalStore } from "../../../component/toaster/store";
+import { useGlobalStore } from "../../../component/toaster/toast.store";
 import type { IEpisode } from "./helper/interface";
 import { useEpisodeStore } from "./helper/store";
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Back from "../../../../component/global/back/back";
-import { useGlobalStore } from "../../../../component/toaster/store";
+import { useGlobalStore } from "../../../../component/toaster/toast.store";
 import { Permissions } from "../../../../component/utils/permissons";
 import { useRoleStore } from "./helper/store";
 

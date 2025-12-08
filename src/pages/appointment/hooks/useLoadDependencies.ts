@@ -1,7 +1,7 @@
  import { usePatientStore } from "../../patient/componet/helper/store";
 import { useStaffStore } from "../../staff/componet/staff/helper/store";
 import { useAppointmentStore } from "../helper/store";
-import { useGlobalStore } from "../../../component/toaster/store";
+import { useGlobalStore } from "../../../component/toaster/toast.store";
 
 export const useLoadAppointmentDependencies = () => {
   const { getAllActiveStaff } = useStaffStore();

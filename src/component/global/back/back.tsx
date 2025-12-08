@@ -1,21 +1,44 @@
 import { FaArrowLeft } from "react-icons/fa";
 
-const Back = () => {
+interface BackButtonProps {
+  onClick?: () => void;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export const BackButton = ({
+  onClick,
+  className = "",
+  ariaLabel = "Go back",
+}: BackButtonProps) => {
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      window.history.back();
+    }
+  };
+
   return (
     <button
-      onClick={() => window.history.back()}
-      className="flex items-center justify-center 
-                 h-8 w-8 sm:h-10 sm:w-10 
-                 rounded-full 
-                 backdrop-blur-md 
-                 hover:bg-gray-700/30 
-                 transition-all 
-                 border border-gray-700/50"
-      aria-label="Go back"
+      onClick={handleClick}
+      className={`
+        flex items-center justify-center
+        h-8 w-8 sm:h-10 sm:w-10
+        rounded-full
+        backdrop-blur-md
+        border border-border
+        text-muted
+        transition-all duration-200
+        hover:bg-primary-light hover:text-primary hover:border-primary
+        hover:shadow-soft
+        active:scale-95
+        focus-ring
+        ${className}
+      `}
+      aria-label={ariaLabel}
     >
-      <FaArrowLeft className="text-slate-600 text-base sm:text-lg" />
+      <FaArrowLeft className="text-current" />
     </button>
   );
 };
-
-export default Back;

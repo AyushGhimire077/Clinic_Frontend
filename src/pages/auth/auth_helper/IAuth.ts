@@ -20,5 +20,4 @@ export interface AuthState {
 
   login: (data: AuthRequest) => Promise<IResponse>;
   register: (data: RegistrationRequest) => Promise<IResponse>;
- }
-
+}

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { baseSidebarItems } from "../../component/utils/SidebarUtils";
+import { baseSidebarItems } from "../../component/utils/sidebarUtils";
 
 const Sidebar = () => {
   const location = useLocation();

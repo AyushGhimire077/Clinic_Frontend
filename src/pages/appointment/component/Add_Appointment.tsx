@@ -2,7 +2,7 @@ import type { AlertColor } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Back from "../../../component/global/back/back";
-import { useGlobalStore } from "../../../component/toaster/store";
+import { useGlobalStore } from "../../../component/toaster/toast.store";
 import type { IPatient } from "../../patient/componet/helper/interface";
 import type { IStaff } from "../../staff/componet/staff/helper/interface";
 import { useStaffStore } from "../../staff/componet/staff/helper/store";

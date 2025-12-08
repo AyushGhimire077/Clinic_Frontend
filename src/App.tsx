@@ -6,9 +6,7 @@ import type { JSX } from "react";
 import Layout from "./pages/layout/Layout";
 import Staff from "./pages/staff/Staff";
 import AddRole from "./pages/staff/componet/staff_roles/Add_Role";
-import Toaster from "./component/toaster/toaster";
-import { useGlobalStore } from "./component/toaster/store";
-import RoleTable from "./pages/staff/componet/staff_roles/Role_Table";
+ import RoleTable from "./pages/staff/componet/staff_roles/Role_Table";
 import AddStaff from "./pages/staff/componet/staff/Add_Staff";
 import Patient from "./pages/patient/Patient";
 import StaffTable from "./pages/staff/componet/staff/Staff_Table";
@@ -26,7 +24,8 @@ import AddEpisode from "./pages/episode/component/Add_Episode";
 import EpisodeTable from "./pages/episode/component/Episode_Table";
 import AddEpisodeTemp from "./pages/episode/component/AddEpisodeTemp";
 import EpisodeTempTable from "./pages/episode/component/EpisodeTempTable";
-
+import { Toast } from "./component/toaster/components/Toast";
+ 
 interface ProtectedRouteProps {
   children: JSX.Element;
 }
@@ -48,14 +47,14 @@ const PublicRoute = ({ children }: { children: JSX.Element }) => {
   }
   return children;
 };
-
+ 
+ 
 const App = () => {
   const token = useAuthStore((state) => state.token);
-  const { toasterData, closeToaster } = useGlobalStore();
-
+ 
   return (
     <>
-      <Toaster data={toasterData} close={closeToaster} />
+      <Toast />
       <Routes>
         {/* Public route without Layout */}
         <Route

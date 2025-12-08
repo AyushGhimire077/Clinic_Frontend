@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEpisodeStore } from "./helper/store";
-import { useGlobalStore } from "../../../component/toaster/store";
+import { useGlobalStore } from "../../../component/toaster/toast.store";
 import type { EpisodeTempReq } from "./helper/interface";
 import Back from "../../../component/global/back/back";
 import { FaClipboardCheck, FaMoneyBillWave, FaTag, FaSpinner } from "react-icons/fa";

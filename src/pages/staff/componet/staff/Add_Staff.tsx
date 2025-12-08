@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Back from "../../../../component/global/back/back";
-import { useGlobalStore } from "../../../../component/toaster/store";
+import { useGlobalStore } from "../../../../component/toaster/toast.store";
 import { useRoleStore } from "../staff_roles/helper/store";
 import { useStaffStore } from "./helper/store";
 import type { IStaffRequest } from "./helper/interface";

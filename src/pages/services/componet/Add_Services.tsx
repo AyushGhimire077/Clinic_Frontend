@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { userServiceStore } from "../helper/store";
 import type { IServicesRequest } from "../helper/interface";
 import { useNavigate } from "react-router-dom";
-import { useGlobalStore } from "../../../component/toaster/store";
+import { useGlobalStore } from "../../../component/toaster/toast.store";
 import Back from "../../../component/global/back/back";
 import { doctorTypeOptions } from "../../../component/global/interface";
 

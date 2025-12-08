@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useGlobalStore } from "../../../component/toaster/store";
+import { useGlobalStore } from "../../../component/toaster/toast.store";
 import { useStaffStore } from "../../staff/componet/staff/helper/store";
 import { useEpisodeStore } from "./helper/store";
 import type { EpisodeRequest } from "./helper/interface";

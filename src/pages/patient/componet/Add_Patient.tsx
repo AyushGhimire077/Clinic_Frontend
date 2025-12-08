@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { IPatientRequest } from "./helper/interface";
 import { useNavigate } from "react-router-dom";
-import { useGlobalStore } from "../../../component/toaster/store";
+import { useGlobalStore } from "../../../component/toaster/toast.store";
 import Back from "../../../component/global/back/back";
 import { usePatientStore } from "./helper/store";
 import type { AlertColor } from "@mui/material";
