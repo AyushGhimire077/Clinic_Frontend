@@ -17,6 +17,8 @@ export type BillingMode = "PER_VISIT" | "PACKAGE";
 
 export type EpisodeType = "ONE_TIME" | "RECURRING";
 
+export type Status = "ACTIVE" | "CLOSED" ;
+
 export type AppointmentStatus =
   | "BOOKED"
   | "CHECKED_IN"
@@ -28,6 +30,11 @@ export type AppointmentStatus =
     { label: "CHECKED_IN", value: "CHECKED_IN" },
     { label: "MISSED", value: "MISSED" }, 
     { label: "CANCELLED", value: "CANCELLED" },
+  ];
+
+  export const episodeTypeOptions = [
+    { label: "ONE_TIME", value: "ONE_TIME" },
+    { label: "RECURRING", value: "RECURRING" },
   ];
 
 export const DoctorTypeOption = {

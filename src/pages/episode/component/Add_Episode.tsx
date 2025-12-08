@@ -4,11 +4,15 @@ import { useStaffStore } from "../../staff/componet/staff/helper/store";
 import { useEpisodeStore } from "./helper/store";
 import type { EpisodeRequest } from "./helper/interface";
 import type { AlertColor } from "@mui/material";
+import { usePatientStore } from "../../patient/componet/helper/store";
+import { episodeTypeOptions } from "../../../component/global/interface";
 
 const AddEpisode = () => {
   const { createEpisode } = useEpisodeStore();
   const { setToasterData } = useGlobalStore();
   const { getAllActiveStaff, staffList } = useStaffStore();
+  const { getAllActivePatients, patientList } = usePatientStore();
+  const { getAllEpisodeTemplates, episodeTemplateList } = useEpisodeStore();
 
   const [form, setForm] = useState<EpisodeRequest>({
     title: "",
@@ -16,8 +20,10 @@ const AddEpisode = () => {
     endDate: "",
     type: "ONE_TIME", // "ONE_TIME" | "RECURRING"
     billingMode: "PER_VISIT", // or  "PACKAGE"
-    status: "OPEN", // OPEN, COMPLETED, CANCELLED
+    status: "ACTIVE", 
     primaryDoctorId: "",
+    patientId: "",
+    templateId: "",
     packageCharge: 0,
   });
 
@@ -34,6 +40,8 @@ const AddEpisode = () => {
   // Load staff on mount
   useEffect(() => {
     getAllActiveStaff({ page: 0, size: 1000 });
+    getAllActivePatients({ page: 0, size: 1000 });
+    getAllEpisodeTemplates({ page: 0, size: 1000 });
   }, []);
 
   // Validation
@@ -46,6 +54,7 @@ const AddEpisode = () => {
       newErrors.endDate = "End date cannot be before start date";
     if (!form.primaryDoctorId)
       newErrors.primaryDoctorId = "Primary doctor is required";
+    if (!form.patientId) newErrors.patientId = "Patient is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -88,8 +97,10 @@ const AddEpisode = () => {
           endDate: "",
           type: "ONE_TIME",
           billingMode: "PER_VISIT",
-          status: "OPEN",
+          status: "ACTIVE",
           primaryDoctorId: "",
+          patientId: "",
+          templateId: "",
           packageCharge: 0,
         });
         setErrors({});
@@ -173,8 +184,14 @@ const AddEpisode = () => {
             onChange={handleChange}
             className={inputClasses(!!errors.type)}
           >
-            <option value="OPD">OPD</option>
-            <option value="IPD">IPD</option>
+            {episodeTypeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label
+                  .replace("_", " ")
+                  .toLowerCase()
+                  .replace(/\b\w/g, (c) => c.toUpperCase())}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -218,6 +235,54 @@ const AddEpisode = () => {
             <p className="text-red-500 text-sm mt-1">
               {errors.primaryDoctorId}
             </p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="primaryDoctorId" className={labelClasses}>
+            Select template ?
+          </label>
+          <select
+            id="primaryDoctorId"
+            name="primaryDoctorId"
+            value={form.templateId}
+            onChange={handleChange}
+            className={inputClasses(!!errors.primaryDoctorId)}
+          >
+            <option value="">Select Doctor</option>
+            {episodeTemplateList.map((d) => (
+              <option key={d.id} value={d.id}>
+                Dr. {d.title} - {d.type}
+              </option>
+            ))}
+          </select>
+          {errors.primaryDoctorId && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.primaryDoctorId}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="patientId" className={labelClasses}>
+            Patient *
+          </label>
+          <select
+            id="patientId"
+            name="patientId"
+            value={form.patientId}
+            onChange={handleChange}
+            className={inputClasses(!!errors.patientId)}
+          >
+            <option value="">Select Patient</option>
+            {patientList.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+          {errors.patientId && (
+            <p className="text-red-500 text-sm mt-1">{errors.patientId}</p>
           )}
         </div>
 

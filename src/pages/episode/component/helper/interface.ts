@@ -3,7 +3,9 @@ import type {
   EpisodeType,
   IResponse,
   PaginationInfo,
+  Status,
 } from "../../../../component/global/interface";
+import type { IPatient } from "../../../patient/componet/helper/interface";
 import type { IStaff } from "../../../staff/componet/staff/helper/interface";
 
 export interface IEpisode {
@@ -12,12 +14,14 @@ export interface IEpisode {
   startDate: string;
   endDate: string;
   // ONE_TIME, PACKAGE
-  type: string;
-  // PER_VISIT, PACKAGE
-  billingMode: string;
-  // open / closed
-  status: string;
+  type: EpisodeType;
+
+  billingMode: BillingMode; // PER_VISIT, PACKAGE
+
+  status: Status;
   primaryDoctor: IStaff;
+  patient: IPatient;
+
   packageCharge: number;
 }
 
@@ -26,9 +30,11 @@ export interface EpisodeRequest {
   startDate: string;
   endDate: string;
   type: EpisodeType;
-  billingMode: string;
-  status: string;
+  billingMode: BillingMode;
+  status: Status;
   primaryDoctorId: string;
+  patientId: string;
+  templateId?: string;
   packageCharge: number;
 }
 

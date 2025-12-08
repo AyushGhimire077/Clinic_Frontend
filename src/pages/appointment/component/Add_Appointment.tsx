@@ -9,9 +9,11 @@ import { useStaffStore } from "../../staff/componet/staff/helper/store";
 import type { IAppointment, IAppointmentRequest } from "../helper/interface";
 import { useAppointmentStore } from "../helper/store";
 import { appointmentStatusOptions } from "../../../component/global/interface";
+import { useEpisodeStore } from "../../episode/component/helper/store";
 
 const AddAppointment = () => {
   const { create, update } = useAppointmentStore();
+  const { getAllEpisodes, episodeList} = useEpisodeStore();
   const { setToasterData } = useGlobalStore();
   const { staffList, getAllActiveStaff } = useStaffStore();
   const navigate = useNavigate();
@@ -504,36 +506,27 @@ const AddAppointment = () => {
                     </select>
                   </div>
                 </div>
+
+                <div>
+                  <label htmlFor="status" className={labelClasses}>
+                    Status
+                  </label>
+                  <select
+                    id="status"
+                    name="status"
+                    value={form.status}
+                    onChange={handleChange}
+                    className={inputClasses(false)}
+                  >
+                    {appointmentStatusOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* Services Selection */}
-          <div
-            className="rounded-2xl p-6 border border-slate-100"
-            style={{ backgroundColor: "#f7fee7" }} // Light green background
-          >
-            <h3 className="text-lg font-semibold text-slate-800 mb-6 flex items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: colors.success }}
-              >
-                <svg
-                  className="w-4 h-4 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z"
-                  />
-                </svg>
-              </div>
-              Select Services
-            </h3>
           </div>
 
           {/* Submit Button */}
