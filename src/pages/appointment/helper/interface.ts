@@ -1,29 +1,23 @@
 import type {
   AppointmentStatus,
-  InvoiceType,
   IResponse,
   PaginationInfo,
 } from "../../../component/global/interface";
-import type { IPatient } from "../../patient/componet/helper/interface";
- import type { IServices } from "../../services/helper/interface";
+import type { IEpisode } from "../../episode/component/helper/interface";
 import type { IStaff } from "../../staff/componet/staff/helper/interface";
 
 export interface IAppointment {
   id: string;
-  patient: IPatient;
+  episode: IEpisode;
   doctor: IStaff;
+  scheduledDateTime: string;
   status: AppointmentStatus;
-  servicesId: IServices[];
-  dateTime: string;
-  invoiceType: InvoiceType;
 }
 
 export interface IAppointmentRequest {
-  patientId: string;
+  episodeId: string;
   doctorId: string;
-  dateTime: string;
-  invoiceType: InvoiceType;
-  servicesId: String[];
+  scheduledDateTime: string;
   status: AppointmentStatus;
 }
 
@@ -39,5 +33,8 @@ export interface AppointmentState {
     pagination: PaginationInfo
   ) => Promise<IResponse>;
 
-  update: (id: string, data: Partial<IAppointmentRequest>) => Promise<IResponse>;
+  update: (
+    id: string,
+    data: Partial<IAppointmentRequest>
+  ) => Promise<IResponse>;
 }

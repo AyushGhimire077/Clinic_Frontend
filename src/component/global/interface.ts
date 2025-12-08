@@ -13,11 +13,22 @@ export interface PaginationInfo {
 
 export type Gender = "MALE" | "FEMALE" | "OTHER";
 
-export type InvoiceType = "ONE_TIME" | "CONTINUOUS";
+export type BillingMode = "PER_VISIT" | "PACKAGE";
 
-export type AppointmentStatus = "OPEN" | "PAID" | "CANCELLED";
+export type EpisodeType = "ONE_TIME" | "RECURRING";
 
+export type AppointmentStatus =
+  | "BOOKED"
+  | "CHECKED_IN"
+  | "MISSED"
+  | "CANCELLED";
 
+  export const appointmentStatusOptions = [
+    { label: "BOOKED", value: "BOOKED" },
+    { label: "CHECKED_IN", value: "CHECKED_IN" },
+    { label: "MISSED", value: "MISSED" }, 
+    { label: "CANCELLED", value: "CANCELLED" },
+  ];
 
 export const DoctorTypeOption = {
   GENERAL: "GENERAL",
@@ -38,14 +49,17 @@ export const DoctorTypeOption = {
   LAB_TECHNICIAN: "LAB_TECHNICIAN",
 } as const;
 
- export type DoctorType = typeof DoctorTypeOption[keyof typeof DoctorTypeOption];
+export type DoctorType =
+  (typeof DoctorTypeOption)[keyof typeof DoctorTypeOption];
 
- export const doctorTypeOptions = Object.values(DoctorTypeOption).map((value) => ({
-  label: value,
-  value,
-}));
+export const doctorTypeOptions = Object.values(DoctorTypeOption).map(
+  (value) => ({
+    label: value,
+    value,
+  })
+);
 
- export const StaffTypeOption = {
+export const StaffTypeOption = {
   ALL_ROUNDER: "ALL_ROUNDER",
   DOCTOR: "DOCTOR",
   NURSE: "NURSE",
@@ -53,7 +67,7 @@ export const DoctorTypeOption = {
   HELPER: "HELPER",
 } as const;
 
-export type StaffType = typeof StaffTypeOption[keyof typeof StaffTypeOption];
+export type StaffType = (typeof StaffTypeOption)[keyof typeof StaffTypeOption];
 
 export const staffTypeOptions = Object.values(StaffTypeOption).map((value) => ({
   label: value,

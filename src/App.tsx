@@ -20,11 +20,12 @@ import AddAppointment from "./pages/appointment/component/Add_Appointment";
 import Services from "./pages/services/Services";
 import AddServices from "./pages/services/componet/Add_Services";
 import ServiceTable from "./pages/services/componet/Service_Table";
-import AppointmentDetail from "./pages/appointment/component/Appointment_Detail";
 import PatientDetail from "./pages/patient/componet/Patient_Detail";
 import Episode from "./pages/episode/Episode";
 import AddEpisode from "./pages/episode/component/Add_Episode";
 import EpisodeTable from "./pages/episode/component/Episode_Table";
+import AddEpisodeTemp from "./pages/episode/component/AddEpisodeTemp";
+import EpisodeTempTable from "./pages/episode/component/EpisodeTempTable";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -103,7 +104,6 @@ const App = () => {
             <Route index element={<Appointment />} />
             <Route path="create" element={<AddAppointment />} />
             <Route path="view-appointment" element={<AppointmentTable />} />
-            <Route path="view/:id" element={<AppointmentDetail />} />
             {/* aslo for editing appointment */}
             <Route path="edit/:id" element={<AddAppointment />} />
           </Route>
@@ -118,6 +118,8 @@ const App = () => {
             <Route index element={<Episode />} />
             <Route path="view" element={<EpisodeTable />} />
             <Route path="create" element={<AddEpisode />} />
+            <Route path="create-temp" element={<AddEpisodeTemp />} />
+            <Route path="view-templates" element={<EpisodeTempTable />} />
           </Route>
         </Route>
 
