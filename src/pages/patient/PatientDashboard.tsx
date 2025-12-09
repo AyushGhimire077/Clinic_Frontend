@@ -1,0 +1,157 @@
+import { UserPlus, Users, UserCheck } from "lucide-react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { usePatientStore } from "./helper/patient.store";
+
+const PatientDashboard = () => {
+  const navigate = useNavigate();
+  const { getAllPatients, patientList } = usePatientStore();
+
+  useEffect(() => {
+    getAllPatients({ page: 0, size: 10 });
+  }, [getAllPatients]);
+
+  const quickActions = [
+    {
+      title: "Add New Patient",
+      description: "Register a new patient in the system",
+      icon: UserPlus,
+      onClick: () => navigate("add"),
+      color: "from-primary to-primary-dark",
+    },
+    {
+      title: "View All Patients",
+      description: "Browse and manage patient records",
+      icon: Users,
+      onClick: () => navigate("view"),
+      color: "from-info to-blue-600",
+    },
+  ];
+
+  const activePatientsCount = patientList.filter((p) => p.isActive).length;
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      {/* Header */}
+      <div className="text-center mb-8">
+        <div className="w-20 h-20 bg-linear-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <Users className="w-10 h-10 text-white" />
+        </div>
+        <h1 className="text-2xl font-bold text-foreground">
+          Patient Management
+        </h1>
+        <p className="text-muted">
+          Manage patient records and appointments efficiently
+        </p>
+      </div>
+
+      {/* Quick Actions Grid */}
+      <div className="grid md:grid-cols-2 gap-4 mb-8">
+        {quickActions.map((action) => {
+          const Icon = action.icon;
+          return (
+            <button
+              key={action.title}
+              onClick={action.onClick}
+              className="p-6 bg-surface border border-border rounded-lg hover:shadow-medium transition-all duration-200 hover-lift text-left"
+            >
+              <div
+                className={`w-12 h-12 bg-linear-to-br ${action.color} rounded-lg flex items-center justify-center mb-4`}
+              >
+                <Icon className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-foreground mb-1">
+                {action.title}
+              </h3>
+              <p className="text-sm text-muted">{action.description}</p>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-surface border border-border rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted">Total Patients</p>
+              <p className="text-2xl font-bold text-foreground">
+                {patientList.length}
+              </p>
+            </div>
+            <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-primary" />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-surface border border-border rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted">Active Patients</p>
+              <p className="text-2xl font-bold text-foreground">
+                {activePatientsCount}
+              </p>
+            </div>
+            <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+              <UserCheck className="w-5 h-5 text-success" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Patients (Optional) */}
+      {patientList.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
+            Recent Patients
+          </h3>
+          <div className="bg-surface border border-border rounded-lg overflow-hidden">
+            <div className="divide-y divide-border">
+              {patientList.slice(0, 3).map((patient) => (
+                <div
+                  key={patient.id}
+                  className="p-4 flex items-center justify-between hover:bg-primary-light/5 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center">
+                      <Users className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">
+                        {patient.name}
+                      </p>
+                      <p className="text-sm text-muted">
+                        {patient.gender.toLowerCase()} • {patient.bloodGroup}
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${patient.isActive
+                        ? "bg-success/10 text-success"
+                        : "bg-error/10 text-error"
+                      }`}
+                  >
+                    {patient.isActive ? "Active" : "Inactive"}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {patientList.length > 3 && (
+              <div className="p-4 border-t border-border text-center">
+                <button
+                  onClick={() => navigate("view")}
+                  className="text-primary hover:text-primary-dark font-medium text-sm"
+                >
+                  View all {patientList.length} patients
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default PatientDashboard;

@@ -1,33 +1,29 @@
-import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import AuthPage from "../auth/AuthPage";
- import Sidebar from "./Sidebar";
-import AppBar from "./AppBar";
-import { getTokenFromCookies } from "../../component/global/config";
+import { useEffect } from "react";
+import { useAuthStore } from "../auth/store/auth.store";
+import { Sidebar } from "./component/Sidebar";
+import { AppBar } from "./component/AppBar";
 
 const Layout = () => {
-  const [token, setToken] = useState<string | null>(null);
+  const { checkAuth } = useAuthStore();
 
   useEffect(() => {
-    setToken(getTokenFromCookies());
-  }, []);
-
-  if (!token) {
-    return <AuthPage />;
-  }
+    checkAuth();
+  }, [checkAuth]);
 
   return (
-    <>
-      <div className="flex">
+    <div className="flex min-h-screen bg-background">
+      <div className="w-64 bg-gray-900 text-white ">
         <Sidebar />
-        <div className="w-full px-3">
-          <AppBar />
-          <div className="w-full mt-2 overflow-y-scroll rounded">
-            <Outlet />
-          </div>
-        </div>
       </div>
-    </>
+
+      <div className="flex-1 flex flex-col">
+        <AppBar />
+        <main className="flex-1 overflow-auto p-4 md:p-6">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   );
 };
 

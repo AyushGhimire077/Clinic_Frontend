@@ -3,8 +3,7 @@ export interface IResponse {
   status: number;
   severity: Severity;
   message: string;
-  data: any;
-}
+ }
 export type Severity = "success" | "error" | "info" | "warning";
 
 // Pagination

@@ -1,5 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { FaFileMedical, FaPlus, FaEye, FaTags, FaClipboardList } from "react-icons/fa";
+import {
+  FaFileMedical,
+  FaPlus,
+  FaEye,
+  FaTags,
+  FaClipboardList,
+} from "react-icons/fa";
 import { FiFileText, FiEye } from "react-icons/fi";
 
 const Episode = () => {
@@ -32,7 +38,8 @@ const Episode = () => {
                 onClick={() => navigate("create")}
                 className="flex items-center gap-2 px-5 py-2.5 text-white rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md"
                 style={{
-                  background: "linear-gradient(135deg, #059669 0%, #0d9488 100%)",
+                  background:
+                    "linear-gradient(135deg, #059669 0%, #0d9488 100%)",
                 }}
               >
                 <FaPlus />
@@ -91,10 +98,10 @@ const Episode = () => {
               Welcome to Episode Management
             </h2>
             <p className="text-gray-600 mb-8 max-w-2xl mx-auto text-lg">
-              Streamline your patient care workflow. Create episodes, manage treatments,
-              track progress, and handle billing—all in one place.
+              Streamline your patient care workflow. Create episodes, manage
+              treatments, track progress, and handle billing—all in one place.
             </p>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
               <button
                 onClick={() => navigate("create")}
@@ -103,7 +110,9 @@ const Episode = () => {
                 <div className="p-3 rounded-lg bg-teal-50 group-hover:bg-teal-100 mb-4">
                   <FaPlus className="text-teal-600 text-xl" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">Create Episode</h3>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  Create Episode
+                </h3>
                 <p className="text-sm text-gray-500">Start new treatment</p>
               </button>
 
@@ -114,8 +123,12 @@ const Episode = () => {
                 <div className="p-3 rounded-lg bg-blue-50 group-hover:bg-blue-100 mb-4">
                   <FaClipboardList className="text-blue-600 text-xl" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">New Template</h3>
-                <p className="text-sm text-gray-500">Create reusable template</p>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  New Template
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Create reusable template
+                </p>
               </button>
 
               <button
@@ -125,7 +138,9 @@ const Episode = () => {
                 <div className="p-3 rounded-lg bg-purple-50 group-hover:bg-purple-100 mb-4">
                   <FaTags className="text-purple-600 text-xl" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">View Templates</h3>
+                <h3 className="font-semibold text-gray-900 mb-1">
+                  View Templates
+                </h3>
                 <p className="text-sm text-gray-500">Browse all templates</p>
               </button>
 
