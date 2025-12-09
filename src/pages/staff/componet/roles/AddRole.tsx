@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Shield, Save, Users } from "lucide-react";
+import { Save, Shield, Users } from "lucide-react";
 import { BackButton } from "../../../../component/global/back/back";
+import { inputField } from "../../../../component/global/customStyle";
 import { useToast } from "../../../../component/toaster/useToast";
+import { permissionValues } from "../../../../component/utils/permissons";
 import { useRoleStore } from "../../role.helper/role.store";
 
-const permissionValues = Object.values(Permissions);
 
 const AddRole = () => {
   const { showToast } = useToast();
@@ -113,7 +114,7 @@ const AddRole = () => {
                   setForm((prev) => ({ ...prev, role: e.target.value }))
                 }
                 placeholder="e.g., Administrator, Doctor, Nurse"
-                className="input-field"
+                className={inputField}
                 required
               />
             </div>
@@ -164,10 +165,9 @@ const AddRole = () => {
                   key={permission}
                   className={`
                     p-3 rounded-lg border cursor-pointer transition-all
-                    ${
-                      form.permissions.includes(permission)
-                        ? "border-primary bg-primary-light/10"
-                        : "border-border hover:border-primary/50"
+                    ${form.permissions.includes(permission)
+                      ? "border-primary bg-primary-light/10"
+                      : "border-border hover:border-primary/50"
                     }
                   `}
                   onClick={() => togglePermission(permission)}
@@ -176,11 +176,10 @@ const AddRole = () => {
                     <div
                       className={`
                       w-4 h-4 rounded border flex items-center justify-center
-                      ${
-                        form.permissions.includes(permission)
+                      ${form.permissions.includes(permission)
                           ? "bg-primary border-primary"
                           : "border-border"
-                      }
+                        }
                     `}
                     >
                       {form.permissions.includes(permission) && (

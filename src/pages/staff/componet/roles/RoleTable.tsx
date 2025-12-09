@@ -6,6 +6,7 @@ import { SearchInput } from "../../../../component/global/SearchInput";
 import { useToast } from "../../../../component/toaster/useToast";
 import { useRoleStore } from "../../role.helper/role.store";
 import { Pagination } from "../../../../component/global/Pagination";
+import { useNavigate } from "react-router-dom";
 
 const RoleTable = () => {
   const { showToast } = useToast();
@@ -23,7 +24,9 @@ const RoleTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showActiveOnly, setShowActiveOnly] = useState(false);
   const [loading, setLoading] = useState(false);
-  const pageSize = 10;
+  const pageSize = 100; // no need of pagination for roles, load all
+
+  const navigate = useNavigate();
 
   const loadRoles = async () => {
     setLoading(true);
@@ -82,11 +85,10 @@ const RoleTable = () => {
               <Filter className="w-4 h-4 text-muted" />
               <button
                 onClick={() => setShowActiveOnly(!showActiveOnly)}
-                className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
-                  showActiveOnly
-                    ? "bg-primary-light border-primary text-primary"
-                    : "border-border hover:bg-surface"
-                }`}
+                className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${showActiveOnly
+                  ? "bg-primary-light border-primary text-primary"
+                  : "border-border hover:bg-surface"
+                  }`}
               >
                 {showActiveOnly ? "Show All" : "Active Only"}
               </button>
@@ -172,7 +174,7 @@ const RoleTable = () => {
                           <p className="font-medium text-foreground">
                             {role.role}
                           </p>
-                          <p className="text-sm text-muted">
+                          <p className="text-[10px] text-muted">
                             ID: {role.id.substring(0, 8)}...
                           </p>
                         </div>
@@ -197,14 +199,12 @@ const RoleTable = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div
-                            className={`w-2 h-2 rounded-full ${
-                              role.isActive ? "bg-success" : "bg-error"
-                            }`}
+                            className={`w-2 h-2 rounded-full ${role.isActive ? "bg-success" : "bg-error"
+                              }`}
                           />
                           <span
-                            className={`text-sm font-medium ${
-                              role.isActive ? "text-success" : "text-error"
-                            }`}
+                            className={`text-sm font-medium ${role.isActive ? "text-success" : "text-error"
+                              }`}
                           >
                             {role.isActive ? "Active" : "Inactive"}
                           </span>
@@ -233,8 +233,7 @@ const RoleTable = () => {
                             className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
                             title="Edit Role"
                             onClick={() => {
-                              // Navigate to edit page or open modal
-                              // navigate(`/staff/roles/edit/${role.id}`);
+                              navigate(`/staff/roles/edit/${role.id}`, { state: { data: role } });
                             }}
                           >
                             <Edit2 className="w-4 h-4" />

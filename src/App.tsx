@@ -28,6 +28,7 @@ import ServiceTable from "./pages/services/componet/ServiceTable";
 
 import Layout from "./pages/layout/Layout";
 import { getTokenFromCookies } from "./component/global/config";
+import EditRole from "./pages/staff/componet/roles/EditRole";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -89,6 +90,7 @@ const App = () => {
             <Route path="roles">
               <Route index element={<AddRole />} />
               <Route path="view" element={<RoleTable />} />
+              <Route path="edit/:id" element={<EditRole />} />
             </Route>
             <Route path="add-staff" element={<AddStaff />} />
             <Route path="table" element={<StaffTable />} />
