@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Users, Filter, Phone, Activity, Printer, Edit2 } from "lucide-react";
+import { Users, Filter, Phone, Activity, Printer, Edit2, RefreshCcw } from "lucide-react";
 import { BackButton } from "../../../component/global/back/back";
 import { SearchInput } from "../../../component/global/SearchInput";
 import { usePatientStore } from "../helper/patient.store";
@@ -38,6 +38,13 @@ const PatientTable = () => {
       setLoading(false);
     }
   };
+
+  const refreshData = () => {
+    setSearchQuery("");
+    setShowActiveOnly(false);
+    setPage(0);
+    loadData();
+  }
 
   useEffect(() => {
     loadData();
@@ -84,7 +91,7 @@ const PatientTable = () => {
           </div>
 
           <button
-            onClick={() => navigate("/patients/add")}
+            onClick={() => navigate("/patient/add")}
             className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2"
           >
             <Users className="w-5 h-5" />
@@ -125,14 +132,16 @@ const PatientTable = () => {
             />
           </div>
           <div className="flex items-center gap-2">
+            <button onClick={refreshData} className="px-4 py-2 rounded-lg border border-border hover:bg-surface"><RefreshCcw className="w-4 h-4" /></button>
+          </div>
+          <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-muted" />
             <button
               onClick={() => setShowActiveOnly(!showActiveOnly)}
-              className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
-                showActiveOnly
-                  ? "bg-primary-light border-primary text-primary"
-                  : "border-border hover:bg-surface"
-              }`}
+              className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${showActiveOnly
+                ? "bg-primary-light border-primary text-primary"
+                : "border-border hover:bg-surface"
+                }`}
             >
               <Activity className="w-4 h-4" />
               {showActiveOnly ? "Active Only" : "All Patients"}
@@ -226,14 +235,12 @@ const PatientTable = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div
-                            className={`w-2 h-2 rounded-full ${
-                              patient.isActive ? "bg-success" : "bg-error"
-                            }`}
+                            className={`w-2 h-2 rounded-full ${patient.isActive ? "bg-success" : "bg-error"
+                              }`}
                           />
                           <span
-                            className={`text-sm font-medium ${
-                              patient.isActive ? "text-success" : "text-error"
-                            }`}
+                            className={`text-sm font-medium ${patient.isActive ? "text-success" : "text-error"
+                              }`}
                           >
                             {patient.isActive ? "Active" : "Inactive"}
                           </span>
@@ -252,7 +259,7 @@ const PatientTable = () => {
                           </button>
                           <button
                             onClick={() =>
-                              navigate(`/patient/${patient.id}/edit`)
+                              navigate(`/patient/edit/${patient.id}`, { state: { patient: patient } })
                             }
                             className="p-2 text-muted hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                             title="Edit Patient"

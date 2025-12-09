@@ -19,19 +19,17 @@ export interface IEpisode {
   primaryDoctor: IStaff;
   patient: IPatient;
   packageCharge: number;
-  templateId?: string;
 }
 
 export interface EpisodeRequest {
   title: string;
   startDate: string;
-  endDate: string;
+  endDate?: string;
   type: EpisodeType;
   billingMode: BillingMode;
   status: Status;
   primaryDoctorId: string;
   patientId: string;
-  templateId?: string;
   packageCharge: number;
 }
 

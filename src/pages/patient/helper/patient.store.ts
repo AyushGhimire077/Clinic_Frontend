@@ -39,6 +39,22 @@ export const usePatientStore = create<PatientState>((set) => ({
     }
   },
 
+  editPatient: async (id, patient) => {
+    try {
+      const res = await axios_auth.put(`/patient/update/${id}`, patient);
+      if (res.data?.status === 200) {
+        set((state) => ({
+          patientList: state.patientList.map((p) =>
+            p.id === id ? res.data.data : p
+          ),
+        }));
+      }
+      return handleApiResponse(res);
+    } catch (error: any) {
+      return handleApiError(error);
+    }
+  },
+
   getAllPatients: async (pagination) => {
     try {
       const res = await axios_auth.get("/patient/all", { params: pagination });

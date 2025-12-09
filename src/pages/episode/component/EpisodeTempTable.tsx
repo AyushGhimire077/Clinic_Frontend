@@ -54,7 +54,7 @@ const EpisodeTemplateTable = () => {
           </div>
 
           <button
-            onClick={() => navigate("/episodes/templates/add")}
+            onClick={() => navigate("/episode/templates/add")}
             className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />

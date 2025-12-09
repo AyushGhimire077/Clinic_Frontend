@@ -8,6 +8,7 @@ import {
 import { useToast } from "../../../component/toaster/useToast";
 import type { EpisodeTempReq } from "../helper/episode.interface";
 import { useEpisodeStore } from "../helper/episode.store";
+import { inputField } from "../../../component/global/customStyle";
 
 const AddEpisodeTemplate = () => {
   const { showToast } = useToast();
@@ -102,7 +103,7 @@ const AddEpisodeTemplate = () => {
               value={form.title}
               onChange={handleChange}
               placeholder="e.g., Standard Physical Therapy Package"
-              className="input-field"
+              className={inputField}
               required
             />
           </div>
@@ -123,7 +124,7 @@ const AddEpisodeTemplate = () => {
                   name="type"
                   value={form.type}
                   onChange={handleChange}
-                  className="input-field pl-10"
+                  className={inputField + " pl-10"}
                   required
                 >
                   {episodeTypeOptions.map((option) => (
@@ -149,7 +150,7 @@ const AddEpisodeTemplate = () => {
                   name="billingMode"
                   value={form.billingMode}
                   onChange={handleChange}
-                  className="input-field pl-10"
+                  className={inputField + " pl-10"}
                   required
                 >
                   {billingModeOptions.map((option) => (
@@ -171,17 +172,17 @@ const AddEpisodeTemplate = () => {
               Package Charge *
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-3 text-muted">$</span>
+              <span className="absolute left-3 top-3  text-muted">Rs.</span>
               <input
                 id="packageCharge"
                 name="packageCharge"
-                type="number"
+                type="tel"
                 min="0"
                 step="0.01"
                 value={form.packageCharge}
                 onChange={handleChange}
                 placeholder="0.00"
-                className="input-field pl-10"
+                className={inputField + " pl-10"}
                 required
               />
             </div>

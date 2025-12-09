@@ -1,4 +1,8 @@
-import type { DoctorType, IResponse, PaginationInfo } from "../../../component/global/interface";
+import type {
+  DoctorType,
+  IResponse,
+  PaginationInfo,
+} from "../../../component/global/interface";
 
 export interface IServices {
   id: string;
@@ -21,10 +25,13 @@ export interface ServicesState {
   currentPage: number;
   totalPages: number;
   totalItems: number;
-  
+
   setServicesList: (servicesList: IServices[]) => void;
   createServices: (services: IServicesRequest) => Promise<IResponse>;
   getAllServices: (pagination: PaginationInfo) => Promise<IResponse>;
   getAllActiveServices: (pagination: PaginationInfo) => Promise<IResponse>;
-  searchServices: (query: string, pagination: PaginationInfo) => Promise<IResponse>;
+  searchServices: (
+    query: string,
+    pagination: PaginationInfo
+  ) => Promise<IResponse>;
 }

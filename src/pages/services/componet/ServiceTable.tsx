@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Activity, Filter, Plus } from "lucide-react";
+import { Activity, Filter, Plus, RefreshCcw } from "lucide-react";
 import { BackButton } from "../../../component/global/back/back";
 import { Pagination } from "../../../component/global/Pagination";
 import { SearchInput } from "../../../component/global/SearchInput";
 import { useServicesStore } from "../services.helper/services.store";
+import { formatCurrency } from "../../../component/global/formatters";
 
 const ServiceTable = () => {
   const navigate = useNavigate();
@@ -39,6 +40,29 @@ const ServiceTable = () => {
     }
   };
 
+
+
+  useEffect(() => {
+    // Debounce search
+    const timer = setTimeout(() => {
+      if (searchQuery !== "") {
+        setPage(0);
+        loadData();
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+
+  const activeServicesCount = servicesList.filter((s) => s.isActive).length;
+
+  const refreshData = () => {
+    setSearchQuery("");
+    setShowActiveOnly(false);
+    setPage(0);
+    loadData();
+  }
+
   useEffect(() => {
     loadData();
   }, [page, showActiveOnly]);
@@ -54,19 +78,6 @@ const ServiceTable = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const handleSearch = () => {
-    setPage(0);
-    loadData();
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  };
-
-  const activeServicesCount = servicesList.filter((s) => s.isActive).length;
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -110,7 +121,7 @@ const ServiceTable = () => {
             <div className="text-sm text-muted">Active Services</div>
           </div>
           <div className="bg-background border border-border rounded-lg p-4">
-            <div className="text-2xl font-bold text-foreground">
+            <div className="text-2xl font-semibold text-foreground">
               {formatCurrency(
                 servicesList.reduce((sum, s) => sum + s.charge, 0)
               )}
@@ -124,20 +135,22 @@ const ServiceTable = () => {
           <div className="flex-1">
             <SearchInput
               value={searchQuery}
-              onChange={handleSearch}
+              onChange={setSearchQuery}
               placeholder="Search services by name or description..."
               className="w-full"
             />
           </div>
           <div className="flex items-center gap-2">
+            <button onClick={refreshData} className="px-4 py-2 rounded-lg border border-border hover:bg-surface"><RefreshCcw className="w-4 h-4" /></button>
+          </div>
+          <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-muted" />
             <button
               onClick={() => setShowActiveOnly(!showActiveOnly)}
-              className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
-                showActiveOnly
-                  ? "bg-primary-light border-primary text-primary"
-                  : "border-border hover:bg-surface"
-              }`}
+              className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${showActiveOnly
+                ? "bg-primary-light border-primary text-primary"
+                : "border-border hover:bg-surface"
+                }`}
             >
               <Activity className="w-4 h-4" />
               {showActiveOnly ? "Active Only" : "All Services"}
@@ -229,14 +242,12 @@ const ServiceTable = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div
-                            className={`w-2 h-2 rounded-full ${
-                              service.isActive ? "bg-success" : "bg-error"
-                            }`}
+                            className={`w-2 h-2 rounded-full ${service.isActive ? "bg-success" : "bg-error"
+                              }`}
                           />
                           <span
-                            className={`text-sm font-medium ${
-                              service.isActive ? "text-success" : "text-error"
-                            }`}
+                            className={`text-sm font-medium ${service.isActive ? "text-success" : "text-error"
+                              }`}
                           >
                             {service.isActive ? "Active" : "Inactive"}
                           </span>

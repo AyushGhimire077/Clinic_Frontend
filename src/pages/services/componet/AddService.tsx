@@ -7,6 +7,7 @@ import { doctorTypeOptions } from "../../../component/global/interface";
 import { useToast } from "../../../component/toaster/useToast";
 import { useServicesStore } from "../services.helper/services.store";
 import type { IServicesRequest } from "../services.helper/services.interface";
+import { inputField } from "../../../component/global/customStyle";
 
 const AddService = () => {
   const { showToast } = useToast();
@@ -41,6 +42,12 @@ const AddService = () => {
       showToast("Service name is required", "warning");
       return;
     }
+    if(!form.charge || form.charge < 0){
+      showToast("Charge must be a positive number", "warning");
+      return;
+    }
+    
+
 
     setIsLoading(true);
 
@@ -49,7 +56,13 @@ const AddService = () => {
       showToast(res.message, res.severity);
 
       if (res.severity === "success") {
-        setTimeout(() => navigate("/services"), 1500);
+        setForm({
+          name: "",
+          description: "",
+          charge: 0,
+          type: "GENERAL",
+
+        })
       }
     } catch (error) {
       showToast("Failed to create service", "error");
@@ -91,7 +104,7 @@ const AddService = () => {
               value={form.name}
               onChange={handleChange}
               placeholder="e.g., General Consultation, Blood Test"
-              className="input-field"
+              className={inputField}
               required
             />
           </div>
@@ -111,7 +124,7 @@ const AddService = () => {
               onChange={handleChange}
               placeholder="Describe the service..."
               rows={3}
-              className="input-field"
+              className={inputField}
             />
           </div>
 
@@ -125,17 +138,16 @@ const AddService = () => {
                 Charge *
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-3 text-muted">$</span>
+                <span className="absolute left-3 top-3 text-muted">Rs. </span>
                 <input
                   id="charge"
                   name="charge"
-                  type="number"
-                  step="0.01"
+                  type="tel"
                   min="0"
                   value={form.charge}
                   onChange={handleChange}
                   placeholder="0.00"
-                  className="input-field pl-10"
+                  className={inputField + " pl-10"}
                   required
                 />
               </div>
@@ -147,14 +159,14 @@ const AddService = () => {
                 htmlFor="type"
                 className="block text-sm font-medium text-foreground mb-2"
               >
-                Service Do Type
+                Service Specific Type
               </label>
               <select
                 id="type"
                 name="type"
                 value={form.type}
                 onChange={handleChange}
-                className="input-field"
+                className={inputField}
               >
                 <option value="">Any Staff Type</option>
                 {doctorTypeOptions.map((option) => (

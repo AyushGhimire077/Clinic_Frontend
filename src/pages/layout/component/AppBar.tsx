@@ -19,6 +19,13 @@ export const AppBar = () => {
         <BackButton ariaLabel="Back to previous page" />
       </div>
 
+      {/* Welcome to ClinicHub */}
+      <div className="hidden xl:flex items-center gap-3">
+        <h1 className="text-lg font-semibold text-foreground ">
+          Welcome  {(user?.name ?? "User")} to ClinicHub
+        </h1>
+      </div>
+
       {/* Center/Right section */}
       <div className="flex items-center gap-4 ml-auto">
         {user && (

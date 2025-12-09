@@ -39,6 +39,7 @@ export interface PatientState {
 
   setPatientList: (patientList: IPatient[]) => void;
   createPatient: (patient: IPatientRequest) => Promise<IResponse>;
+  editPatient: (id: string, patient: Partial<IPatientRequest>) => Promise<IResponse>;
   getAllPatients: (pagination: PaginationInfo) => Promise<IResponse>;
   getAllActivePatients: (pagination: PaginationInfo) => Promise<IResponse>;
   searchPatients: (

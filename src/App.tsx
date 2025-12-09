@@ -9,7 +9,7 @@ import AddEpisode from "./pages/episode/component/AddEpisode";
 import AddEpisodeTemp from "./pages/episode/component/AddEpisodeTemp";
 import EpisodeTable from "./pages/episode/component/EpisodeTable";
 import EpisodeTempTable from "./pages/episode/component/EpisodeTempTable";
-import Episode from "./pages/episode/Episode";
+import EpisodeDashboard from "./pages/episode/EpisodeDashboard";
 
 import AddPatient from "./pages/patient/componet/AddPatient";
 import PatientDetail from "./pages/patient/componet/PatientDetail";
@@ -57,7 +57,7 @@ const App = () => {
   const { user } = useAuthStore();
   const token = user?.token;
 
-   return (
+  return (
     <>
       <Toast />
 
@@ -94,12 +94,14 @@ const App = () => {
             </Route>
             <Route path="add-staff" element={<AddStaff />} />
             <Route path="table" element={<StaffTable />} />
+
           </Route>
 
           {/* Patient */}
           <Route path="patient">
             <Route index element={<Patient />} />
             <Route path="add" element={<AddPatient />} />
+            <Route path="edit/:id" element={<AddPatient />} />
 
             <Route path="view" element={<PatientTable />} />
             <Route path=":id/detail" element={<PatientDetail />} />
@@ -108,17 +110,17 @@ const App = () => {
           {/* Services */}
           <Route path="services">
             <Route index element={<ServicesDashboard />} />
-            <Route path="create" element={<AddService />} />
-             <Route path="view-services" element={<ServiceTable />} />
+            <Route path="add" element={<AddService />} />
+            <Route path="view" element={<ServiceTable />} />
           </Route>
 
           {/* Episode */}
           <Route path="episode">
-            <Route index element={<Episode />} />
+            <Route index element={<EpisodeDashboard />} />
             <Route path="view" element={<EpisodeTable />} />
-            <Route path="create" element={<AddEpisode />} />
-            <Route path="create-temp" element={<AddEpisodeTemp />} />
-            <Route path="view-templates" element={<EpisodeTempTable />} />
+            <Route path="add" element={<AddEpisode />} />
+            <Route path="templates/add" element={<AddEpisodeTemp />} />
+            <Route path="templates/view" element={<EpisodeTempTable />} />
           </Route>
         </Route>
 

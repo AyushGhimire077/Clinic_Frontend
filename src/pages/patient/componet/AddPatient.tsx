@@ -1,17 +1,22 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-import { Users, Calendar, Home, Save } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Calendar, Home, Save, Users } from "lucide-react";
 import { BackButton } from "../../../component/global/back/back";
+import { inputField } from "../../../component/global/customStyle";
 import { genderOptions } from "../../../component/global/interface";
 import { useToast } from "../../../component/toaster/useToast";
+import type { IPatient, IPatientRequest } from "../helper/patient.interface";
 import { usePatientStore } from "../helper/patient.store";
-import type { IPatientRequest } from "../helper/patient.interface";
+import { useLocation } from "react-router-dom";
 
 const AddPatient = () => {
   const { showToast } = useToast();
-  const { createPatient } = usePatientStore();
-  const navigate = useNavigate();
+  const { createPatient, editPatient } = usePatientStore();
+  const [isEditing, setIsEditing] = useState(false);
+
+  const location = useLocation();
+  const editPatientData = location.state?.patient as IPatient | undefined;
+
+  console.log(editPatientData)
 
   const [form, setForm] = useState<IPatientRequest>({
     name: "",
@@ -34,10 +39,11 @@ const AddPatient = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.name || !form.email || !form.contactNumber || !form.dob) {
+    if (!form.name || !form.contactNumber || !form.dob) {
       showToast("Please fill in all required fields", "warning");
       return;
     }
@@ -45,11 +51,24 @@ const AddPatient = () => {
     setIsLoading(true);
 
     try {
-      const res = await createPatient(form);
+
+      const res = isEditing
+        ? await editPatient(editPatientData!.id, form)
+        : await createPatient(form);
       showToast(res.message, res.severity);
 
       if (res.severity === "success") {
-        setTimeout(() => navigate("/patients"), 1500);
+        setForm({
+          name: "",
+          email: "",
+          contactNumber: "",
+          address: "",
+          gender: "MALE",
+          dob: "",
+          bloodGroup: "A+",
+        });
+
+        window.history.back();
       }
     } catch (error) {
       showToast("Failed to create patient", "error");
@@ -57,6 +76,21 @@ const AddPatient = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (editPatientData) {
+      setForm({
+        name: editPatientData.name,
+        email: editPatientData.email,
+        contactNumber: editPatientData.contactNumber.toString(),
+        address: editPatientData.address,
+        gender: editPatientData.gender,
+        dob: editPatientData.dateOfBirth,
+        bloodGroup: editPatientData.bloodGroup,
+      });
+      setIsEditing(true);
+    }
+  }, [editPatientData]);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -70,10 +104,12 @@ const AddPatient = () => {
             <Users className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">
-            Register New Patient
+            {isEditing ? `Edit ${editPatientData?.name}` : "Register New Patient"}
           </h1>
           <p className="text-muted">
-            Enter patient details to create a comprehensive medical record
+            {isEditing
+              ? "Update patient details below"
+              : "Fill in the details to register a new patient"}
           </p>
         </div>
 
@@ -100,7 +136,7 @@ const AddPatient = () => {
                   placeholder="Enter patient's full name"
                   value={form.name}
                   onChange={handleChange}
-                  className="input-field"
+                  className={inputField}
                   required
                 />
               </div>
@@ -110,7 +146,7 @@ const AddPatient = () => {
                   htmlFor="email"
                   className="block text-sm font-medium text-foreground mb-2"
                 >
-                  Email Address *
+                  Email Address
                 </label>
                 <input
                   id="email"
@@ -119,8 +155,8 @@ const AddPatient = () => {
                   placeholder="patient@example.com"
                   value={form.email}
                   onChange={handleChange}
-                  className="input-field"
-                  required
+                  className={inputField}
+
                 />
               </div>
 
@@ -135,10 +171,10 @@ const AddPatient = () => {
                   id="contactNumber"
                   name="contactNumber"
                   type="tel"
-                  placeholder="+1 234 567 8900"
+                  placeholder="+977 1234567890"
                   value={form.contactNumber}
                   onChange={handleChange}
-                  className="input-field"
+                  className={inputField}
                   required
                 />
               </div>
@@ -159,14 +195,14 @@ const AddPatient = () => {
                   Date of Birth *
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-3 w-5 h-5 text-muted" />
+                  <Calendar className="absolute left-3 top-4 w-5 h-5 text-muted" />
                   <input
                     id="dob"
                     name="dob"
                     type="date"
                     value={form.dob}
                     onChange={handleChange}
-                    className="input-field pl-10"
+                    className={`${inputField} pl-10`}
                     required
                   />
                 </div>
@@ -184,7 +220,7 @@ const AddPatient = () => {
                   name="gender"
                   value={form.gender}
                   onChange={handleChange}
-                  className="input-field"
+                  className={inputField}
                   required
                 >
                   {genderOptions.map((option) => (
@@ -200,15 +236,15 @@ const AddPatient = () => {
                   htmlFor="bloodGroup"
                   className="block text-sm font-medium text-foreground mb-2"
                 >
-                  Blood Group *
+                  Blood Group
                 </label>
                 <select
                   id="bloodGroup"
                   name="bloodGroup"
                   value={form.bloodGroup}
                   onChange={handleChange}
-                  className="input-field"
-                  required
+                  className={inputField}
+
                 >
                   {bloodGroups.map((bg) => (
                     <option key={bg} value={bg}>
@@ -229,7 +265,7 @@ const AddPatient = () => {
               Residential Address *
             </label>
             <div className="relative">
-              <Home className="absolute left-3 top-3 w-5 h-5 text-muted" />
+              <Home className="absolute left-3 top-4 w-5 h-5 text-muted" />
               <input
                 id="address"
                 name="address"
@@ -237,7 +273,7 @@ const AddPatient = () => {
                 placeholder="Enter complete residential address"
                 value={form.address}
                 onChange={handleChange}
-                className="input-field pl-10"
+                className={`${inputField} pl-10`}
                 required
               />
             </div>
@@ -253,12 +289,12 @@ const AddPatient = () => {
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Registering Patient...
+                  {isEditing ? "Updating Patient..." : "Registering Patient..."}
                 </>
               ) : (
                 <>
                   <Save className="w-5 h-5" />
-                  Register Patient
+                  {isEditing ? "Update Patient" : "Register Patient"}
                 </>
               )}
             </button>

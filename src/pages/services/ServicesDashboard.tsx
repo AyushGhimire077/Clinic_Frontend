@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Activity, Plus, List, DollarSign, CheckCircle } from "lucide-react";
 import { useServicesStore } from "./services.helper/services.store";
+import { formatCurrency } from "../../component/global/formatters";
 
 const ServicesDashboard = () => {
   const navigate = useNavigate();
@@ -34,18 +35,13 @@ const ServicesDashboard = () => {
   );
   const averageCharge = totalServices > 0 ? totalCharge / totalServices : 0;
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount);
-  };
+
 
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div className="w-20 h-20 bg-linear-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center mx-auto mb-4">
           <Activity className="w-10 h-10 text-white" />
         </div>
         <h1 className="text-2xl font-bold text-foreground">Medical Services</h1>
@@ -65,7 +61,7 @@ const ServicesDashboard = () => {
               className="p-6 bg-surface border border-border rounded-lg hover:shadow-medium transition-all duration-200 hover-lift text-left"
             >
               <div
-                className={`w-12 h-12 bg-gradient-to-br ${action.color} rounded-lg flex items-center justify-center mb-4`}
+                className={`w-12 h-12 bg-linear-to-br ${action.color} rounded-lg flex items-center justify-center mb-4`}
               >
                 <Icon className="w-6 h-6 text-white" />
               </div>
@@ -115,7 +111,7 @@ const ServicesDashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted">Avg. Charge</p>
-              <p className="text-2xl font-bold text-foreground">
+              <p className="text-2xl font-semibold text-foreground">
                 {formatCurrency(averageCharge)}
               </p>
             </div>
@@ -154,11 +150,10 @@ const ServicesDashboard = () => {
                     </div>
                   </div>
                   <div
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      service.isActive
-                        ? "bg-success/10 text-success"
-                        : "bg-error/10 text-error"
-                    }`}
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${service.isActive
+                      ? "bg-success/10 text-success"
+                      : "bg-error/10 text-error"
+                      }`}
                   >
                     {service.isActive ? "Active" : "Inactive"}
                   </div>

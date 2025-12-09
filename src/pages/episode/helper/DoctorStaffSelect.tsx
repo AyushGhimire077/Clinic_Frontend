@@ -85,7 +85,7 @@ const DoctorStaffSelect = ({
           <div className="flex items-center gap-3 min-w-0">
             {selectedStaff ? (
               <>
-                <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center shrink-0">
                   <span className="font-medium text-primary">
                     {getInitials(selectedStaff.name)}
                   </span>
@@ -108,9 +108,8 @@ const DoctorStaffSelect = ({
             )}
           </div>
           <ChevronDown
-            className={`w-5 h-5 text-muted transition-transform ${
-              isOpen ? "rotate-180" : ""
-            }`}
+            className={`w-5 h-5 text-muted transition-transform ${isOpen ? "rotate-180" : ""
+              }`}
           />
         </button>
 
@@ -157,16 +156,14 @@ const DoctorStaffSelect = ({
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                          value === staff.id ? "bg-primary-light" : "bg-surface"
-                        }`}
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${value === staff.id ? "bg-primary-light" : "bg-surface"
+                          }`}
                       >
                         <span
-                          className={`font-medium ${
-                            value === staff.id
-                              ? "text-primary"
-                              : "text-foreground"
-                          }`}
+                          className={`font-medium ${value === staff.id
+                            ? "text-primary"
+                            : "text-foreground"
+                            }`}
                         >
                           {getInitials(staff.name)}
                         </span>

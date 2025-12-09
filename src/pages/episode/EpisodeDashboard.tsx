@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa";
 import { FiFileText, FiEye } from "react-icons/fi";
 
-const Episode = () => {
+const EpisodeDashboard = () => {
   const navigate = useNavigate();
 
   return (
@@ -35,7 +35,7 @@ const Episode = () => {
                 View Episodes
               </button>
               <button
-                onClick={() => navigate("create")}
+                onClick={() => navigate("add")}
                 className="flex items-center gap-2 px-5 py-2.5 text-white rounded-lg transition-all duration-200 font-medium shadow-sm hover:shadow-md"
                 style={{
                   background:
@@ -91,7 +91,7 @@ const Episode = () => {
         {/* Main Content Area */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="p-8 text-center">
-            <div className="w-24 h-24 bg-gradient-to-br from-blue-50 to-teal-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="w-24 h-24 bg-linear-to-br from-blue-50 to-teal-50 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <FiFileText className="w-12 h-12 text-teal-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">
@@ -104,7 +104,7 @@ const Episode = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
               <button
-                onClick={() => navigate("create")}
+                onClick={() => navigate("add")}
                 className="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-xl hover:border-teal-300 hover:shadow-md transition-all duration-200 group"
               >
                 <div className="p-3 rounded-lg bg-teal-50 group-hover:bg-teal-100 mb-4">
@@ -117,7 +117,7 @@ const Episode = () => {
               </button>
 
               <button
-                onClick={() => navigate("create-temp")}
+                onClick={() => navigate("templates/add")}
                 className="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-xl hover:border-blue-300 hover:shadow-md transition-all duration-200 group"
               >
                 <div className="p-3 rounded-lg bg-blue-50 group-hover:bg-blue-100 mb-4">
@@ -132,7 +132,7 @@ const Episode = () => {
               </button>
 
               <button
-                onClick={() => navigate("view-templates")}
+                onClick={() => navigate("templates/view")}
                 className="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-xl hover:border-purple-300 hover:shadow-md transition-all duration-200 group"
               >
                 <div className="p-3 rounded-lg bg-purple-50 group-hover:bg-purple-100 mb-4">
@@ -172,4 +172,4 @@ const Episode = () => {
   );
 };
 
-export default Episode;
+export default EpisodeDashboard;
