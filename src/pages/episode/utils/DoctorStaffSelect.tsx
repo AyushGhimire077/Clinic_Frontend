@@ -114,7 +114,7 @@ const DoctorStaffSelect = ({
         </button>
 
         {isOpen && !disabled && (
-          <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-lg shadow-elevated max-h-96 overflow-hidden">
+          <div className="absolute z-50 border border-primary w-full mt-1 pb-4 bg-background   rounded-lg shadow-elevated max-h-96 overflow-hidden">
             <div className="p-3 border-b border-border">
               <div className="relative">
                 <Search className="absolute left-3 top-2.5 w-4 h-4 text-muted" />
@@ -123,7 +123,7 @@ const DoctorStaffSelect = ({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search staff..."
-                  className="w-full pl-10 pr-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full pl-10 pr-3 py-2 border border-border outline-0 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                   autoFocus
                 />
               </div>
@@ -174,7 +174,7 @@ const DoctorStaffSelect = ({
                         </p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs px-2 py-1 bg-surface rounded">
-                            {staff.role}
+                            {staff.type}
                           </span>
                           {staff.doctorSubType && (
                             <span className="text-xs px-2 py-1 bg-primary-light text-primary rounded">

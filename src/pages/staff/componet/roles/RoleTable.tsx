@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
-import { Shield, CheckCircle, XCircle, Edit2, Filter } from "lucide-react";
-import { BackButton } from "../../../../component/global/back/back";
-import { SearchInput } from "../../../../component/global/SearchInput";
+import { Activity, Edit2, Filter, Shield } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { BackButton } from "../../../../component/global/components/back/back";
+import { Pagination } from "../../../../component/global/components/Pagination";
+import { SearchInput } from "../../../../component/global/components/SearchInput";
 import { useToast } from "../../../../component/toaster/useToast";
 import { useRoleStore } from "../../role.helper/role.store";
-import { Pagination } from "../../../../component/global/Pagination";
-import { useNavigate } from "react-router-dom";
 
 const RoleTable = () => {
   const { showToast } = useToast();
@@ -215,18 +215,17 @@ const RoleTable = () => {
                           {role.isActive ? (
                             <button
                               onClick={() => handleDisable(role.id)}
-                              className="p-2 text-error hover:bg-error/10 rounded-lg transition-colors"
-                              title="Disable Role"
+                              className="p-2 text-error hover:text-error hover:bg-error/10 rounded-lg transition-colors" title="Disable Role"
                             >
-                              <XCircle className="w-4 h-4" />
+                              <Activity className="w-4 h-4" />
                             </button>
                           ) : (
                             <button
                               onClick={() => handleEnable(role.id)}
-                              className="p-2 text-success hover:bg-success/10 rounded-lg transition-colors"
+                              className="p-2 text-success hover:text-success hover:bg-success/10 rounded-lg transition-colors"
                               title="Enable Role"
                             >
-                              <CheckCircle className="w-4 h-4" />
+                              <Activity className="w-4 h-4" />
                             </button>
                           )}
                           <button

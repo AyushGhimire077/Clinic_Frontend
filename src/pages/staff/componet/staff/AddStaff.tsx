@@ -1,16 +1,16 @@
 import { Briefcase, FileText, Plus, User, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BackButton } from "../../../../component/global/back/back";
+import { BackButton } from "../../../../component/global/components/back/back";
+import { inputField } from "../../../../component/global/components/customStyle";
 import {
   doctorTypeOptions,
   staffTypeOptions,
-} from "../../../../component/global/interface";
+} from "../../../../component/global/utils/global.interface";
 import { useToast } from "../../../../component/toaster/useToast";
 import { useRoleStore } from "../../role.helper/role.store";
 import type { IStaffRequest } from "../../staff.helper/staff.interface";
 import { useStaffStore } from "../../staff.helper/staff.store";
-import { inputField } from "../../../../component/global/customStyle";
 
 const AddStaff = () => {
   const { showToast } = useToast();
@@ -97,7 +97,7 @@ const AddStaff = () => {
       </div>
 
       <div className="bg-surface border border-border rounded-lg p-6">
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <div className="w-16 h-16 bg-linear-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center mx-auto mb-4">
             <Users className="w-8 h-8 text-white" />
           </div>
@@ -107,17 +107,9 @@ const AddStaff = () => {
           <p className="text-muted">Register a new healthcare professional</p>
         </div>
 
-        <div className="mb-8">
-          <button
-            onClick={() => navigate("/staff/table")}
-            className="w-full p-4 bg-surface border shadow-soft border-border rounded-lg hover:shadow-md transition-all flex items-center justify-center gap-3"
-          >
-            <FileText className="w-5 h-5 text-muted" />
-            <span className="font-medium text-foreground">
-              View All Staff Members
-            </span>
-          </button>
-        </div>
+        <hr className="border-border mb-6" />
+
+
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -126,8 +118,9 @@ const AddStaff = () => {
               <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <User className="w-5 h-5 text-primary" />
                 Personal Information
-              </h3>
 
+              </h3>
+              <hr className="border-border mb-6" />
               <div>
                 <label
                   htmlFor="name"
@@ -211,6 +204,8 @@ const AddStaff = () => {
                 <Briefcase className="w-5 h-5 text-primary" />
                 Employment Details
               </h3>
+              <hr className="border-border mb-6" />
+
 
               <div>
                 <label

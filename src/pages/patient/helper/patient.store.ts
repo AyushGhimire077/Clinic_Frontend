@@ -19,6 +19,7 @@ export const usePatientStore = create<PatientState>((set) => ({
   currentPage: 0,
   totalPages: 0,
   totalItems: 0,
+  count: new Map<string, object>(),
 
   setPatientList: (patientList) => set({ patientList }),
 
@@ -130,6 +131,64 @@ export const usePatientStore = create<PatientState>((set) => ({
       } else {
         return null;
       }
+    } catch (error: any) {
+      return handleApiError(error);
+    }
+  },
+
+  // count section
+  countPatients: async () => {
+    try {
+      const res = await axios_auth.get("/patient/count");
+
+      set((state) => {
+        state.count.clear();
+        const data = res.data.data;
+        for (const key in data) {
+          state.count.set(key, data[key]);
+        }
+        return { count: state.count };
+      });
+
+      console.log(res.data.data);
+
+      return handleApiResponse(res);
+    } catch (error: any) {
+      return handleApiError(error);
+    }
+  },
+
+  // enable disable section
+  enablePatient: async (id) => {
+    try {
+      const res = await axios_auth.get(`/patient/enable/${id}`);
+
+      if (res.data?.status === 200) {
+        set((state) => ({
+          patientList: state.patientList.map((patient) =>
+            patient.id === id ? { ...patient, isActive: true } : patient
+          ),
+        }));
+      }
+
+      return handleApiResponse(res);
+    } catch (error: any) {
+      return handleApiError(error);
+    }
+  },
+  disablePatient: async (id) => {
+    try {
+      const res = await axios_auth.get(`/patient/disable/${id}`);
+
+      if (res.data?.status === 200) {
+        set((state) => ({
+          patientList: state.patientList.map((patient) =>
+            patient.id === id ? { ...patient, isActive: false } : patient
+          ),
+        }));
+      }
+
+      return handleApiResponse(res);
     } catch (error: any) {
       return handleApiError(error);
     }

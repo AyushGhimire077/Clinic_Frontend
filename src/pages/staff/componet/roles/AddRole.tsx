@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Save, Shield, Users } from "lucide-react";
-import { BackButton } from "../../../../component/global/back/back";
-import { inputField } from "../../../../component/global/customStyle";
+import { BackButton } from "../../../../component/global/components/back/back";
+import { inputField } from "../../../../component/global/components/customStyle";
 import { useToast } from "../../../../component/toaster/useToast";
 import { permissionValues } from "../../../../component/utils/permissons";
 import { useRoleStore } from "../../role.helper/role.store";

@@ -1,22 +1,77 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-
 import {
-  Users,
-  Calendar,
-  Phone,
-  Mail,
-  MapPin,
   Activity,
+  AlertCircle,
+  Calendar,
   Edit2,
   FileText,
-  UserCheck,
+  Mail,
+  MapPin,
+  Phone,
+  RefreshCw,
   Shield,
+  UserCheck,
+  Users,
 } from "lucide-react";
-import { BackButton } from "../../../component/global/back/back";
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { BackButton } from "../../../component/global/components/back/back";
+import { calculateAge, formatDate } from "../../../component/global/utils/global.utils.";
 import { useToast } from "../../../component/toaster/useToast";
 import { usePatientStore } from "../helper/patient.store";
-import { formatDate, formatDateTime } from "../../../component/global/formatters";
+
+
+
+const getInitials = (name: string) => {
+  return name
+    .split(" ")
+    .map((n) => n?.[0] || "")
+    .join("")
+    .toUpperCase()
+    .substring(0, 2);
+};
+
+// Sub-components for better organization
+const PatientStatusBadge = ({ isActive }: { isActive: boolean }) => (
+  <span
+    className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${isActive
+      ? "bg-success/10 text-success border border-success/20"
+      : "bg-error/10 text-error border border-error/20"
+      }`}
+  >
+    <div className={`w-2 h-2 rounded-full mr-2 ${isActive ? "bg-success" : "bg-error"}`} />
+    {isActive ? "Active Patient" : "Inactive"}
+  </span>
+);
+
+const InfoCard = ({
+  children,
+  className = ""
+}: {
+  children: React.ReactNode;
+  className?: string
+}) => (
+  <div className={`bg-surface border border-border rounded-xl p-6 shadow-sm ${className}`}>
+    {children}
+  </div>
+);
+
+const LoadingSkeleton = () => (
+  <div className="max-w-6xl mx-auto animate-pulse">
+    <div className="mb-6">
+      <div className="w-24 h-10 bg-gray-200 rounded-lg"></div>
+    </div>
+    <div className="space-y-6">
+      <div className="h-40 bg-gray-200 rounded-xl"></div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 h-64 bg-gray-200 rounded-xl"></div>
+        <div className="space-y-6">
+          <div className="h-48 bg-gray-200 rounded-xl"></div>
+          <div className="h-40 bg-gray-200 rounded-xl"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 const PatientDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,40 +80,95 @@ const PatientDetail = () => {
   const { getPatientById, patientList } = usePatientStore();
 
   const [patient, setPatient] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadPatient();
-  }, [id]);
-
-  const loadPatient = async () => {
-    if (!id) return;
-
-    // First try to find in existing list
-    const foundPatient = patientList.find((p) => p.id === id);
-    if (foundPatient) {
-      setPatient(foundPatient);
+  const loadPatient = useCallback(async () => {
+    if (!id) {
+      setError("Patient ID is missing");
+      setLoading(false);
       return;
     }
 
-    // If not found, fetch from API
     setLoading(true);
-    try {
-      const res = await getPatientById(id);
+    setError(null);
 
-      setPatient(res);
+    try {
+      // Try cache first for instant feedback
+      const cachedPatient = patientList.find((p) => p.id === id);
+      if (cachedPatient) {
+        setPatient(cachedPatient);
+      }
+
+      // Always fetch fresh data in background
+      const freshPatient = await getPatientById(id);
+
+      // Only update if data differs from cache
+      if (!cachedPatient || JSON.stringify(cachedPatient) !== JSON.stringify(freshPatient)) {
+        setPatient(freshPatient);
+      }
     } catch (error) {
-      showToast("Failed to load patient", "error");
-      navigate("/patient");
+      console.error("Failed to load patient:", error);
+
+      // If we have cached data, show it with a warning
+      const cachedPatient = patientList.find((p) => p.id === id);
+      if (cachedPatient) {
+        setPatient(cachedPatient);
+        showToast("Showing cached data. Could not refresh patient details.", "warning");
+      } else {
+        setError("Failed to load patient data. Please try again.");
+        showToast("Failed to load patient", "error");
+      }
     } finally {
       setLoading(false);
     }
+  }, [id, getPatientById, patientList, showToast]);
+
+  useEffect(() => {
+    loadPatient();
+  }, [loadPatient]);
+
+  const handleRefresh = () => {
+    loadPatient();
   };
 
-  if (loading) {
+  const handleRetry = () => {
+    setError(null);
+    loadPatient();
+  };
+
+  if (loading && !patient) {
+    return <LoadingSkeleton />;
+  }
+
+  if (error && !patient) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="w-8 h-8 border-2 border-primary-light border-t-primary rounded-full animate-spin" />
+      <div className="max-w-4xl mx-auto">
+        <BackButton />
+        <div className="bg-surface border border-border rounded-xl p-8 text-center">
+          <AlertCircle className="w-16 h-16 mx-auto mb-4 text-error/50" />
+          <h1 className="text-2xl font-bold text-foreground mb-3">
+            Unable to Load Patient
+          </h1>
+          <p className="text-muted mb-6 max-w-md mx-auto">
+            {error}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={handleRetry}
+              className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors flex items-center justify-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Try Again
+            </button>
+            <button
+              onClick={() => navigate("/patient")}
+              className="px-6 py-3 border border-border text-foreground rounded-lg hover:bg-surface transition-colors"
+            >
+              Back to Patients
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -67,11 +177,14 @@ const PatientDetail = () => {
     return (
       <div className="max-w-4xl mx-auto">
         <BackButton />
-        <div className="bg-surface border border-border rounded-lg p-8 text-center">
+        <div className="bg-surface border border-border rounded-xl p-8 text-center">
           <Users className="w-16 h-16 mx-auto mb-4 text-muted/30" />
-          <h1 className="text-2xl font-bold text-foreground mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-3">
             Patient Not Found
           </h1>
+          <p className="text-muted mb-6">
+            The patient you're looking for doesn't exist or has been removed.
+          </p>
           <button
             onClick={() => navigate("/patient")}
             className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
@@ -83,260 +196,253 @@ const PatientDetail = () => {
     );
   }
 
-  const calculateAge = (dateOfBirth: string) => {
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
-  };
-
   const age = calculateAge(patient.dateOfBirth);
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="mb-6">
-        <BackButton />
+    <div className="max-w-6xl mx-auto px-4 py-6">
+      {/* Header with Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div className="flex items-center gap-4">
+          <BackButton />
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Patient Details</h1>
+            <p className="text-sm text-muted">Manage and view patient information</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleRefresh}
+            className="p-2 hover:bg-surface rounded-lg transition-colors"
+            title="Refresh data"
+          >
+            <RefreshCw className="w-5 h-5 text-muted" />
+          </button>
+          <button
+            onClick={() => navigate(`/patient/edit/${patient.id}`, { state: { patient: patient } })}
+            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2"
+          >
+            <Edit2 className="w-4 h-4" />
+            Edit
+          </button>
+        </div>
       </div>
 
-      {/* Header */}
-      <div className="bg-surface border border-border rounded-lg p-6 mb-6">
+      {/* Patient Header Card */}
+      <InfoCard className="mb-6">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
           <div className="flex items-start gap-4">
-            <div className="w-16 h-16 bg-primary-light rounded-lg flex items-center justify-center">
-              <span className="text-xl font-bold text-primary">
+            <div className="w-20 h-20 bg-linear-to-br from-primary-light to-primary rounded-xl flex items-center justify-center shadow-sm">
+              <span className="text-2xl font-bold text-white">
                 {getInitials(patient.name)}
               </span>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">
-                {patient.name}
-              </h1>
-              <div className="flex flex-wrap gap-2 mt-2">
-                <span
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${patient.isActive
-                    ? "bg-success/10 text-success"
-                    : "bg-error/10 text-error"
-                    }`}
-                >
-                  {patient.isActive ? "Active Patient" : "Inactive"}
-                </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-surface text-foreground">
-                  {patient.gender.toLowerCase()}
-                </span>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-error/10 text-error">
-                  {patient.bloodGroup}
-                </span>
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-3 mb-3">
+                <h1 className="text-2xl font-bold text-foreground">
+                  {patient.name}
+                </h1>
+                <PatientStatusBadge isActive={patient.isActive} />
+              </div>
+
+              <div className="flex flex-wrap gap-4 text-sm text-muted">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>Born {formatDate(patient.dateOfBirth)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <UserCheck className="w-4 h-4" />
+                  <span className="capitalize">{patient.gender.toLowerCase()}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Activity className="w-4 h-4" />
+                  <span>{patient.bloodGroup}</span>
+                </div>
+                {/* register on */}
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4" />
+                  <span>{formatDate(patient.createdAt)}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <div className="bg-background border border-border rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-foreground">{age}</div>
-              <div className="text-sm text-muted">Years Old</div>
-            </div>
-            <div className="text-center text-sm text-muted">
-              ID:{" "}
-              <span className="font-mono">{patient.id.substring(0, 8)}...</span>
-            </div>
+          <div className="flex flex-col items-center gap-3">
+
           </div>
         </div>
-      </div>
+      </InfoCard>
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Personal Information */}
-        <div className="lg:col-span-2">
-          <div className="bg-surface border border-border rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Users className="w-5 h-5 text-primary" />
-              Personal Information
-            </h2>
+        <div className="lg:col-span-2 space-y-6">
+          <InfoCard>
+            <div className="flex items-center gap-2 mb-6">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Users className="w-5 h-5 text-primary" />
+              </div>
+              <h2 className="text-lg font-semibold text-foreground">
+                Personal Information
+              </h2>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-5">
                 <div>
-                  <label className="text-sm font-medium text-muted">
+                  <label className="text-sm font-medium text-muted block mb-1">
                     Full Name
                   </label>
-                  <p className="text-foreground font-medium">{patient.name}</p>
+                  <p className="text-foreground font-medium text-lg">{patient.name}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted">
+                  <label className="text-sm font-medium text-muted block mb-1">
                     Date of Birth
                   </label>
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-muted" />
-                    <span className="text-foreground">
+                    <span className="text-foreground font-medium">
                       {formatDate(patient.dateOfBirth)}
                     </span>
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted">Age</label>
-                  <p className="text-foreground font-medium">{age} years</p>
+                  <label className="text-sm font-medium text-muted block mb-1">
+                    Age
+                  </label>
+                  <p className="text-foreground font-medium text-lg">{age} years</p>
                 </div>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-5">
                 <div>
-                  <label className="text-sm font-medium text-muted">
+                  <label className="text-sm font-medium text-muted block mb-1">
                     Contact Number
                   </label>
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-muted" />
-                    <span className="text-foreground">
+                    <a
+                      href={`tel:${patient.contactNumber}`}
+                      className="text-foreground font-medium hover:text-primary transition-colors"
+                    >
                       {patient.contactNumber}
-                    </span>
+                    </a>
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted">
+                  <label className="text-sm font-medium text-muted block mb-1">
                     Email Address
                   </label>
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-muted" />
-                    <span className="text-foreground">{patient.email}</span>
+                    <a
+                      href={`mailto:${patient.email}`}
+                      className="text-foreground font-medium hover:text-primary transition-colors"
+                    >
+                      {patient.email}
+                    </a>
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted">
+                  <label className="text-sm font-medium text-muted block mb-1">
                     Gender
                   </label>
-                  <p className="text-foreground font-medium capitalize">
+                  <p className="text-foreground font-medium text-lg capitalize">
                     {patient.gender.toLowerCase()}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6">
-              <label className="text-sm font-medium text-muted">Address</label>
-              <div className="flex items-start gap-2 mt-2">
-                <MapPin className="w-4 h-4 text-muted mt-1" />
-                <p className="text-foreground">{patient.address}</p>
+            <div className="mt-8 pt-6 border-t border-border">
+              <label className="text-sm font-medium text-muted block mb-2">
+                Address
+              </label>
+              <div className="flex items-start gap-3 p-4 bg-background border border-border rounded-lg">
+                <MapPin className="w-5 h-5 text-muted shrink-0 mt-0.5" />
+                <p className="text-foreground leading-relaxed">{patient.address}</p>
               </div>
             </div>
-          </div>
+          </InfoCard>
         </div>
 
-        {/* Medical Information */}
-        <div>
-          <div className="bg-surface border border-border rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-primary" />
-              Medical Information
-            </h2>
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Medical Information */}
+          <InfoCard>
+            <div className="flex items-center gap-2 mb-6">
+              <div className="p-2 bg-error/10 rounded-lg">
+                <Activity className="w-5 h-5 text-error" />
+              </div>
+              <h2 className="text-lg font-semibold text-foreground">
+                Medical Information
+              </h2>
+            </div>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="p-4 bg-background border border-border rounded-lg">
-                <label className="text-sm font-medium text-muted">
+                <label className="text-sm font-medium text-muted block mb-2">
                   Blood Group
                 </label>
                 <div className="mt-2">
-                  <span className="inline-flex items-center px-3 py-2 rounded-lg bg-error/10 text-error font-bold text-lg">
+                  <span className="inline-flex items-center justify-center px-4 py-3 rounded-lg bg-error/10 text-error font-bold text-xl min-w-20">
                     {patient.bloodGroup}
                   </span>
                 </div>
-                <p className="text-sm text-muted mt-2">
-                  Critical medical information
+                <p className="text-sm text-muted mt-3">
+                  Critical medical information for emergencies
                 </p>
               </div>
 
               <div className="p-4 bg-background border border-border rounded-lg">
-                <label className="text-sm font-medium text-muted">
+                <label className="text-sm font-medium text-muted block mb-2">
                   Patient Status
                 </label>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-3 mt-2">
                   <div
-                    className={`w-2 h-2 rounded-full ${patient.isActive ? "bg-success" : "bg-error"
+                    className={`w-3 h-3 rounded-full ${patient.isActive ? "bg-success animate-pulse" : "bg-error"
                       }`}
                   />
                   <span
-                    className={`font-medium ${patient.isActive ? "text-success" : "text-error"
+                    className={`font-medium text-lg ${patient.isActive ? "text-success" : "text-error"
                       }`}
                   >
                     {patient.isActive ? "Active" : "Inactive"}
                   </span>
                 </div>
-                <p className="text-sm text-muted mt-2">
+                <p className="text-sm text-muted mt-3">
                   {patient.isActive
-                    ? "Can schedule appointments"
-                    : "Cannot schedule new appointments"}
+                    ? "Patient can schedule new appointments"
+                    : "Patient cannot schedule new appointments"}
                 </p>
               </div>
             </div>
-          </div>
+          </InfoCard>
 
-          {/* Registration Details */}
-          <div className="bg-surface border border-border rounded-lg p-6 mt-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Shield className="w-5 h-5 text-primary" />
-              Registration Details
-            </h2>
 
-            <div className="space-y-3">
-              <div>
-                <label className="text-sm font-medium text-muted">
-                  Registered On
-                </label>
-                <p className="text-foreground">
-                  {formatDateTime(patient.createdAt)}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted">
-                  Last Updated
-                </label>
-                <p className="text-foreground">
-                  {formatDateTime(patient.updatedAt)}
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-end mt-8">
-        <button
-          onClick={() => navigate("/patients")}
-          className="px-6 py-3 border border-border text-foreground rounded-lg hover:bg-surface transition-colors"
-        >
-          Back to Patients
-        </button>
-        <button
-          onClick={() => navigate(`/patients/${patient.id}/edit`)}
-          className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2"
-        >
-          <Edit2 className="w-4 h-4" />
-          Edit Patient
-        </button>
-        <button
-          onClick={() => navigate(`/episodes/add?patientId=${patient.id}`)}
-          className="px-6 py-3 bg-info text-white rounded-lg hover:bg-info/80 transition-colors flex items-center gap-2"
-        >
-          <FileText className="w-4 h-4" />
-          Create Episode
-        </button>
+      <div className="mt-8 pt-6 border-t border-border">
+        <div className="flex flex-col sm:flex-row gap-4 justify-end">
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={() => navigate(`/patient/edit/${patient.id}`, { state: { patient: patient } })}
+              className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors flex items-center justify-center gap-2"
+            >
+              <Edit2 className="w-4 h-4" />
+              Edit Patient Details
+            </button>
+            <button
+              onClick={() => navigate(`/episode/add?patientId=${patient.id}`)}
+              className="px-6 py-3 bg-linear-to-r from-info to-info/80 text-white rounded-lg hover:from-info/80 hover:to-info transition-all flex items-center justify-center gap-2 shadow-sm"
+            >
+              <FileText className="w-4 h-4" />
+              Create New Episode
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

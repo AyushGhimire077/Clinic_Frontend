@@ -1,8 +1,8 @@
 import { Save, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { BackButton } from "../../../../component/global/back/back";
-import { inputField } from "../../../../component/global/customStyle";
+import { BackButton } from "../../../../component/global/components/back/back";
+import { inputField } from "../../../../component/global/components/customStyle";
 import { useToast } from "../../../../component/toaster/useToast";
 import { permissionValues } from "../../../../component/utils/permissons";
 import type { IRole } from "../../role.helper/role.interface";

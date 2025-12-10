@@ -1,10 +1,10 @@
 import type {
-  EpisodeType,
   BillingMode,
-  Status,
+  EpisodeType,
   IResponse,
   PaginationInfo,
-} from "../../../component/global/interface";
+  Status,
+} from "../../../component/global/utils/global.interface";
 import type { IPatient } from "../../patient/helper/patient.interface";
 import type { IStaff } from "../../staff/staff.helper/staff.interface";
 

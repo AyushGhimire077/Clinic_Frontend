@@ -5,16 +5,16 @@ import AuthPage from "./pages/auth/AuthPage";
 import { useAuthStore } from "./pages/auth/store/auth.store";
 
 import Dashboard from "./pages/Dashboard";
-import AddEpisode from "./pages/episode/component/AddEpisode";
-import AddEpisodeTemp from "./pages/episode/component/AddEpisodeTemp";
-import EpisodeTable from "./pages/episode/component/EpisodeTable";
-import EpisodeTempTable from "./pages/episode/component/EpisodeTempTable";
+import AddEpisode from "./pages/episode/component/episode/AddEpisode";
+import EpisodeTable from "./pages/episode/component/episode/EpisodeTable";
+import AddEpisodeTemp from "./pages/episode/component/temp/AddEpisodeTemp";
+import EpisodeTempTable from "./pages/episode/component/temp/EpisodeTempTable";
 import EpisodeDashboard from "./pages/episode/EpisodeDashboard";
 
 import AddPatient from "./pages/patient/componet/AddPatient";
 import PatientDetail from "./pages/patient/componet/PatientDetail";
-import Patient from "./pages/patient/PatientDashboard";
 import PatientTable from "./pages/patient/componet/PatientTable";
+import Patient from "./pages/patient/PatientDashboard";
 
 import AddRole from "./pages/staff/componet/roles/AddRole";
 import RoleTable from "./pages/staff/componet/roles/RoleTable";
@@ -22,13 +22,14 @@ import AddStaff from "./pages/staff/componet/staff/AddStaff";
 import StaffTable from "./pages/staff/componet/staff/StaffTable";
 import StaffDashboard from "./pages/staff/StaffDashboard";
 
-import ServicesDashboard from "./pages/services/ServicesDashboard";
 import AddService from "./pages/services/componet/AddService";
 import ServiceTable from "./pages/services/componet/ServiceTable";
+import ServicesDashboard from "./pages/services/ServicesDashboard";
 
-import Layout from "./pages/layout/Layout";
 import { getTokenFromCookies } from "./component/global/config";
+import Layout from "./pages/layout/Layout";
 import EditRole from "./pages/staff/componet/roles/EditRole";
+import PageNotFound from "./component/PageNotFound";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -119,6 +120,8 @@ const App = () => {
             <Route index element={<EpisodeDashboard />} />
             <Route path="view" element={<EpisodeTable />} />
             <Route path="add" element={<AddEpisode />} />
+            <Route path="add?patientId=:patientId" element={<AddEpisode />} />
+            <Route path="add?template=:template" element={<AddEpisode />} />
             <Route path="templates/add" element={<AddEpisodeTemp />} />
             <Route path="templates/view" element={<EpisodeTempTable />} />
           </Route>
@@ -127,7 +130,9 @@ const App = () => {
         {/* Fallback */}
         <Route
           path="*"
-          element={<Navigate to={token ? "/home" : "/sign-in"} replace />}
+          element={
+            <PageNotFound />
+          }
         />
       </Routes>
     </>

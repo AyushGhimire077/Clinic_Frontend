@@ -20,7 +20,7 @@ function AuthPage() {
     
     if (res.severity === "success") {
       // Redirect to dashboard on successful login
-      navigate("/dashboard");
+      navigate("/");
     }
   };
 

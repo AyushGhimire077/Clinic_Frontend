@@ -1,22 +1,30 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Users, Filter, Phone, Activity, Printer, Edit2, RefreshCcw } from "lucide-react";
-import { BackButton } from "../../../component/global/back/back";
-import { SearchInput } from "../../../component/global/SearchInput";
+import { Activity, Edit2, Filter, Phone, Printer, RefreshCcw, Users } from "lucide-react";
+import { BackButton } from "../../../component/global/components/back/back";
+import { Pagination } from "../../../component/global/components/Pagination";
+import { SearchInput } from "../../../component/global/components/SearchInput";
 import { usePatientStore } from "../helper/patient.store";
-import { Pagination } from "../../../component/global/Pagination";
+import { useToast } from "../../../component/toaster/useToast";
 
 const PatientTable = () => {
   const navigate = useNavigate();
   const {
     patientList,
     totalPages,
-    totalItems,
+
     getAllPatients,
     getAllActivePatients,
     searchPatients,
+    disablePatient,
+    enablePatient,
+    countPatients,
+
+    count,
   } = usePatientStore();
+
+  const { showToast } = useToast();
 
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,10 +42,24 @@ const PatientTable = () => {
       } else {
         await getAllPatients({ page, size: pageSize });
       }
+
+
+      countPatients();
     } finally {
       setLoading(false);
     }
   };
+
+  const handleEnable = async (id: string) => {
+    const res = await enablePatient(id);
+    showToast(res.message, res.severity);
+  };
+
+  const handleDisable = async (id: string) => {
+    const res = await disablePatient(id);
+    showToast(res.message, res.severity);
+  };
+
 
   const refreshData = () => {
     setSearchQuery("");
@@ -70,7 +92,13 @@ const PatientTable = () => {
       .substring(0, 2);
   };
 
-  const activePatientsCount = patientList.filter((p) => p.isActive).length;
+  type GenderRatio = { MALE?: number; FEMALE?: number };
+  const genderRatio: GenderRatio = count.get("genderRatio") || {};
+  const male = genderRatio.MALE ?? 0;
+  const female = genderRatio.FEMALE ?? 0;
+
+  const display = `M${male}/F${female}`;
+
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -103,21 +131,21 @@ const PatientTable = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-background border border-border rounded-lg p-4">
             <div className="text-2xl font-bold text-foreground">
-              {totalItems}
+              {count.get("total")?.toString() || "0"}
             </div>
             <div className="text-sm text-muted">Total Patients</div>
           </div>
           <div className="bg-background border border-border rounded-lg p-4">
             <div className="text-2xl font-bold text-foreground">
-              {activePatientsCount}
+              {count.get("active")?.toString() || "0"}
             </div>
             <div className="text-sm text-muted">Active Patients</div>
           </div>
           <div className="bg-background border border-border rounded-lg p-4">
-            <div className="text-2xl font-bold text-foreground">
-              {new Set(patientList.map((p) => p.bloodGroup)).size}
+            <div className="text-2xl font-semibold pb-1 text-foreground">
+              {display}
             </div>
-            <div className="text-sm text-muted">Blood Groups</div>
+            <div className="text-sm text-muted">Gender Distribution</div>
           </div>
         </div>
 
@@ -175,19 +203,22 @@ const PatientTable = () => {
               <table className="w-full">
                 <thead className="bg-surface border-b border-border">
                   <tr>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
+                    <th className="px-8 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
                       Patient
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
+                    <th className="px-8 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
                       Contact
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
+                    <th className="px-8 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
                       Medical
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
+                    <th className="px-8 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th className="px-8 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
+                    <th className="px-8 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -233,6 +264,18 @@ const PatientTable = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4">
+                        {patient.oneTimeFlag ? (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-warning/10 text-warning">
+                            OneTime
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-success/10 text-success">
+                            Regular
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div
                             className={`w-2 h-2 rounded-full ${patient.isActive ? "bg-success" : "bg-error"
@@ -266,6 +309,28 @@ const PatientTable = () => {
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
+
+                          {patient.isActive ? (
+                            <button
+                              onClick={async () => {
+                                await handleDisable(patient.id);
+                              }}
+                              className="p-2 text-error hover:text-error hover:bg-error/10 rounded-lg transition-colors"
+                              title="Disable Patient"
+                            >
+                              <Activity className="w-4 h-4" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={async () => {
+                                await handleEnable(patient.id);
+                              }}
+                              className="p-2 text-success hover:text-success hover:bg-success/10 rounded-lg transition-colors"
+                              title="Enable Patient"
+                            >
+                              <Activity className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

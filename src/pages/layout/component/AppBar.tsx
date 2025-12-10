@@ -1,6 +1,6 @@
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { BackButton } from "../../../component/global/back/back";
+import { BackButton } from "../../../component/global/components/back/back";
 import { useAuthStore } from "../../auth/store/auth.store";
 
 export const AppBar = () => {

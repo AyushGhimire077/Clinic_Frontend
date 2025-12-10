@@ -2,7 +2,7 @@ import type {
   Gender,
   IResponse,
   PaginationInfo,
-} from "../../../component/global/interface";
+} from "../../../component/global/utils/global.interface";
 import type { IStaff } from "../../staff/staff.helper/staff.interface";
 
 export interface IPatientRequest {
@@ -12,6 +12,7 @@ export interface IPatientRequest {
   address: string;
   gender: Gender;
   dob: string;
+  oneTimeFlag?: boolean;
   bloodGroup: string;
 }
 
@@ -25,6 +26,8 @@ export interface IPatient {
   dateOfBirth: string;
   gender: Gender;
   isActive: boolean;
+  oneTimeFlag?: boolean;
+
   staffRegisteredBy: IStaff;
   adminRegisteredBy: IStaff;
   createdAt: string;
@@ -36,15 +39,24 @@ export interface PatientState {
   currentPage: number;
   totalPages: number;
   totalItems: number;
+  count: Map<string, object>;
 
   setPatientList: (patientList: IPatient[]) => void;
   createPatient: (patient: IPatientRequest) => Promise<IResponse>;
-  editPatient: (id: string, patient: Partial<IPatientRequest>) => Promise<IResponse>;
+  editPatient: (
+    id: string,
+    patient: Partial<IPatientRequest>
+  ) => Promise<IResponse>;
+  countPatients: () => Promise<IResponse>;
   getAllPatients: (pagination: PaginationInfo) => Promise<IResponse>;
   getAllActivePatients: (pagination: PaginationInfo) => Promise<IResponse>;
   searchPatients: (
     query: string,
     pagination: PaginationInfo
   ) => Promise<IResponse>;
+
+  disablePatient: (id: string) => Promise<IResponse>;
+  enablePatient: (id: string) => Promise<IResponse>;
+
   getPatientById: (id: string) => Promise<IPatient | null>;
 }

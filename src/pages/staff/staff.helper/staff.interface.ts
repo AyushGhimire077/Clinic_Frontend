@@ -1,9 +1,9 @@
 import type {
+  DoctorType,
   IResponse,
   PaginationInfo,
   StaffType,
-  DoctorType,
-} from "../../../component/global/interface";
+} from "../../../component/global/utils/global.interface";
 
 export interface IStaffRequest {
   name: string;

@@ -2,7 +2,7 @@ import type {
   DoctorType,
   IResponse,
   PaginationInfo,
-} from "../../../component/global/interface";
+} from "../../../component/global/utils/global.interface";
 
 export interface IServices {
   id: string;

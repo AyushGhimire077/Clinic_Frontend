@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Calendar, User, DollarSign, Filter, Plus } from "lucide-react";
-import { BackButton } from "../../../component/global/back/back";
-import { SearchInput } from "../../../component/global/SearchInput";
-import { useEpisodeStore } from "../helper/episode.store";
-import { Pagination } from "../../../component/global/Pagination";
+import { Calendar, DollarSign, Filter, Plus, User } from "lucide-react";
+import { BackButton } from "../../../../component/global/components/back/back";
+import { Pagination } from "../../../../component/global/components/Pagination";
+import { SearchInput } from "../../../../component/global/components/SearchInput";
 import {
   formatCurrency,
   formatDate,
-} from "../../../component/global/formatters";
+} from "../../../../component/global/utils/global.utils.";
+import { useEpisodeStore } from "../../helper/episode.store";
 
 const EpisodeTable = () => {
   const navigate = useNavigate();

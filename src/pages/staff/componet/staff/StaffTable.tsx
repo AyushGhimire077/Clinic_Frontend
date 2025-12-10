@@ -1,10 +1,10 @@
 import { Users } from "lucide-react";
 import { useEffect, useState } from "react";
-import { BackButton } from "../../../../component/global/back/back";
-import { Pagination } from "../../../../component/global/Pagination";
-import { SearchInput } from "../../../../component/global/SearchInput";
+import { BackButton } from "../../../../component/global/components/back/back";
+import { Pagination } from "../../../../component/global/components/Pagination";
+import { SearchInput } from "../../../../component/global/components/SearchInput";
+import { formatCurrency } from "../../../../component/global/utils/global.utils.";
 import { useStaffStore } from "../../staff.helper/staff.store";
-import { formatCurrency } from "../../../../component/global/formatters";
 
 const StaffTable = () => {
   const { staffList, getAllStaff, searchStaff } = useStaffStore();

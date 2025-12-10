@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { CreditCard, FileText, Package, Plus } from "lucide-react";
-import { BackButton } from "../../../component/global/back/back";
-import { formatCurrency } from "../../../component/global/formatters";
-import { Pagination } from "../../../component/global/Pagination";
-import { SearchInput } from "../../../component/global/SearchInput";
-import { useEpisodeStore } from "../helper/episode.store";
+import { BackButton } from "../../../../component/global/components/back/back";
+import { Pagination } from "../../../../component/global/components/Pagination";
+import { SearchInput } from "../../../../component/global/components/SearchInput";
+import { formatCurrency } from "../../../../component/global/utils/global.utils.";
+import { useEpisodeStore } from "../../helper/episode.store";
 
 const EpisodeTemplateTable = () => {
   const navigate = useNavigate();
@@ -190,7 +190,7 @@ const EpisodeTemplateTable = () => {
                       <td className="px-6 py-4">
                         <button
                           onClick={() =>
-                            navigate(`/episodes/add?template=${template.id}`)
+                            navigate(`/episode/add?template=${template.id}`)
                           }
                           className="px-4 py-2 text-primary border border-primary rounded-lg hover:bg-primary-light transition-colors"
                         >

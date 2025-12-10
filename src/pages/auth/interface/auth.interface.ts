@@ -1,4 +1,4 @@
-import type { IResponse } from "../../../component/global/interface";
+import type { IResponse } from "../../../component/global/utils/global.interface";
 
 export interface AuthRequest {
   email: string;

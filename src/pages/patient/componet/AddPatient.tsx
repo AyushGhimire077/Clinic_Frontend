@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
 import { Calendar, Home, Save, Users } from "lucide-react";
-import { BackButton } from "../../../component/global/back/back";
-import { inputField } from "../../../component/global/customStyle";
-import { genderOptions } from "../../../component/global/interface";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { BackButton } from "../../../component/global/components/back/back";
+import { inputField } from "../../../component/global/components/customStyle";
+import { genderOptions } from "../../../component/global/utils/global.interface";
 import { useToast } from "../../../component/toaster/useToast";
 import type { IPatient, IPatientRequest } from "../helper/patient.interface";
 import { usePatientStore } from "../helper/patient.store";
-import { useLocation } from "react-router-dom";
 
 const AddPatient = () => {
   const { showToast } = useToast();
@@ -26,6 +26,7 @@ const AddPatient = () => {
     gender: "MALE",
     dob: "",
     bloodGroup: "A+",
+    oneTimeFlag: false,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +67,7 @@ const AddPatient = () => {
           gender: "MALE",
           dob: "",
           bloodGroup: "A+",
+          oneTimeFlag: false,
         });
 
         window.history.back();
@@ -87,6 +89,7 @@ const AddPatient = () => {
         gender: editPatientData.gender,
         dob: editPatientData.dateOfBirth,
         bloodGroup: editPatientData.bloodGroup,
+        oneTimeFlag: editPatientData.oneTimeFlag || false,
       });
       setIsEditing(true);
     }
@@ -277,6 +280,29 @@ const AddPatient = () => {
                 required
               />
             </div>
+          </div>
+
+          {/* one time flag */}
+          <div className="flex items-center gap-3">
+            <input
+              id="oneTimeFlag"
+              name="oneTimeFlag"
+              type="checkbox"
+              checked={form.oneTimeFlag}
+              onChange={(e) => {
+                setForm({
+                  ...form,
+                  oneTimeFlag: e.target.checked,
+                });
+              }}
+              className="w-5 h-5"
+            />
+            <label
+              htmlFor="oneTimeFlag"
+              className="text-sm font-medium text-foreground"
+            >
+              One Time Patient
+            </label>
           </div>
 
           {/* Submit Button */}
