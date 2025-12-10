@@ -95,7 +95,6 @@ const App = () => {
             </Route>
             <Route path="add-staff" element={<AddStaff />} />
             <Route path="table" element={<StaffTable />} />
-
           </Route>
 
           {/* Patient */}
@@ -128,12 +127,7 @@ const App = () => {
         </Route>
 
         {/* Fallback */}
-        <Route
-          path="*"
-          element={
-            <PageNotFound />
-          }
-        />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>
   );

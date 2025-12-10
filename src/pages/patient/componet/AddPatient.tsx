@@ -1,4 +1,4 @@
-import { Calendar, Home, Save, Users } from "lucide-react";
+import { Calendar, Home, Save, User, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { BackButton } from "../../../component/global/components/back/back";
@@ -15,8 +15,6 @@ const AddPatient = () => {
 
   const location = useLocation();
   const editPatientData = location.state?.patient as IPatient | undefined;
-
-  console.log(editPatientData)
 
   const [form, setForm] = useState<IPatientRequest>({
     name: "",
@@ -40,7 +38,6 @@ const AddPatient = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -52,7 +49,6 @@ const AddPatient = () => {
     setIsLoading(true);
 
     try {
-
       const res = isEditing
         ? await editPatient(editPatientData!.id, form)
         : await createPatient(form);
@@ -96,7 +92,7 @@ const AddPatient = () => {
   }, [editPatientData]);
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       <div className="mb-6">
         <BackButton />
       </div>
@@ -107,7 +103,9 @@ const AddPatient = () => {
             <Users className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">
-            {isEditing ? `Edit ${editPatientData?.name}` : "Register New Patient"}
+            {isEditing
+              ? `Edit ${editPatientData?.name}`
+              : "Register New Patient"}
           </h1>
           <p className="text-muted">
             {isEditing
@@ -116,14 +114,17 @@ const AddPatient = () => {
           </p>
         </div>
 
+        <hr className="border-border mb-6" />
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Personal Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                <Users className="w-5 h-5 text-primary" />
+                <User className="w-5 h-5 text-primary" />
                 Personal Information
               </h3>
+              <hr className="border-border mb-6" />
 
               <div>
                 <label
@@ -159,7 +160,6 @@ const AddPatient = () => {
                   value={form.email}
                   onChange={handleChange}
                   className={inputField}
-
                 />
               </div>
 
@@ -189,6 +189,8 @@ const AddPatient = () => {
                 <Calendar className="w-5 h-5 text-primary" />
                 Medical Information
               </h3>
+
+              <hr className="border-border mb-6" />
 
               <div>
                 <label
@@ -247,7 +249,6 @@ const AddPatient = () => {
                   value={form.bloodGroup}
                   onChange={handleChange}
                   className={inputField}
-
                 >
                   {bloodGroups.map((bg) => (
                     <option key={bg} value={bg}>
@@ -283,7 +284,7 @@ const AddPatient = () => {
           </div>
 
           {/* one time flag */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-end py-t gap-3">
             <input
               id="oneTimeFlag"
               name="oneTimeFlag"

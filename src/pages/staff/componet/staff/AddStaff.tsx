@@ -1,6 +1,5 @@
-import { Briefcase, FileText, Plus, User, Users } from "lucide-react";
+import { Briefcase,  Plus, User, Users } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { BackButton } from "../../../../component/global/components/back/back";
 import { inputField } from "../../../../component/global/components/customStyle";
 import {
@@ -16,7 +15,6 @@ const AddStaff = () => {
   const { showToast } = useToast();
   const { createStaff } = useStaffStore();
   const { roles, getAllActiveRoles } = useRoleStore();
-  const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState<IStaffRequest>({
@@ -78,8 +76,6 @@ const AddStaff = () => {
           type: "NURSE",
           doctorSubType: null,
         });
-
-        window.history.back();
       }
     } catch (error) {
       showToast("Failed to create staff member", "error");
@@ -91,7 +87,7 @@ const AddStaff = () => {
   const isDoctor = form.type === "DOCTOR";
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-5xl mx-auto">
       <div className="mb-6">
         <BackButton />
       </div>
@@ -109,8 +105,6 @@ const AddStaff = () => {
 
         <hr className="border-border mb-6" />
 
-
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Personal Information */}
@@ -118,7 +112,6 @@ const AddStaff = () => {
               <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <User className="w-5 h-5 text-primary" />
                 Personal Information
-
               </h3>
               <hr className="border-border mb-6" />
               <div>
@@ -205,7 +198,6 @@ const AddStaff = () => {
                 Employment Details
               </h3>
               <hr className="border-border mb-6" />
-
 
               <div>
                 <label

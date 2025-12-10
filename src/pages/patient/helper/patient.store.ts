@@ -16,10 +16,14 @@ const handleApiError = (error: any) => ({
 
 export const usePatientStore = create<PatientState>((set) => ({
   patientList: [],
+  recentlyAddedPaitnet: null,
   currentPage: 0,
   totalPages: 0,
   totalItems: 0,
   count: new Map<string, object>(),
+
+  setRecentlyAddedPaitnet: (p: any) => set({ recentlyAddedPaitnet: p }),
+  clearRecentlyAddedPatient: () => set({ recentlyAddedPaitnet: null }),
 
   setPatientList: (patientList) => set({ patientList }),
 
@@ -29,8 +33,9 @@ export const usePatientStore = create<PatientState>((set) => ({
 
       if (res.data?.status === 200 || res.data?.status === 201) {
         set((state) => ({
-          patientList: [res.data.data, ...state.patientList],
+          patientList: [...state.patientList, res.data.data],
           totalItems: state.totalItems + 1,
+          recentlyAddedPaitnet: res.data.data,
         }));
       }
 

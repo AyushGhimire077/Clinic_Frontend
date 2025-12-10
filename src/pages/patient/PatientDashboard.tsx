@@ -1,168 +1,157 @@
-import { UserPlus, UserRoundCheck, UserRoundCog, Users } from "lucide-react";
-import { useEffect } from "react";
+import { Users, UserPlus, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePatientStore } from "./helper/patient.store";
+import PatientPopup from "./componet/PatientPopup";
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
-  const { getAllPatients, patientList, countPatients, count } = usePatientStore();
+  const { getAllPatients, patientList, countPatients, count } =
+    usePatientStore();
 
   useEffect(() => {
     getAllPatients({ page: 0, size: 10 });
     countPatients();
   }, [getAllPatients, countPatients]);
 
-  const quickActions = [
+  const cards = [
     {
       title: "Add New Patient",
-      description: "Register a new patient in the system",
+      description: "Register a new patient",
       icon: UserPlus,
-      onClick: () => navigate("add"),
       color: "from-primary to-primary-dark",
+      onClick: () => navigate("add"),
     },
     {
       title: "View All Patients",
-      description: "Browse and manage patient records",
+      description: "Browse all patient records",
       icon: Users,
+      color: "from-info to-info",
       onClick: () => navigate("view"),
-      color: "from-info to-blue-600",
     },
   ];
 
-
   return (
-    <div className="max-w-5xl mx-auto">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <div className="w-20 h-20 bg-linear-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <Users className="w-10 h-10 text-white" />
-        </div>
-        <h1 className="text-2xl font-bold text-foreground">
-          Patient Management
-        </h1>
-        <p className="text-muted">
-          Manage patient records and appointments efficiently
-        </p>
-      </div>
+    <div className="min-h-screen bg-background py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <PatientPopup />
 
-      {/* Quick Actions Grid */}
-      <div className="grid md:grid-cols-2 gap-4 mb-8">
-        {quickActions.map((action) => {
-          const Icon = action.icon;
-          return (
-            <button
-              key={action.title}
-              onClick={action.onClick}
-              className="p-6 bg-surface border border-border rounded-lg hover:shadow-medium transition-all duration-200 hover-lift text-left"
-            >
-              <div
-                className={`w-12 h-12 bg-linear-to-br ${action.color} rounded-lg flex items-center justify-center mb-4`}
+        <div className="text-center mb-10">
+          <div className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center bg-linear-to-br from-primary to-primary-dark shadow-soft">
+            <Users className="w-10 h-10 text-white" />
+          </div>
+
+          <h1 className="text-3xl font-bold text-foreground mt-4">
+            Patient Management
+          </h1>
+          <p className="text-muted text-sm">Manage and monitor your patients</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {cards.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.title}
+                className="text-left bg-surface rounded-xl p-6 border border-border shadow-soft hover:bg-primary-light/40 transition-all"
+                onClick={item.onClick}
               >
-                <Icon className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-1">
-                {action.title}
-              </h3>
-              <p className="text-sm text-muted">{action.description}</p>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-surface border border-border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted">Total Patients</p>
-              <p className="text-2xl font-bold text-foreground">
-                {count.get("total")?.toString() || "0"}
-              </p>
-            </div>
-            <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center">
-              <Users className="w-5 h-5 text-primary" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-surface border border-border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted">Active Patients</p>
-              <p className="text-2xl font-bold text-foreground">
-                {count.get("active")?.toString() || "0"}
-              </p>
-            </div>
-            <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
-              <UserRoundCheck className="w-5 h-5 text-success" />
-            </div>
-          </div>
-        </div>
-        <div className="bg-surface border border-border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted">One Time Patients</p>
-              <p className="text-2xl font-bold text-foreground">
-                {count.get("oneTime")?.toString() || "0"}
-              </p>
-            </div>
-            <div className="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
-              <UserRoundCog className="w-5 h-5 text-warning" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Patients (Optional) */}
-      {patientList.length > 0 && (
-        <div className="mt-8">
-          <h3 className="text-lg font-semibold text-foreground mb-4">
-            Recent Patients
-          </h3>
-          <div className="bg-surface border border-border rounded-lg overflow-hidden">
-            <div className="divide-y divide-border">
-              {patientList.slice(0, 3).map((patient) => (
-                <div
-                  key={patient.id}
-                  className="p-4 flex items-center justify-between hover:bg-primary-light/5 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center">
-                      <Users className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">
-                        {patient.name}
-                      </p>
-                      <p className="text-sm text-muted">
-                        {patient.gender.toLowerCase()} • {patient.bloodGroup}
-                      </p>
-                    </div>
-                  </div>
+                <div className="flex items-start gap-4">
                   <div
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${patient.isActive
-                      ? "bg-success/10 text-success"
-                      : "bg-error/10 text-error"
-                      }`}
+                    className={`w-12 h-12 rounded-lg bg-linear-to-br ${item.color} flex items-center justify-center shadow-soft`}
                   >
-                    {patient.isActive ? "Active" : "Inactive"}
+                    <Icon className="w-6 h-6 text-white" />
                   </div>
+
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg text-foreground mb-1">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-muted">{item.description}</p>
+                  </div>
+
+                  <ChevronRight className="w-5 h-5 text-muted transition-all" />
                 </div>
-              ))}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
+            <div className="text-3xl font-bold text-primary">
+              {count.get("count")?.toString() || "0"}
             </div>
-            {patientList.length > 3 && (
-              <div className="p-4 border-t border-border text-center">
-                <button
-                  onClick={() => navigate("view")}
-                  className="text-primary hover:text-primary-dark font-medium text-sm"
-                >
-                  View all {patientList.length} patients
-                </button>
-              </div>
-            )}
+            <div className="text-sm text-muted">Total Patients</div>
+          </div>
+
+          <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
+            <div className="text-3xl font-bold text-success">
+              {count.get("active")?.toString() || "0"}
+            </div>
+            <div className="text-sm text-muted">Active Patients</div>
+          </div>
+
+          <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
+            <div className="text-3xl font-bold text-primary-dark">
+              {count.get("oneTime")?.toString() || "0"}
+            </div>
+            <div className="text-sm text-muted">One-Time Patients</div>
           </div>
         </div>
-      )}
+
+        {/* recntly  top 3 */}
+        {patientList.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-foreground mb-4">
+              Recent Patients
+            </h3>
+            <div className="bg-surface border border-border rounded-lg overflow-hidden">
+              <div className="divide-y divide-border">
+                {patientList.slice(0, 3).map((patient) => (
+                  <div
+                    key={patient.id}
+                    className="p-4 flex items-center justify-between hover:bg-primary-light/5 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center">
+                        <Users className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">
+                          {patient.name}
+                        </p>
+                        <p className="text-sm text-muted">
+                          {patient.gender.toLowerCase()} • {patient.bloodGroup}
+                        </p>
+                      </div>
+                    </div>
+                    <div
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        patient.isActive
+                          ? "bg-success/10 text-success"
+                          : "bg-error/10 text-error"
+                      }`}
+                    >
+                      {patient.isActive ? "Active" : "Inactive"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {patientList.length > 3 && (
+                <div className="p-4 border-t border-border text-center">
+                  <button
+                    onClick={() => navigate("view")}
+                    className="text-primary hover:text-primary-dark font-medium text-sm"
+                  >
+                    View all {patientList.length} patients
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

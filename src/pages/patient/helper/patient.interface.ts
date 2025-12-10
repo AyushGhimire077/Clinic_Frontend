@@ -41,6 +41,10 @@ export interface PatientState {
   totalItems: number;
   count: Map<string, object>;
 
+  recentlyAddedPaitnet?: IPatient | null;
+  setRecentlyAddedPaitnet: (paitnet: IPatient) => void;
+  clearRecentlyAddedPatient: () => void;
+
   setPatientList: (patientList: IPatient[]) => void;
   createPatient: (patient: IPatientRequest) => Promise<IResponse>;
   editPatient: (
