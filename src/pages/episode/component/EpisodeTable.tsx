@@ -47,6 +47,10 @@ const EpisodeTable = () => {
     return true;
   });
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setPage(1); // Reset to first page on new search
+  };
   const getStatusColor = (status: string) => {
     switch (status) {
       case "ACTIVE":
@@ -127,7 +131,7 @@ const EpisodeTable = () => {
           <div className="flex-1">
             <SearchInput
               value={searchQuery}
-              onChange={setSearchQuery}
+              onChange={handleSearch}
               placeholder="Search episodes by title or patient..."
               className="w-full"
             />
@@ -254,8 +258,11 @@ const EpisodeTable = () => {
                             {formatDate(episode.startDate)}
                           </p>
                           <p className="text-sm text-foreground">
-                            <span className="font-medium">End:</span>{" "}
-                            {formatDate(episode.endDate)}
+                            <span className="font-medium">End:</span>
+                            {" PENDING"}
+                            {episode.endDate != null
+                              ? formatDate(episode.startDate)
+                              : ""}
                           </p>
                         </div>
                       </td>

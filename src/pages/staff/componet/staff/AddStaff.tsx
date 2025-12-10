@@ -68,7 +68,18 @@ const AddStaff = () => {
       showToast(res.message, res.severity);
 
       if (res.severity === "success") {
-        setTimeout(() => navigate("/staff/table"), 1500);
+        setForm({
+          name: "",
+          email: "",
+          password: "",
+          contactNumber: 0,
+          salary: 0,
+          roleId: "",
+          type: "NURSE",
+          doctorSubType: null,
+        });
+
+        window.history.back();
       }
     } catch (error) {
       showToast("Failed to create staff member", "error");
@@ -76,7 +87,6 @@ const AddStaff = () => {
       setIsLoading(false);
     }
   };
-
 
   const isDoctor = form.type === "DOCTOR";
 
@@ -296,7 +306,9 @@ const AddStaff = () => {
                     required
                     className={`${inputField} pl-10`}
                   />
-                  <span className="absolute left-3 top-3 text-md text-muted">Rs.</span>
+                  <span className="absolute left-3 top-3 text-md text-muted">
+                    Rs.
+                  </span>
                 </div>
               </div>
             </div>
