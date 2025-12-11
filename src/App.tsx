@@ -30,6 +30,10 @@ import { getTokenFromCookies } from "./component/global/config";
 import Layout from "./pages/layout/Layout";
 import EditRole from "./pages/staff/componet/roles/EditRole";
 import PageNotFound from "./component/PageNotFound";
+import Appointment from "./pages/appointment/AppointmentDashboard ";
+import AppointmentTable from "./pages/appointment/component/AppointmentTable";
+import AppointmentDashboard from "./pages/appointment/AppointmentDashboard ";
+import AddAppointment from "./pages/appointment/component/AddAppointment";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -112,6 +116,19 @@ const App = () => {
             <Route index element={<ServicesDashboard />} />
             <Route path="add" element={<AddService />} />
             <Route path="view" element={<ServiceTable />} />
+          </Route>
+
+
+          {/* Appointment  */}
+          <Route path="appointment">
+            <Route index element={<AppointmentDashboard />} />
+            <Route path="create" element={<AddAppointment />} />
+
+            <Route path="edit" element={<AddAppointment />} />
+            <Route path="create" element={<AddAppointment />} />
+            <Route path="view-appointment" element={<AppointmentTable />} />
+
+
           </Route>
 
           {/* Episode */}

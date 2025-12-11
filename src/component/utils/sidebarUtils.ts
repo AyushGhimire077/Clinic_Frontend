@@ -9,7 +9,7 @@ import { IoReceiptSharp } from "react-icons/io5";
 import { BsPrescription } from "react-icons/bs";
 
 export const getSidebarItems = [
-  { icon: TbDashboard, label: "Dashboard", url: "", key: "dashboard" },
+  { icon: TbDashboard, label: "Dashboard", url: "/", key: "dashboard" },
   { icon: MdOutlinePeople, label: "Staff", url: "staff", key: "staff" },
   { icon: HiOutlineUser, label: "Patient", url: "patient", key: "patient" },
   {

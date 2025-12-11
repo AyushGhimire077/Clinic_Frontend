@@ -1,18 +1,11 @@
 import { create } from "zustand";
 import { axios_auth } from "../../../component/global/config";
+import type { IResponse } from "../../../component/global/utils/global.interface";
+import {
+  handleApiError,
+  handleApiResponse,
+} from "../../../component/global/utils/global.utils.";
 import type { EpisodeState } from "./episode.interface";
-
-const handleApiResponse = (res: any) => ({
-  message: res.data?.message || "Request completed",
-  status: res.data?.status || 500,
-  severity: res.data?.severity?.toLowerCase() || "error",
-});
-
-const handleApiError = (error: any) => ({
-  message: error?.response?.data?.message || error?.message || "Request failed",
-  status: error?.response?.status || 500,
-  severity: "error",
-});
 
 export const useEpisodeStore = create<EpisodeState>((set) => ({
   episodeList: [],

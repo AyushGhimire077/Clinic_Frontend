@@ -1,10 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
 import { IoLogoCapacitor } from "react-icons/io5";
+import { Link, useMatch } from "react-router-dom";
 import { getSidebarItems } from "../../../component/utils/sidebarUtils";
 import { useAuthStore } from "../../auth/store/auth.store";
 
 export const Sidebar = () => {
-  const location = useLocation();
   const { user } = useAuthStore();
   const sidebarItems = getSidebarItems.map((item) => ({
     id: item.key,
@@ -32,7 +31,8 @@ export const Sidebar = () => {
       <nav className="flex-1 p-4 overflow-y-auto">
         <div className="space-y-1">
           {sidebarItems.map((item: any) => {
-            const isActive = location.pathname.startsWith(item.path);
+            const match = useMatch({ path: item.path, end: item.path === "/" });
+            const isActive = !!match;
             const Icon = item.icon;
 
             return (
@@ -42,19 +42,17 @@ export const Sidebar = () => {
                 className={`
                   flex items-center gap-3 p-3 rounded-lg
                   transition-all duration-200
-                  ${
-                    isActive
-                      ? "bg-primary text-white shadow-md"
-                      : "text-muted hover:bg-primary-light hover:text-primary"
+                  ${isActive
+                    ? "bg-primary text-white shadow-md"
+                    : "text-muted hover:bg-primary-light hover:text-primary"
                   }
                   focus-ring
                 `}
                 title={item.label}
               >
                 <Icon
-                  className={`w-5 h-5 ${
-                    isActive ? "text-white" : "text-current"
-                  }`}
+                  className={`w-5 h-5 ${isActive ? "text-white" : "text-current"
+                    }`}
                 />
                 <span className="font-medium text-sm">{item.label}</span>
                 {item.badge && (

@@ -3,19 +3,11 @@ import { inputField } from "../../../../../component/global/components/customSty
 import { episodeTypeOptions, statusOptions, billingModeOptions } from "../../../../../component/global/utils/global.interface";
 import DoctorStaffSelect from "../../../utils/DoctorStaffSelect";
 import PatientSelect from "../../../utils/PatientSelect";
+import type { EpisodeRequest } from "../../../helper/episode.interface";
 
 
 interface EpisodeFormSectionsProps {
-    form: {
-        patientId: string;
-        primaryDoctorId: string;
-        title: string;
-        startDate: string;
-        type: string;
-        status: string;
-        billingMode: string;
-        packageCharge: number;
-    };
+    form:  EpisodeRequest;
     selectedPatient: any;
     patientLoading: boolean;
     loading: boolean;

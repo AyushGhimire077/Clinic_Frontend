@@ -19,6 +19,7 @@ export interface IEpisode {
   primaryDoctor: IStaff;
   patient: IPatient;
   packageCharge: number;
+  appointment?: boolean;
 }
 
 export interface EpisodeRequest {
@@ -31,6 +32,7 @@ export interface EpisodeRequest {
   primaryDoctorId: string;
   patientId: string;
   packageCharge: number;
+  appointment: boolean;
 }
 
 export interface EpisodeTempReq {

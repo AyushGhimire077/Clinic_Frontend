@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Activity, Edit2, Filter, Phone, Printer, RefreshCcw, Users } from "lucide-react";
@@ -68,19 +68,15 @@ const PatientTable = () => {
     loadData();
   }
 
-  useEffect(() => {
-    loadData();
-  }, [page, showActiveOnly]);
+
 
   useEffect(() => {
-    // Debounce search
-    const timer = setTimeout(() => {
-      if (searchQuery !== "") {
-        setPage(0);
-        loadData();
-      }
-    }, 500);
-    return () => clearTimeout(timer);
+    if (searchQuery !== "") {
+      setPage(0);
+      loadData();
+    }
+
+    return
   }, [searchQuery]);
 
   const getInitials = (name: string) => {
@@ -101,7 +97,7 @@ const PatientTable = () => {
 
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-[90em] mx-auto">
       <div className="mb-6">
         <BackButton />
       </div>

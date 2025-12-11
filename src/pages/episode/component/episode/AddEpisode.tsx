@@ -1,6 +1,6 @@
-import { Calendar, AlertCircle } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { AlertCircle, Calendar } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { BackButton } from "../../../../component/global/components/back/back";
 import { useToast } from "../../../../component/toaster/useToast";
 import type { IPatient } from "../../../patient/helper/patient.interface";
@@ -9,8 +9,8 @@ import type { EpisodeRequest } from "../../helper/episode.interface";
 import { useEpisodeStore } from "../../helper/episode.store";
 import EpisodeFormSections from "./sub/EpisodeFormSections";
 import FormActions from "./sub/FormActions";
-import TemplateSelection from "./sub/TemplateSelection";
 import PatientInfoBanner from "./sub/PatientInfoBanner";
+import TemplateSelection from "./sub/TemplateSelection";
 
 
 const AddEpisode = () => {
@@ -35,6 +35,7 @@ const AddEpisode = () => {
     primaryDoctorId: "",
     patientId: patientId,
     packageCharge: 0,
+    appointment: false,
   });
 
   const [selectedTemplateId, setSelectedTemplateId] = useState(templateId);
@@ -99,6 +100,7 @@ const AddEpisode = () => {
           type: "ONE_TIME",
           billingMode: "PER_VISIT",
           packageCharge: 0,
+
         }));
         return;
       }
@@ -123,9 +125,11 @@ const AddEpisode = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
+    const target = e.target as HTMLInputElement | HTMLSelectElement;
+    const { name, value, type } = target;
+    const checked = (target instanceof HTMLInputElement) ? target.checked : undefined;
 
-    // If user manually changes a field that was auto-filled from template, clear the template selection
+    // Clear template if user manually changes an auto-filled field
     if (
       selectedTemplateId &&
       ["title", "type", "billingMode", "packageCharge"].includes(name)
@@ -136,13 +140,16 @@ const AddEpisode = () => {
     setForm((prev) => ({
       ...prev,
       [name]:
-        name === "packageCharge"
-          ? value === ""
-            ? 0
-            : parseFloat(value) || 0
-          : value,
+        type === "checkbox"
+          ? checked
+          : name === "packageCharge"
+            ? value === ""
+              ? 0
+              : parseFloat(value) || 0
+            : value,
     }));
   };
+
 
   // Handle patient selection
   const handlePatientSelect = (id: string) => {
@@ -185,7 +192,6 @@ const AddEpisode = () => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const { isValid, errors } = validateForm();
     if (!isValid) {
       showToast(errors[0], "warning");
@@ -196,21 +202,33 @@ const AddEpisode = () => {
 
     try {
       const res = await createEpisode(form);
+
+      console.log(res)
+
       showToast(res.message, res.severity);
 
-      if (res.severity === "success") {
-        () => navigate("/episode/view");
-        setForm({
-          title: "",
-          startDate: new Date().toISOString().slice(0, 10),
-          type: "ONE_TIME",
-          billingMode: "PER_VISIT",
-          status: "ACTIVE",
-          primaryDoctorId: "",
-          patientId: "",
-          packageCharge: 0,
+      if (res.severity.toLowerCase() !== "success") return;
+
+      if (form.appointment) {
+        navigate(`/appointment/create?episodeId=${res.data.id}&patientId=${form.patientId}`, {
+          state: { episodeId: res.data.id, patientId: form.patientId },
         });
+        return;
       }
+
+      setForm({
+        title: "",
+        startDate: new Date().toISOString().slice(0, 10),
+        type: "ONE_TIME",
+        billingMode: "PER_VISIT",
+        status: "ACTIVE",
+        primaryDoctorId: "",
+        patientId: "",
+        packageCharge: 0,
+        appointment: false,
+      });
+
+      navigate("/episode/view");
     } catch (error: any) {
       console.error("Create episode error:", error);
       showToast(
@@ -221,6 +239,8 @@ const AddEpisode = () => {
       setLoading(false);
     }
   };
+
+
 
   // Handle cancel
   const handleCancel = () => {
@@ -334,7 +354,10 @@ const AddEpisode = () => {
 
               {/* Action Buttons */}
               <FormActions
+                form={form}
                 loading={loading}
+                onFieldChange={handleChange}
+                
                 patientLoading={patientLoading}
                 selectedTemplateId={selectedTemplateId}
                 onCancel={handleCancel}

@@ -1,7 +1,7 @@
-//  import { usePatientStore } from "../../patient/componet/helper/store";
-// import { useStaffStore } from "../../staff/componet/staff/helper/store";
-// import { useAppointmentStore } from "../helper/store";
-// import { useGlobalStore } from "../../../component/toaster/toast.store";
+// import { useToast } from "../../../component/toaster/useToast";
+// import { usePatientStore } from "../../patient/helper/patient.store";
+// import { useStaffStore } from "../../staff/staff.helper/staff.store";
+// import { useAppointmentStore } from "../helper/appointment.store";
 
 // export const useLoadAppointmentDependencies = () => {
 //   const { getAllActiveStaff } = useStaffStore();
@@ -10,7 +10,7 @@
 
 //   const { getAllAppointments } = useAppointmentStore();
 
-//   const { setToasterData } = useGlobalStore();
+//   const { showToast } = useToast();
 
 //   const pagination = { page: 0, size: 10 };
 
@@ -22,11 +22,7 @@
 //         getAllAppointments(pagination),
 //       ]);
 //     } catch (error) {
-//       setToasterData({
-//         message: "Failed to load required data",
-//         severity: "error",
-//         open: true,
-//       });
+//       showToast("Error loading dependencies", "error");
 //     }
 //   };
 

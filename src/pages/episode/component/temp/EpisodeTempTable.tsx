@@ -36,7 +36,7 @@ const EpisodeTemplateTable = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-[90em] mx-auto">
       <div className="mb-6">
         <BackButton />
       </div>

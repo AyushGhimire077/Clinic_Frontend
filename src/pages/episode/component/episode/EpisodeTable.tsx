@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Calendar, DollarSign, Filter, Plus, User } from "lucide-react";
+import { Calendar, DollarSign, Filter, Plus, RefreshCcw, User } from "lucide-react";
 import { BackButton } from "../../../../component/global/components/back/back";
 import { Pagination } from "../../../../component/global/components/Pagination";
 import { SearchInput } from "../../../../component/global/components/SearchInput";
@@ -16,15 +16,13 @@ const EpisodeTable = () => {
   const { episodeList, totalPages, totalItems, getAllEpisodes } =
     useEpisodeStore();
 
+
+
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const pageSize = 10;
-
-  useEffect(() => {
-    loadEpisodes();
-  }, [page, statusFilter]);
 
   const loadEpisodes = async () => {
     setLoading(true);
@@ -34,6 +32,13 @@ const EpisodeTable = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+
+    if (page === 0) return; // skip reloading unnecessarily 
+    loadEpisodes();
+  }, [page]);
+
 
   const filteredEpisodes = episodeList.filter((episode) => {
     if (
@@ -46,6 +51,16 @@ const EpisodeTable = () => {
     if (statusFilter && episode.status !== statusFilter) return false;
     return true;
   });
+
+
+
+  const refreshData = () => {
+    setSearchQuery("");
+    setStatusFilter("");
+    setPage(0);
+    loadEpisodes();
+  }
+
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -62,6 +77,10 @@ const EpisodeTable = () => {
     }
   };
 
+
+
+
+
   const getTypeColor = (type: string) => {
     switch (type) {
       case "ONE_TIME":
@@ -74,7 +93,7 @@ const EpisodeTable = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-[90em] mx-auto">
       <div className="mb-6">
         <BackButton />
       </div>
@@ -88,7 +107,7 @@ const EpisodeTable = () => {
           </div>
 
           <button
-            onClick={() => navigate("/episodes/add")}
+            onClick={() => navigate("/episode/add")}
             className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
@@ -135,6 +154,9 @@ const EpisodeTable = () => {
               placeholder="Search episodes by title or patient..."
               className="w-full"
             />
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={refreshData} className="px-4 py-2 rounded-lg border border-border hover:bg-surface"><RefreshCcw className="w-4 h-4" /></button>
           </div>
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-muted" />

@@ -80,7 +80,7 @@ const PatientDashboard = () => {
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
             <div className="text-3xl font-bold text-primary">
-              {count.get("count")?.toString() || "0"}
+              {count.get("total")?.toString() || "0"}
             </div>
             <div className="text-sm text-muted">Total Patients</div>
           </div>
