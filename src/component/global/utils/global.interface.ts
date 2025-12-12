@@ -45,6 +45,7 @@ export const AppointmentStatus = {
   BOOKED: "BOOKED",
   CHECKED_IN: "CHECKED_IN",
   MISSED: "MISSED",
+  COMPLETED: "COMPLETED",
   CANCELLED: "CANCELLED",
 } as const;
 export type AppointmentStatus =

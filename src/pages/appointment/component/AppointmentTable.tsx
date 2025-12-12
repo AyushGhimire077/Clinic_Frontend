@@ -6,7 +6,7 @@ import {
   Edit,
   Eye,
   Stethoscope,
-  User
+  User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,8 @@ import type { IAppointment } from "../helper/appointment.interface";
 import { useAppointmentStore } from "../helper/appointment.store";
 
 const AppointmentTable = () => {
-  const { appointments, getAllAppointments, getByStatus } = useAppointmentStore();
+  const { appointments, getAllAppointments, filterByStatus } =
+    useAppointmentStore();
   const navigate = useNavigate();
 
   const [page, setPage] = useState(0);
@@ -27,11 +28,7 @@ const AppointmentTable = () => {
   const loadAppointments = async () => {
     setLoading(true);
     try {
-      if (statusFilter === "ALL") {
-        await getAllAppointments({ page, size });
-      } else {
-        await getByStatus(statusFilter, { page, size });
-      }
+      await getAllAppointments({ page, size });
     } catch (error) {
       console.error("Failed to load appointments:", error);
     } finally {
@@ -41,28 +38,35 @@ const AppointmentTable = () => {
 
   useEffect(() => {
     loadAppointments();
-  }, [page, statusFilter]);
+  }, [page]);
+
+  useEffect(() => {
+    async function filter() {
+      await filterByStatus(statusFilter, { page, size });
+    }
+    filter();
+  }, [statusFilter]);
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value - 1);
   };
 
   const formatDateTime = (dateTime: string) => {
-    return new Date(dateTime).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
+    return new Date(dateTime).toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -74,7 +78,10 @@ const AppointmentTable = () => {
       CANCELLED: "bg-red-100 text-red-700 border-red-200",
       MISSED: "bg-yellow-100 text-yellow-700 border-yellow-200",
     };
-    return colors[status as keyof typeof colors] || "bg-slate-100 text-slate-700 border-slate-200";
+    return (
+      colors[status as keyof typeof colors] ||
+      "bg-slate-100 text-slate-700 border-slate-200"
+    );
   };
 
   const getBillingModeColor = (mode: string) => {
@@ -89,12 +96,15 @@ const AppointmentTable = () => {
   const handleAction = (appointment: IAppointment, action: string) => {
     switch (action) {
       case "view":
-        navigate(`/appointment/view/${appointment.id}`, { state: { appointment } });
+        navigate(`/appointment/view/${appointment.id}`, {
+          state: { appointment },
+        });
         break;
       case "edit":
-        navigate(`/appointment/edit?appointmentId=${appointment.id}`, { state: { appointment } });
+        navigate(`/appointment/edit?appointmentId=${appointment.id}`, {
+          state: { appointment },
+        });
         break;
-
     }
   };
 
@@ -145,10 +155,11 @@ const AppointmentTable = () => {
                   setStatusFilter(option.value);
                   setPage(0);
                 }}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium text-sm border ${statusFilter === option.value
-                  ? "bg-primary text-white border-primary"
-                  : "bg-background text-foreground border-border hover:border-primary"
-                  }`}
+                className={`px-3 py-1.5 rounded-lg transition-all font-medium text-sm border ${
+                  statusFilter === option.value
+                    ? "bg-primary text-white border-primary"
+                    : "bg-background text-foreground border-border hover:border-primary"
+                }`}
               >
                 {option.label}
               </button>
@@ -218,9 +229,6 @@ const AppointmentTable = () => {
                           {/* Patient */}
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center">
-                                <User className="w-5 h-5 text-primary" />
-                              </div>
                               <div>
                                 <p className="font-medium text-foreground">
                                   {appointment.episode.patient.name}
@@ -229,7 +237,10 @@ const AppointmentTable = () => {
                                   {appointment.episode.patient.contactNumber}
                                 </p>
                                 <p className="text-xs text-muted mt-1">
-                                  DOB: {formatDate(appointment.episode.patient.dateOfBirth)}
+                                  DOB:{" "}
+                                  {formatDate(
+                                    appointment.episode.patient.dateOfBirth
+                                  )}
                                 </p>
                               </div>
                             </div>
@@ -238,9 +249,6 @@ const AppointmentTable = () => {
                           {/* Doctor */}
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-surface rounded-lg flex items-center justify-center">
-                                <Stethoscope className="w-5 h-5 text-foreground" />
-                              </div>
                               <div>
                                 <p className="font-medium text-foreground">
                                   Dr. {appointment.episode.primaryDoctor.name}
@@ -248,9 +256,13 @@ const AppointmentTable = () => {
                                 <p className="text-sm text-muted">
                                   {appointment.episode.primaryDoctor.role}
                                 </p>
-                                {appointment.episode.primaryDoctor.doctorSubType && (
+                                {appointment.episode.primaryDoctor
+                                  .doctorSubType && (
                                   <p className="text-xs text-muted mt-1">
-                                    {appointment.episode.primaryDoctor.doctorSubType}
+                                    {
+                                      appointment.episode.primaryDoctor
+                                        .doctorSubType
+                                    }
                                   </p>
                                 )}
                               </div>
@@ -264,7 +276,11 @@ const AppointmentTable = () => {
                                 {appointment.episode.title}
                               </p>
                               <div className="flex items-center gap-2">
-                                <span className={`text-xs px-2 py-1 rounded ${getBillingModeColor(appointment.episode.billingMode)}`}>
+                                <span
+                                  className={`text-xs px-2 py-1 rounded ${getBillingModeColor(
+                                    appointment.episode.billingMode
+                                  )}`}
+                                >
                                   {appointment.episode.billingMode}
                                 </span>
                                 <span className="text-xs px-2 py-1 bg-surface text-foreground rounded border border-border">
@@ -272,7 +288,10 @@ const AppointmentTable = () => {
                                 </span>
                               </div>
                               <p className="text-xs text-muted">
-                                {formatDate(appointment.episode.startDate)} - {formatDate(appointment.episode.endDate || "Present")}
+                                {formatDate(appointment.episode.startDate)} -{" "}
+                                {formatDate(
+                                  appointment.episode.endDate || "Present"
+                                )}
                               </p>
                             </div>
                           </td>
@@ -280,7 +299,6 @@ const AppointmentTable = () => {
                           {/* Date & Time */}
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-2">
-                              <Clock className="w-4 h-4 text-muted" />
                               <span className="text-sm font-medium text-foreground">
                                 {formatDateTime(appointment.scheduledDateTime)}
                               </span>
@@ -289,16 +307,22 @@ const AppointmentTable = () => {
 
                           {/* Billing Mode */}
                           <td className="px-6 py-4">
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getBillingModeColor(appointment.episode.billingMode)}`}>
-                              {appointment.episode.billingMode.replace("_", " ")}
+                            <span
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getBillingModeColor(
+                                appointment.episode.billingMode
+                              )}`}
+                            >
+                              {appointment.episode.billingMode.replace(
+                                "_",
+                                " "
+                              )}
                             </span>
                           </td>
 
                           {/* Package Charge */}
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-2">
-                              <DollarSign className="w-4 h-4 text-muted" />
-                              <span className="font-medium text-foreground">
+                               <span className="font-medium text-foreground">
                                 Rs. {appointment.episode.packageCharge}
                               </span>
                             </div>
@@ -307,16 +331,25 @@ const AppointmentTable = () => {
                           {/* Duration */}
                           <td className="px-6 py-4">
                             <div className="text-sm text-muted">
-                              <p>Start: {formatDate(appointment.episode.startDate)}</p>
+                              <p>
+                                Start:{" "}
+                                {formatDate(appointment.episode.startDate)}
+                              </p>
                               {appointment.episode.endDate && (
-                                <p>End: {formatDate(appointment.episode.endDate)}</p>
+                                <p>
+                                  End: {formatDate(appointment.episode.endDate)}
+                                </p>
                               )}
                             </div>
                           </td>
 
                           {/* Status */}
                           <td className="px-6 py-4">
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(appointment.status)}`}>
+                            <span
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
+                                appointment.status
+                              )}`}
+                            >
                               {appointment.status}
                             </span>
                           </td>
@@ -325,14 +358,18 @@ const AppointmentTable = () => {
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-2">
                               <button
-                                onClick={() => handleAction(appointment, "view")}
+                                onClick={() =>
+                                  handleAction(appointment, "view")
+                                }
                                 className="p-2 text-primary hover:bg-primary-light rounded-lg transition-colors"
                                 title="View Details"
                               >
                                 <Eye className="w-4 h-4" />
                               </button>
                               <button
-                                onClick={() => handleAction(appointment, "edit")}
+                                onClick={() =>
+                                  handleAction(appointment, "edit")
+                                }
                                 className="p-2 text-warning hover:bg-warning/10 rounded-lg transition-colors"
                                 title="Edit Appointment"
                               >
@@ -352,7 +389,9 @@ const AppointmentTable = () => {
                 <div className="px-6 py-4 border-t border-border">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <p className="text-sm text-muted">
-                      Showing {page * size + 1} - {Math.min((page + 1) * size, appointments.length)} of {appointments.length} appointments
+                      Showing {page * size + 1} -{" "}
+                      {Math.min((page + 1) * size, appointments.length)} of{" "}
+                      {appointments.length} appointments
                     </p>
                     <Pagination
                       count={totalPages}

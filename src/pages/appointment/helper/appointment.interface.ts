@@ -29,10 +29,7 @@ export interface AppointmentState {
 
   getAppointmentById: (id: string) => Promise<IResponse>;
 
-  getByStatus: (
-    stats: string,
-    pagination: PaginationInfo
-  ) => Promise<IResponse>;
+  filterByStatus: (stats: string, pagination: PaginationInfo) => void;
 
   update: (
     id: string,

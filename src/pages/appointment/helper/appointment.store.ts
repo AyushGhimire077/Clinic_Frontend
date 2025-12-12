@@ -5,6 +5,7 @@ import {
   handleApiError,
   handleApiResponse,
 } from "../../../component/global/utils/global.utils.";
+import type { PaginationInfo } from "../../../component/global/utils/global.interface";
 
 export const useAppointmentStore = create<AppointmentState>((set) => ({
   appointments: [],
@@ -36,12 +37,16 @@ export const useAppointmentStore = create<AppointmentState>((set) => ({
   },
 
   // Get appointments by status
-  getByStatus: async (status: string, { page, size }) => {
+  filterByStatus: async (status, pagination) => {
     try {
       const res = await axios_auth.get(
-        `/appointment/all/by-status/${status}?page=${page}&size=${size}`
+        `/appointment/all/by-status/${status}?page=${pagination.page}&size=${pagination.size}`
       );
-      set({ appointments: res.data.data });
+
+      set({
+        appointments: res.data.data || [],
+      });
+
       return handleApiResponse(res);
     } catch (err: any) {
       return handleApiError(err);
