@@ -2,7 +2,7 @@ import type {
   AppointmentStatus,
   IResponse,
   PaginationInfo,
-} from "../../../component/global/utils/global.interface";
+} from "../../../component/global/utils/enums";
 import type { IEpisode } from "../../episode/helper/episode.interface";
 
 export interface IAppointment {

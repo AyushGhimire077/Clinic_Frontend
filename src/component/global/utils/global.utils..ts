@@ -1,4 +1,4 @@
-import type { IResponse, Severity } from "./global.interface";
+import type { IResponse, Severity } from "./response";
 
 export const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("en-US", {

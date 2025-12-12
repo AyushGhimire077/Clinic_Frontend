@@ -2,7 +2,7 @@ import type {
   Gender,
   IResponse,
   PaginationInfo,
-} from "../../../component/global/utils/global.interface";
+} from "../../../component/global/utils/enums";
 import type { IStaff } from "../../staff/staff.helper/staff.interface";
 
 export interface IPatientRequest {

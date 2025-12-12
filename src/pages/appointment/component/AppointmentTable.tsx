@@ -1,12 +1,8 @@
 import { Pagination } from "@mui/material";
 import {
   Calendar,
-  Clock,
-  DollarSign,
   Edit,
-  Eye,
-  Stethoscope,
-  User,
+  Eye
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -42,6 +38,10 @@ const AppointmentTable = () => {
 
   useEffect(() => {
     async function filter() {
+      if (statusFilter === "ALL") {
+        await getAllAppointments({ page, size });
+        return;
+      }
       await filterByStatus(statusFilter, { page, size });
     }
     filter();
@@ -155,11 +155,10 @@ const AppointmentTable = () => {
                   setStatusFilter(option.value);
                   setPage(0);
                 }}
-                className={`px-3 py-1.5 rounded-lg transition-all font-medium text-sm border ${
-                  statusFilter === option.value
-                    ? "bg-primary text-white border-primary"
-                    : "bg-background text-foreground border-border hover:border-primary"
-                }`}
+                className={`px-3 py-1.5 rounded-lg transition-all font-medium text-sm border ${statusFilter === option.value
+                  ? "bg-primary text-white border-primary"
+                  : "bg-background text-foreground border-border hover:border-primary"
+                  }`}
               >
                 {option.label}
               </button>
@@ -236,12 +235,12 @@ const AppointmentTable = () => {
                                 <p className="text-sm text-muted">
                                   {appointment.episode.patient.contactNumber}
                                 </p>
-                                <p className="text-xs text-muted mt-1">
+                                {/* <p className="text-xs text-muted mt-1">
                                   DOB:{" "}
                                   {formatDate(
                                     appointment.episode.patient.dateOfBirth
                                   )}
-                                </p>
+                                </p> */}
                               </div>
                             </div>
                           </td>
@@ -253,18 +252,18 @@ const AppointmentTable = () => {
                                 <p className="font-medium text-foreground">
                                   Dr. {appointment.episode.primaryDoctor.name}
                                 </p>
-                                <p className="text-sm text-muted">
+                                {/* <p className="text-sm text-muted">
                                   {appointment.episode.primaryDoctor.role}
                                 </p>
                                 {appointment.episode.primaryDoctor
                                   .doctorSubType && (
-                                  <p className="text-xs text-muted mt-1">
-                                    {
-                                      appointment.episode.primaryDoctor
-                                        .doctorSubType
-                                    }
-                                  </p>
-                                )}
+                                    <p className="text-xs text-muted mt-1">
+                                      {
+                                        appointment.episode.primaryDoctor
+                                          .doctorSubType
+                                      }
+                                    </p>
+                                  )} */}
                               </div>
                             </div>
                           </td>
@@ -322,7 +321,7 @@ const AppointmentTable = () => {
                           {/* Package Charge */}
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-2">
-                               <span className="font-medium text-foreground">
+                              <span className="font-medium text-foreground">
                                 Rs. {appointment.episode.packageCharge}
                               </span>
                             </div>

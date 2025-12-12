@@ -47,7 +47,7 @@ const EpisodeSelect = ({
   // Filter episodes
   const filteredEpisodes = episodeList.filter((episode) => {
     if (patientId && episode.patient.id !== patientId) return false;
-    
+
     const searchLower = searchTerm.toLowerCase();
     return (
       searchTerm === "" ||
@@ -85,6 +85,29 @@ const EpisodeSelect = ({
     };
     return colors[type as keyof typeof colors] || "bg-slate-100 text-slate-700";
   };
+
+
+  // auto close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".relative")) {
+        setIsOpen(false);
+      }
+    };
+
+
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
     <div className="relative">
@@ -135,9 +158,8 @@ const EpisodeSelect = ({
             )}
           </div>
           <ChevronDown
-            className={`w-5 h-5 text-muted transition-transform ${
-              isOpen ? "rotate-180" : ""
-            }`}
+            className={`w-5 h-5 text-muted transition-transform ${isOpen ? "rotate-180" : ""
+              }`}
           />
         </button>
 

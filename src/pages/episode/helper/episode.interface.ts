@@ -1,10 +1,12 @@
 import type {
   BillingMode,
   EpisodeType,
+  Status,
+} from "../../../component/global/utils/enums";
+import type {
   IResponse,
   PaginationInfo,
-  Status,
-} from "../../../component/global/utils/global.interface";
+} from "../../../component/global/utils/response";
 import type { IPatient } from "../../patient/helper/patient.interface";
 import type { IStaff } from "../../staff/staff.helper/staff.interface";
 

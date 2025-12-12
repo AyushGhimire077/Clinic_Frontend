@@ -5,8 +5,7 @@ import {
   handleApiError,
   handleApiResponse,
 } from "../../../component/global/utils/global.utils.";
-import type { PaginationInfo } from "../../../component/global/utils/global.interface";
-
+ 
 export const useAppointmentStore = create<AppointmentState>((set) => ({
   appointments: [],
 

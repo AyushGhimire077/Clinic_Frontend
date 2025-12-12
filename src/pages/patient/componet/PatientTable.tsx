@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Activity, Edit2, Filter, Phone, Printer, RefreshCcw, Users } from "lucide-react";
 import { BackButton } from "../../../component/global/components/back/back";
 import { Pagination } from "../../../component/global/components/Pagination";
 import { SearchInput } from "../../../component/global/components/SearchInput";
-import { usePatientStore } from "../helper/patient.store";
 import { useToast } from "../../../component/toaster/useToast";
+import { usePatientStore } from "../helper/patient.store";
 
 const PatientTable = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const PatientTable = () => {
 
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showActiveOnly, setShowActiveOnly] = useState(false);
+  const [showActiveOnly, setShowActiveOnly] = useState(true);
   const [loading, setLoading] = useState(false);
   const pageSize = 10;
 
@@ -262,7 +262,7 @@ const PatientTable = () => {
                       <td className="px-6 py-4">
                         {patient.oneTimeFlag ? (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-warning/10 text-warning">
-                            OneTime
+                            Walk-in
                           </span>
                         ) : (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-success/10 text-success">
@@ -281,7 +281,7 @@ const PatientTable = () => {
                             className={`text-sm font-medium ${patient.isActive ? "text-success" : "text-error"
                               }`}
                           >
-                            {patient.isActive ? "Active" : "Inactive"}
+                            {patient.isActive ? "Active" : "Completed"}
                           </span>
                         </div>
                       </td>

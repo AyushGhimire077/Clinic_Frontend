@@ -3,37 +3,34 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { Toast } from "./component/toaster/components/Toast";
 import AuthPage from "./pages/auth/AuthPage";
 import { useAuthStore } from "./pages/auth/store/auth.store";
-
 import Dashboard from "./pages/Dashboard";
 import AddEpisode from "./pages/episode/component/episode/AddEpisode";
 import EpisodeTable from "./pages/episode/component/episode/EpisodeTable";
 import AddEpisodeTemp from "./pages/episode/component/temp/AddEpisodeTemp";
 import EpisodeTempTable from "./pages/episode/component/temp/EpisodeTempTable";
 import EpisodeDashboard from "./pages/episode/EpisodeDashboard";
-
 import AddPatient from "./pages/patient/componet/AddPatient";
 import PatientDetail from "./pages/patient/componet/PatientDetail";
 import PatientTable from "./pages/patient/componet/PatientTable";
 import Patient from "./pages/patient/PatientDashboard";
-
 import AddRole from "./pages/staff/componet/roles/AddRole";
 import RoleTable from "./pages/staff/componet/roles/RoleTable";
 import AddStaff from "./pages/staff/componet/staff/AddStaff";
 import StaffTable from "./pages/staff/componet/staff/StaffTable";
 import StaffDashboard from "./pages/staff/StaffDashboard";
-
 import AddService from "./pages/services/componet/AddService";
 import ServiceTable from "./pages/services/componet/ServiceTable";
 import ServicesDashboard from "./pages/services/ServicesDashboard";
-
 import { getTokenFromCookies } from "./component/global/config";
-import Layout from "./pages/layout/Layout";
-import EditRole from "./pages/staff/componet/roles/EditRole";
 import PageNotFound from "./component/PageNotFound";
-import Appointment from "./pages/appointment/AppointmentDashboard ";
-import AppointmentTable from "./pages/appointment/component/AppointmentTable";
 import AppointmentDashboard from "./pages/appointment/AppointmentDashboard ";
 import AddAppointment from "./pages/appointment/component/AddAppointment";
+import AppointmentTable from "./pages/appointment/component/AppointmentTable";
+import Layout from "./pages/layout/Layout";
+import EditRole from "./pages/staff/componet/roles/EditRole";
+import VisitDashboard from "./pages/visit/VistiDashboard";
+import VisitTable from "./pages/visit/component/VistiTable";
+import VisitInfo from "./pages/visit/component/VisitInfo";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -129,6 +126,14 @@ const App = () => {
             <Route path="view-appointment" element={<AppointmentTable />} />
 
 
+          </Route>
+
+
+          {/* Visit */}
+          <Route path="visits">
+            <Route index element={<VisitDashboard />} />
+            <Route path="view" element={<VisitTable status="ONGOING" />} />
+            <Route path="visit-info" element={<VisitInfo />} />
           </Route>
 
           {/* Episode */}

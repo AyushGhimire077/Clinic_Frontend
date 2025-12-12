@@ -281,7 +281,9 @@ const EpisodeTable = () => {
                           </p>
                           <p className="text-sm text-foreground">
                             <span className="font-medium">End:</span>
-                            {" PENDING"}
+                            <span className="inline-block px-2 py-1 text-xs font-semibold text-warning bg-surface rounded-md">
+                              PENDING
+                            </span>
                             {episode.endDate != null
                               ? formatDate(episode.startDate)
                               : ""}

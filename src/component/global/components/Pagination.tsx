@@ -23,11 +23,10 @@ export const Pagination = ({
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`w-10 h-10 rounded-lg ${
-            currentPage === page
-              ? "bg-primary text-white"
-              : "border border-border hover:bg-surface"
-          }`}
+          className={`w-10 h-10 rounded-lg ${currentPage === page
+            ? "bg-primary text-white"
+            : "border border-border hover:bg-surface"
+            }`}
         >
           {page}
         </button>

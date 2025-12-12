@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { axios_auth } from "../../../component/global/config";
-import type { IResponse } from "../../../component/global/utils/global.interface";
 import {
   handleApiError,
   handleApiResponse,

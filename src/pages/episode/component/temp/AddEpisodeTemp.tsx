@@ -2,13 +2,11 @@ import { CreditCard, FileText, Package, Save } from "lucide-react";
 import { useState } from "react";
 import { BackButton } from "../../../../component/global/components/back/back";
 import { inputField } from "../../../../component/global/components/customStyle";
-import {
-  billingModeOptions,
-  episodeTypeOptions,
-} from "../../../../component/global/utils/global.interface";
+
 import { useToast } from "../../../../component/toaster/useToast";
 import type { EpisodeTempReq } from "../../helper/episode.interface";
 import { useEpisodeStore } from "../../helper/episode.store";
+import { billingModeOptions, episodeTypeOptions } from "../../../../component/global/utils/select";
 
 const AddEpisodeTemplate = () => {
   const { showToast } = useToast();
