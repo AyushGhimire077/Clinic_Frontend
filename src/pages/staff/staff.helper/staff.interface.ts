@@ -4,7 +4,7 @@ import type {
   PaginationInfo,
   PaginationState,
   StaffType,
-} from "../../../component/global/utils/global.interface";
+} from "../../../component/global/utils/enums";
 
 export interface IStaffRequest {
   name: string;

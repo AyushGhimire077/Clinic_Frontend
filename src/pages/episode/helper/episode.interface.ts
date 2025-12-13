@@ -1,25 +1,26 @@
 import type {
   BillingMode,
   EpisodeType,
-  IResponse,
-  PaginationInfo,
   Status,
-} from "../../../component/global/utils/global.interface";
+} from "../../../component/global/utils/enums";
 import type { IPatient } from "../../patient/helper/patient.interface";
 import type { IStaff } from "../../staff/staff.helper/staff.interface";
+import type { PaginationInfo } from "../../../component/global/utils/response";
+import type { IResponse, PaginationState } from "../../../component/global/utils/global.interface";
 
 export interface IEpisode {
   id: string;
   title: string;
   startDate: string;
-  endDate: string;
+  endDate?: string;
   type: EpisodeType;
   billingMode: BillingMode;
   status: Status;
   primaryDoctor: IStaff;
   patient: IPatient;
   packageCharge: number;
-  appointment?: boolean;
+  appointment: boolean;
+  createdAt: string;
 }
 
 export interface EpisodeRequest {
@@ -48,25 +49,22 @@ export interface IEpisodeTemp {
   type: EpisodeType;
   billingMode: BillingMode;
   packageCharge: number;
+  createdAt: string;
 }
 
 export interface EpisodeState {
   episodeList: IEpisode[];
   episodeTemplateList: IEpisodeTemp[];
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
+  pagination: PaginationState | null;
 
-  setEpisodeTemplateList: (episodeTemplateList: IEpisodeTemp[]) => void;
-  setEpisodeList: (episodeList: IEpisode[]) => void;
-
-  createEpisode: (episode: EpisodeRequest) => Promise<IResponse>;
+  createEpisode: (data: EpisodeRequest) => Promise<IResponse>;
   getAllEpisodes: (pagination: PaginationInfo) => Promise<IResponse>;
+  getAllActiveEpisodes: (pagination: PaginationInfo) => Promise<IResponse>;
+  filterByStatus: (stats: string, pagination: PaginationInfo) => Promise<IResponse>;
   getEpisodeById: (id: string) => Promise<IResponse>;
-  getAllActiveEpisode: (pagination: PaginationInfo) => Promise<IResponse>;
   cancelEpisode: (id: string) => Promise<IResponse>;
 
-  createEpisodeTemplate: (episode: EpisodeTempReq) => Promise<IResponse>;
+  createEpisodeTemplate: (data: EpisodeTempReq) => Promise<IResponse>;
   getAllEpisodeTemplates: (pagination: PaginationInfo) => Promise<IResponse>;
   getEpisodeTemplateById: (id: string) => Promise<IResponse>;
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -13,8 +13,8 @@ import {
 import { BackButton } from "../../../component/global/components/back/back";
 import { Pagination } from "../../../component/global/components/Pagination";
 import { SearchInput } from "../../../component/global/components/SearchInput";
-import { usePatientStore } from "../helper/patient.store";
 import { useToast } from "../../../component/toaster/useToast";
+import { usePatientStore } from "../helper/patient.store";
 import { calculateAge } from "../../../component/global/utils/global.utils.";
 
 const PatientTable = () => {
@@ -71,19 +71,16 @@ const PatientTable = () => {
 
   const refreshData = () => {
     setSearchQuery("");
-    setShowActiveOnly(false);
+    setShowActiveOnly(true);
     setPage(0);
+    countPatients();
     loadData();
   };
 
   useEffect(() => {
-    if (searchQuery !== "") {
-      setPage(0);
-      loadData();
-    }
-
+     loadData();
     return;
-  }, [searchQuery]);
+  }, [searchQuery, page]);
 
   const getInitials = (name: string) => {
     return name
@@ -273,7 +270,7 @@ const PatientTable = () => {
                       <td className="px-6 py-4">
                         {patient.oneTimeFlag ? (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-warning/10 text-warning">
-                            Walk In
+                            Walk-in  
                           </span>
                         ) : (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-success/10 text-success">
@@ -294,7 +291,7 @@ const PatientTable = () => {
                               patient.isActive ? "text-success" : "text-error"
                             }`}
                           >
-                            {patient.isActive ? "Active" : "Inactive"}
+                            {patient.isActive ? "Active" : "Completed"}
                           </span>
                         </div>
                       </td>

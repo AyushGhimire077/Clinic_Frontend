@@ -1,8 +1,8 @@
+import type { DoctorType } from "../../../component/global/utils/enums";
 import type {
-  DoctorType,
   IResponse,
   PaginationInfo,
-} from "../../../component/global/utils/global.interface";
+} from "../../../component/global/utils/response";
 
 export interface IServices {
   id: string;

@@ -24,6 +24,11 @@ export interface IAppointmentRequest {
 export interface AppointmentState {
   appointments: IAppointment[];
   pagination: PaginationState | null;
+  startDate: string | null;
+  endDate: string | null;
+
+  setStartDate: (startDate: string) => void;
+  setEndDate: (endDate: string) => void;
 
   setPagination: (page: PaginationState | null) => void;
   setAppointment: (appointment: IAppointment[]) => void;
@@ -36,19 +41,19 @@ export interface AppointmentState {
   ) => Promise<IResponse>;
   getAllActive: (
     pagination: PaginationInfo,
-    startDate: string,
-    endDate: string
+    startDate: string | null,
+    endDate: string | null
   ) => Promise<IResponse>;
   getAll: (
     pagination: PaginationInfo,
-    startDate: string,
-    endDate: string
+    startDate: string | null,
+    endDate: string | null
   ) => Promise<IResponse>;
   getById: (id: string) => Promise<IResponse>;
   filterByStatus: (
     stats: string,
     pagination: PaginationInfo,
-    startDate: string,
-    endDate: string
+    startDate: string | null,
+    endDate: string | null
   ) => void;
 }

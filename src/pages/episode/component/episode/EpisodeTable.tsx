@@ -20,8 +20,7 @@ import { useEpisodeStore } from "../../helper/episode.store";
 
 const EpisodeTable = () => {
   const navigate = useNavigate();
-  const { episodeList, totalPages, totalItems, getAllEpisodes, getAllActiveEpisode } =
-    useEpisodeStore();
+  const { episodeList, pagination, getAllEpisodes } = useEpisodeStore();
 
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -115,7 +114,7 @@ const EpisodeTable = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-background border border-border rounded-lg p-4">
             <div className="text-2xl font-bold text-foreground">
-              {totalItems}
+              {episodeList.length}
             </div>
             <div className="text-sm text-muted">Total Episodes</div>
           </div>
@@ -282,7 +281,9 @@ const EpisodeTable = () => {
                           </p>
                           <p className="text-sm text-foreground">
                             <span className="font-medium">End:</span>
-                            {" PENDING"}
+                            <span className="inline-block px-2 py-1 text-xs font-semibold text-warning bg-surface rounded-md">
+                              PENDING
+                            </span>
                             {episode.endDate != null
                               ? formatDate(episode.startDate)
                               : ""}
@@ -323,16 +324,13 @@ const EpisodeTable = () => {
               </table>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-border">
-                <Pagination
-                  currentPage={page + 1}
-                  totalPages={totalPages}
-                  onPageChange={(newPage) => setPage(newPage - 1)}
-                />
-              </div>
-            )}
+            <div className="px-6 py-4 border-t border-border">
+              <Pagination
+                currentPage={pagination?.currentPage || 0}
+                totalPages={pagination?.totalPages || 1}
+                onPageChange={setPage}
+              />
+            </div>
           </>
         )}
       </div>

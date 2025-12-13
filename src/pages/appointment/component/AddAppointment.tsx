@@ -1,17 +1,17 @@
 import type { AlertColor } from "@mui/material";
-import { AlertCircle, Calendar, Clock, Plus, User, Stethoscope, Info, Phone, Mail } from "lucide-react";
+import { AlertCircle, Calendar, Clock, Info, Mail, Phone, Plus, Stethoscope, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { BackButton } from "../../../component/global/components/back/back";
-import { appointmentStatusOptions } from "../../../component/global/utils/global.interface";
 import { useToast } from "../../../component/toaster/useToast";
 import { getLocalDateTime } from "../../../component/utils/datatime";
+import type { IEpisode } from "../../episode/helper/episode.interface";
 import { useEpisodeStore } from "../../episode/helper/episode.store";
+import type { IAppointmentRequest } from "../helper/appointment.interface";
 import { useAppointmentStore } from "../helper/appointment.store";
 import EpisodeSelect from "./EpisodeSelect";
-import type { IEpisode } from "../../episode/helper/episode.interface";
-import type { IAppointmentRequest } from "../helper/appointment.interface";
+import { appointmentStatusOptions } from "../../../component/global/utils/select";
 
 const AddAppointment = () => {
     const { showToast } = useToast();

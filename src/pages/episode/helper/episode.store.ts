@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { axios_auth } from "../../../component/global/config";
-import type { IResponse } from "../../../component/global/utils/global.interface";
 import {
   handleApiError,
   handleApiResponse,
@@ -10,45 +9,38 @@ import type { EpisodeState } from "./episode.interface";
 export const useEpisodeStore = create<EpisodeState>((set) => ({
   episodeList: [],
   episodeTemplateList: [],
-  currentPage: 0,
-  totalPages: 0,
-  totalItems: 0,
+  pagination: null,
 
-  setEpisodeList: (episodeList) => set({ episodeList }),
-  setEpisodeTemplateList: (episodeTemplateList) => set({ episodeTemplateList }),
+  /* CREATE */
 
-  createEpisode: async (episode) => {
+  createEpisode: async (payload) => {
     try {
-      const res = await axios_auth.post("/episodes", episode);
+      const res = await axios_auth.post("/episodes", payload);
 
-      if (res.data?.status === 200 || res.data?.status === 201) {
-        set((state) => ({
-          episodeList: [res.data.data, ...state.episodeList],
-          totalItems: state.totalItems + 1,
-        }));
-      }
+      set((s) => ({
+        episodeList: [res.data.data, ...s.episodeList],
+      }));
 
       return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+    } catch (e) {
+      return handleApiError(e);
     }
   },
 
-  createEpisodeTemplate: async (template) => {
+  createEpisodeTemplate: async (payload) => {
     try {
-      const res = await axios_auth.post("/episodes/templates", template);
+      const res = await axios_auth.post("/episodes/templates", payload);
 
-      if (res.data?.status === 200 || res.data?.status === 201) {
-        set((state) => ({
-          episodeTemplateList: [res.data.data, ...state.episodeTemplateList],
-        }));
-      }
-
+      set((s) => ({
+        episodeTemplateList: [res.data.data, ...s.episodeTemplateList],
+      }));
       return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+    } catch (e) {
+      return handleApiError(e);
     }
   },
+
+  /* GET LIST */
 
   getAllEpisodes: async (pagination) => {
     try {
@@ -57,63 +49,79 @@ export const useEpisodeStore = create<EpisodeState>((set) => ({
       });
 
       if (res.data?.status === 200) {
-        const data = res.data.data;
-        const episodeList = data?.content || data || [];
         set({
-          episodeList,
-          currentPage: pagination.page || 0,
-          totalPages: data?.totalPages || 1,
-          totalItems: data?.totalElements || episodeList.length,
+          episodeList: res.data.data,
+          pagination: res.data.page,
         });
       }
 
       return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+    } catch (e) {
+      return handleApiError(e);
     }
   },
 
-  getAllActiveEpisode: async (pagination) => {
+  filterByStatus: async (status, pagination) => {
+    try {
+      const res = await axios_auth.get(`/episodes/list/status`, {
+        params: { status, pagination },
+      });
+
+      if (res.data?.status === 200) {
+        set({
+          episodeList: res.data.data,
+          pagination: res.data.page,
+        });
+      }
+
+      return handleApiResponse(res);
+    } catch (e) {
+      return handleApiError(e);
+    }
+  },
+
+  getAllActiveEpisodes: async (pagination) => {
     try {
       const res = await axios_auth.get("/episodes/active", {
         params: pagination,
       });
 
       if (res.data?.status === 200) {
-        const data = res.data.data;
-        const episodeList = data?.content || data || [];
         set({
-          episodeList,
-          currentPage: pagination.page || 0,
-          totalPages: data?.totalPages || 1,
-          totalItems: data?.totalElements || episodeList.length,
+          episodeList: res.data.data,
+          pagination: res.data.page,
         });
       }
-
       return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+    } catch (e) {
+      return handleApiError(e);
     }
   },
 
-  //cancel ep
-  cancelEpisode: async (id: string) => {
+  /* SINGLE */
+
+  getEpisodeById: async (id) => {
     try {
-      const res = await axios_auth.patch(`/episodes/${id}/cancel`);
-
-      if (res.data?.status === 200) {
-        set((state) => ({
-          episodeList: state.episodeList.map((e) =>
-            e.id === id ? { ...e, isActive: false } : e
-          ),
-        }));
-      }
-
+      const res = await axios_auth.get(`/episodes/${id}`);
       return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+    } catch (e) {
+      return handleApiError(e);
     }
   },
+
+  /* CANCEL */
+
+  cancelEpisode: async (id) => {
+    try {
+      const res = await axios_auth.get(`/episodes/${id}/cancel`);
+
+      return handleApiResponse(res);
+    } catch (e) {
+      return handleApiError(e);
+    }
+  },
+
+  /* TEMPLATES */
 
   getAllEpisodeTemplates: async (pagination) => {
     try {
@@ -122,28 +130,15 @@ export const useEpisodeStore = create<EpisodeState>((set) => ({
       });
 
       if (res.data?.status === 200) {
-        const data = res.data.data;
-        const episodeTemplateList = data?.content || data || [];
         set({
-          episodeTemplateList,
-          currentPage: pagination.page || 0,
-          totalPages: data?.totalPages || 1,
-          totalItems: data?.totalElements || episodeTemplateList.length,
+          episodeTemplateList: res.data.data,
+          pagination: res.data.page,
         });
       }
 
       return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
-    }
-  },
-
-  getEpisodeById: async (id) => {
-    try {
-      const res = await axios_auth.get(`/episodes/${id}`);
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+    } catch (e) {
+      return handleApiError(e);
     }
   },
 
@@ -151,8 +146,8 @@ export const useEpisodeStore = create<EpisodeState>((set) => ({
     try {
       const res = await axios_auth.get(`/episodes/templates/${id}`);
       return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+    } catch (e) {
+      return handleApiError(e);
     }
   },
 }));

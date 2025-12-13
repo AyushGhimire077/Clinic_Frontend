@@ -1,5 +1,5 @@
 import { Users, UserPlus, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePatientStore } from "./helper/patient.store";
 import PatientPopup from "./componet/PatientPopup";

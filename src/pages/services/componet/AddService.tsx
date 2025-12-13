@@ -4,15 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { Activity, Save } from "lucide-react";
 import { BackButton } from "../../../component/global/components/back/back";
 import { inputField } from "../../../component/global/components/customStyle";
-import { doctorTypeOptions } from "../../../component/global/utils/global.interface";
 import { useToast } from "../../../component/toaster/useToast";
 import type { IServicesRequest } from "../services.helper/services.interface";
 import { useServicesStore } from "../services.helper/services.store";
+import { doctorTypeOptions } from "../../../component/global/utils/select";
 
 const AddService = () => {
   const { showToast } = useToast();
   const { createServices } = useServicesStore();
-  const navigate = useNavigate();
 
   const [form, setForm] = useState<IServicesRequest>({
     name: "",
@@ -42,11 +41,11 @@ const AddService = () => {
       showToast("Service name is required", "warning");
       return;
     }
-    if(!form.charge || form.charge < 0){
+    if (!form.charge || form.charge < 0) {
       showToast("Charge must be a positive number", "warning");
       return;
     }
-    
+
 
 
     setIsLoading(true);

@@ -4,7 +4,7 @@ import {
   getDecodedToken,
   getTokenFromCookies,
 } from "../../../component/global/config";
-import type { IResponse } from "../../../component/global/utils/global.interface";
+import type { IResponse } from "../../../component/global/utils/enums";
 import type {
   AuthRequest,
   AuthState,

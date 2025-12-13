@@ -357,7 +357,7 @@ const AddEpisode = () => {
                 form={form}
                 loading={loading}
                 onFieldChange={handleChange}
-                
+
                 patientLoading={patientLoading}
                 selectedTemplateId={selectedTemplateId}
                 onCancel={handleCancel}

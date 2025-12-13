@@ -2,7 +2,7 @@ import { TbDashboard } from "react-icons/tb";
 import { MdOutlinePeople, MdOutlinePayments } from "react-icons/md";
 import { HiOutlineUser } from "react-icons/hi";
 import { AiOutlineCalendar, AiOutlineStock } from "react-icons/ai";
-import { FaNotesMedical } from "react-icons/fa";
+import { FaAssistiveListeningSystems, FaNotesMedical } from "react-icons/fa";
 import { RiServiceLine } from "react-icons/ri";
 import { FiPackage } from "react-icons/fi";
 import { IoReceiptSharp } from "react-icons/io5";
@@ -12,13 +12,21 @@ export const getSidebarItems = [
   { icon: TbDashboard, label: "Dashboard", url: "/", key: "dashboard" },
   { icon: MdOutlinePeople, label: "Staff", url: "staff", key: "staff" },
   { icon: HiOutlineUser, label: "Patient", url: "patient", key: "patient" },
+  { icon: FaNotesMedical, label: "Episode", url: "episode", key: "episode" },
   {
     icon: AiOutlineCalendar,
     label: "Appointment",
     url: "appointment",
     key: "appointment",
   },
-  { icon: FaNotesMedical, label: "Episode", url: "episode", key: "episode" },
+
+  {
+    icon: FaAssistiveListeningSystems,
+    label: "Visits",
+    url: "visits",
+    key: "visits",
+  },
+
   { icon: RiServiceLine, label: "Services", url: "services", key: "services" },
   {
     icon: MdOutlinePayments,

@@ -7,14 +7,16 @@ import type { IAppointment } from "../helper/appointment.interface";
 import { useAppointmentStore } from "../helper/appointment.store";
 import { Pagination } from "../../../component/global/components/Pagination";
 import { appointmentStatusOptions } from "../../../component/global/utils/global.interface";
-import {
-  formatDate,
-  formatDateTime,
-} from "../../../component/global/utils/global.utils.";
 
 const AppointmentTable = () => {
-  const { appointments, getAll, filterByStatus, pagination } =
-    useAppointmentStore();
+  const {
+    appointments,
+    getAll,
+    filterByStatus,
+    pagination,
+    startDate,
+    endDate,
+  } = useAppointmentStore();
   const navigate = useNavigate();
 
   const [page, setPage] = useState(0);
@@ -26,9 +28,9 @@ const AppointmentTable = () => {
     setLoading(true);
     try {
       if (statusFilter.toUpperCase() === "ALL") {
-        return getAll({ page, size });
+        return getAll({ page, size }, startDate, endDate);
       }
-      return filterByStatus(statusFilter, { page, size });
+      return filterByStatus(statusFilter, { page, size }, startDate, endDate);
     } catch (error) {
       console.error("Failed to load appointments:", error);
     } finally {
@@ -38,7 +40,26 @@ const AppointmentTable = () => {
 
   useEffect(() => {
     loadAppointments();
-  }, [statusFilter, page, size]);
+  }, [page]);
+
+  const formatDateTime = (dateTime: string) => {
+    return new Date(dateTime).toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   const getStatusColor = (status: string) => {
     const colors = {
@@ -208,12 +229,12 @@ const AppointmentTable = () => {
                                 <p className="text-sm text-muted">
                                   {appointment.episode.patient.contactNumber}
                                 </p>
-                                <p className="text-xs text-muted mt-1">
+                                {/* <p className="text-xs text-muted mt-1">
                                   DOB:{" "}
                                   {formatDate(
                                     appointment.episode.patient.dateOfBirth
                                   )}
-                                </p>
+                                </p> */}
                               </div>
                             </div>
                           </td>
@@ -225,18 +246,18 @@ const AppointmentTable = () => {
                                 <p className="font-medium text-foreground">
                                   Dr. {appointment.episode.primaryDoctor.name}
                                 </p>
-                                <p className="text-sm text-muted">
+                                {/* <p className="text-sm text-muted">
                                   {appointment.episode.primaryDoctor.role}
                                 </p>
                                 {appointment.episode.primaryDoctor
                                   .doctorSubType && (
-                                  <p className="text-xs text-muted mt-1">
-                                    {
-                                      appointment.episode.primaryDoctor
-                                        .doctorSubType
-                                    }
-                                  </p>
-                                )}
+                                    <p className="text-xs text-muted mt-1">
+                                      {
+                                        appointment.episode.primaryDoctor
+                                          .doctorSubType
+                                      }
+                                    </p>
+                                  )} */}
                               </div>
                             </div>
                           </td>
