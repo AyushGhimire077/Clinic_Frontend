@@ -1,29 +1,28 @@
 import { create } from "zustand";
 import type { StaffState } from "./staff.interface";
 import { axios_auth } from "../../../component/global/config";
-
-const handleApiResponse = (res: any) => ({
-  message: res.data?.message || "Request completed",
-  status: res.data?.status || 500,
-  severity: res.data?.severity?.toLowerCase() || "error",
-});
-
-const handleApiError = (error: any) => ({
-  message: error?.response?.data?.message || error?.message || "Request failed",
-  status: error?.response?.status || 500,
-  severity: "error",
-});
+import {
+  handleApiError,
+  handleApiResponse,
+} from "../../../component/global/utils/global.utils.";
 
 export const useStaffStore = create<StaffState>((set) => ({
   staffList: [],
-  setStaffList: (staffList) => set({ staffList }),
+  pagination: null,
+  count: null,
 
+  setStaffList: (staffList) => set({ staffList }),
+  setPagination: (pagination) => set({ pagination }),
+
+  // CREATE STAFF
   createStaff: async (staff) => {
     try {
-      const res = await axios_auth.post("/staff/register", staff);
+      const res = await axios_auth.post("/staff", staff);
 
       if (res.data?.status === 201 || res.data?.status === 200) {
-        set((s) => ({ staffList: [...s.staffList, res.data.data] }));
+        set((s) => ({
+          staffList: [...s.staffList, res.data.data],
+        }));
       }
 
       return handleApiResponse(res);
@@ -32,12 +31,16 @@ export const useStaffStore = create<StaffState>((set) => ({
     }
   },
 
+  // GET ALL STAFF (PAGINATION)
   getAllStaff: async (pagination) => {
     try {
-      const res = await axios_auth.get("/staff/all", { params: pagination });
+      const res = await axios_auth.get("/staff/list", { params: pagination });
 
       if (res.data?.status === 200) {
-        set({ staffList: res.data.data || [] });
+        set({
+          staffList: res.data.data || [],
+          pagination: res.data.page || null,
+        });
       }
 
       return handleApiResponse(res);
@@ -46,12 +49,16 @@ export const useStaffStore = create<StaffState>((set) => ({
     }
   },
 
+  // GET ACTIVE STAFF (PAGINATION)
   getAllActiveStaff: async (pagination) => {
     try {
       const res = await axios_auth.get("/staff/active", { params: pagination });
 
       if (res.data?.status === 200) {
-        set({ staffList: res.data.data || [] });
+        set({
+          staffList: res.data.data || [],
+          pagination: res.data.page || null,
+        });
       }
 
       return handleApiResponse(res);
@@ -60,6 +67,24 @@ export const useStaffStore = create<StaffState>((set) => ({
     }
   },
 
+  // COUNT
+  countStaff: async () => {
+    try {
+      const res = await axios_auth.get("/staff/count");
+
+      if (res.data.status == 200) {
+        set({
+          count: res.data.data,
+        });
+      }
+
+      return handleApiResponse(res);
+    } catch (error: any) {
+      return handleApiError(error);
+    }
+  },
+
+  // SEARCH STAFF (PAGINATION)
   searchStaff: async (query: string, pagination) => {
     try {
       const res = await axios_auth.get("/staff/search", {
@@ -67,7 +92,10 @@ export const useStaffStore = create<StaffState>((set) => ({
       });
 
       if (res.data?.status === 200) {
-        set({ staffList: res.data.data || [] });
+        set({
+          staffList: res.data.data || [],
+          pagination: res.data.page || null,
+        });
       }
 
       return handleApiResponse(res);

@@ -1,22 +1,19 @@
-import { Pagination } from "@mui/material";
-import {
-  Calendar,
-  Clock,
-  DollarSign,
-  Edit,
-  Eye,
-  Stethoscope,
-  User,
-} from "lucide-react";
+import { Calendar, Edit, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { BackButton } from "../../../component/global/components/back/back";
 import type { IAppointment } from "../helper/appointment.interface";
 import { useAppointmentStore } from "../helper/appointment.store";
+import { Pagination } from "../../../component/global/components/Pagination";
+import { appointmentStatusOptions } from "../../../component/global/utils/global.interface";
+import {
+  formatDate,
+  formatDateTime,
+} from "../../../component/global/utils/global.utils.";
 
 const AppointmentTable = () => {
-  const { appointments, getAllAppointments, filterByStatus } =
+  const { appointments, getAll, filterByStatus, pagination } =
     useAppointmentStore();
   const navigate = useNavigate();
 
@@ -28,7 +25,10 @@ const AppointmentTable = () => {
   const loadAppointments = async () => {
     setLoading(true);
     try {
-      await getAllAppointments({ page, size });
+      if (statusFilter.toUpperCase() === "ALL") {
+        return getAll({ page, size });
+      }
+      return filterByStatus(statusFilter, { page, size });
     } catch (error) {
       console.error("Failed to load appointments:", error);
     } finally {
@@ -38,37 +38,7 @@ const AppointmentTable = () => {
 
   useEffect(() => {
     loadAppointments();
-  }, [page]);
-
-  useEffect(() => {
-    async function filter() {
-      await filterByStatus(statusFilter, { page, size });
-    }
-    filter();
-  }, [statusFilter]);
-
-  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value - 1);
-  };
-
-  const formatDateTime = (dateTime: string) => {
-    return new Date(dateTime).toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+  }, [statusFilter, page, size]);
 
   const getStatusColor = (status: string) => {
     const colors = {
@@ -108,17 +78,6 @@ const AppointmentTable = () => {
     }
   };
 
-  const statusOptions = [
-    { value: "ALL", label: "All Appointments" },
-    { value: "BOOKED", label: "Booked" },
-    { value: "CHECKED_IN", label: "Checked In" },
-    { value: "COMPLETED", label: "Completed" },
-    { value: "CANCELLED", label: "Cancelled" },
-    { value: "MISSED", label: "Missed" },
-  ];
-
-  const totalPages = Math.ceil(appointments.length / size) || 1;
-
   return (
     <div className="min-h-screen bg-background ">
       <div className="max-w-[90em] mx-auto">
@@ -148,7 +107,20 @@ const AppointmentTable = () => {
 
           {/* Status Filter */}
           <div className="flex flex-wrap gap-2">
-            {statusOptions.map((option) => (
+            <button
+              onClick={() => {
+                setStatusFilter("ALL");
+                setPage(0);
+              }}
+              className={`px-3 py-1.5 rounded-lg transition-all font-medium text-sm border ${
+                statusFilter === "ALL"
+                  ? "bg-primary text-white border-primary"
+                  : "bg-background text-foreground border-border hover:border-primary"
+              }`}
+            >
+              View ALL
+            </button>
+            {appointmentStatusOptions.map((option) => (
               <button
                 key={option.value}
                 onClick={() => {
@@ -322,7 +294,7 @@ const AppointmentTable = () => {
                           {/* Package Charge */}
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-2">
-                               <span className="font-medium text-foreground">
+                              <span className="font-medium text-foreground">
                                 Rs. {appointment.episode.packageCharge}
                               </span>
                             </div>
@@ -394,25 +366,9 @@ const AppointmentTable = () => {
                       {appointments.length} appointments
                     </p>
                     <Pagination
-                      count={totalPages}
-                      page={page + 1}
-                      onChange={handlePageChange}
-                      color="primary"
-                      shape="rounded"
-                      sx={{
-                        "& .MuiPaginationItem-root": {
-                          borderRadius: "8px",
-                          margin: "0 2px",
-                          fontSize: "0.875rem",
-                        },
-                        "& .Mui-selected": {
-                          backgroundColor: "#0891b2 !important",
-                          color: "white",
-                        },
-                        "& .MuiPaginationItem-root:hover": {
-                          backgroundColor: "#f0f9ff",
-                        },
-                      }}
+                      currentPage={pagination?.currentPage || 0}
+                      totalPages={pagination?.totalPages || 1}
+                      onPageChange={setPage}
                     />
                   </div>
                 </div>

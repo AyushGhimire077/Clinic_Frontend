@@ -14,8 +14,7 @@ const RoleTable = () => {
     roles,
     totalPages,
     totalItems,
-    getAllRoles,
-    getAllActiveRoles,
+     getAllActiveRoles,
     enableRole,
     disableRole,
   } = useRoleStore();
@@ -33,9 +32,7 @@ const RoleTable = () => {
     try {
       if (showActiveOnly) {
         await getAllActiveRoles({ page, size: pageSize });
-      } else {
-        await getAllRoles({ page, size: pageSize });
-      }
+      } 
     } finally {
       setLoading(false);
     }

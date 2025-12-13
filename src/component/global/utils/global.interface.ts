@@ -8,12 +8,18 @@ export interface IResponse {
 export type Severity = "success" | "error" | "info" | "warning";
 
 // Pagination
-export interface PaginationInfo {
-  page: number;
-  size: number;
-  total?: number;
-  totalPages?: number;
+export interface PaginationState {
+  currentPage: number;  
+  pageSize: number;     
+  totalItems: number;   
+  totalPages: number;  
 }
+
+export interface PaginationInfo {
+  page: number; // 0-based
+  size: number;
+}
+
 
 export const Gender = {
   MALE: "MALE",

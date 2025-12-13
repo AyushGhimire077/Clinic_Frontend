@@ -2,6 +2,7 @@ import type {
   DoctorType,
   IResponse,
   PaginationInfo,
+  PaginationState,
   StaffType,
 } from "../../../component/global/utils/global.interface";
 
@@ -30,9 +31,18 @@ export interface IStaff {
 
 export interface StaffState {
   staffList: IStaff[];
+  pagination: PaginationState | null;
+  count: Record<string , number> | null;
+
   setStaffList: (staffList: IStaff[]) => void;
+  setPagination: (page: PaginationState | null) => void;
+
   createStaff: (staff: IStaffRequest) => Promise<IResponse>;
   getAllStaff: (pagination: PaginationInfo) => Promise<IResponse>;
   getAllActiveStaff: (pagination: PaginationInfo) => Promise<IResponse>;
-  searchStaff: (query: string, pagination: PaginationInfo) => Promise<IResponse>;
+  countStaff: () => Promise<IResponse>;
+  searchStaff: (
+    query: string,
+    pagination: PaginationInfo
+  ) => Promise<IResponse>;
 }

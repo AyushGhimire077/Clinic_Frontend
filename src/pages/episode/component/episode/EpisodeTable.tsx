@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Calendar, DollarSign, Filter, Plus, RefreshCcw, User } from "lucide-react";
+import {
+  Calendar,
+  DollarSign,
+  Filter,
+  Plus,
+  RefreshCcw,
+  User,
+} from "lucide-react";
 import { BackButton } from "../../../../component/global/components/back/back";
 import { Pagination } from "../../../../component/global/components/Pagination";
 import { SearchInput } from "../../../../component/global/components/SearchInput";
@@ -13,10 +20,8 @@ import { useEpisodeStore } from "../../helper/episode.store";
 
 const EpisodeTable = () => {
   const navigate = useNavigate();
-  const { episodeList, totalPages, totalItems, getAllEpisodes } =
+  const { episodeList, totalPages, totalItems, getAllEpisodes, getAllActiveEpisode } =
     useEpisodeStore();
-
-
 
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,11 +39,9 @@ const EpisodeTable = () => {
   };
 
   useEffect(() => {
-
-    if (page === 0) return; // skip reloading unnecessarily 
+    if (page === 0) return; // skip reloading unnecessarily
     loadEpisodes();
   }, [page]);
-
 
   const filteredEpisodes = episodeList.filter((episode) => {
     if (
@@ -52,15 +55,12 @@ const EpisodeTable = () => {
     return true;
   });
 
-
-
   const refreshData = () => {
     setSearchQuery("");
     setStatusFilter("");
     setPage(0);
     loadEpisodes();
-  }
-
+  };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -76,10 +76,6 @@ const EpisodeTable = () => {
         return "bg-surface text-foreground";
     }
   };
-
-
-
-
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -156,7 +152,12 @@ const EpisodeTable = () => {
             />
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={refreshData} className="px-4 py-2 rounded-lg border border-border hover:bg-surface"><RefreshCcw className="w-4 h-4" /></button>
+            <button
+              onClick={refreshData}
+              className="px-4 py-2 rounded-lg border border-border hover:bg-surface"
+            >
+              <RefreshCcw className="w-4 h-4" />
+            </button>
           </div>
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-muted" />

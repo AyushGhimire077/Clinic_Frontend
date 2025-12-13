@@ -17,11 +17,10 @@ const handleApiError = (error: any) => ({
 export const usePatientStore = create<PatientState>((set) => ({
   patientList: [],
   recentlyAddedPaitnet: null,
-  currentPage: 0,
-  totalPages: 0,
-  totalItems: 0,
   count: new Map<string, object>(),
+  pagination: null,
 
+  setPagination: (pagination) => set({ pagination }),
   setRecentlyAddedPaitnet: (p: any) => set({ recentlyAddedPaitnet: p }),
   clearRecentlyAddedPatient: () => set({ recentlyAddedPaitnet: null }),
 
@@ -34,7 +33,6 @@ export const usePatientStore = create<PatientState>((set) => ({
       if (res.data?.status === 200 || res.data?.status === 201) {
         set((state) => ({
           patientList: [...state.patientList, res.data.data],
-          totalItems: state.totalItems + 1,
           recentlyAddedPaitnet: res.data.data,
         }));
       }
@@ -70,9 +68,7 @@ export const usePatientStore = create<PatientState>((set) => ({
         const patientList = data?.content || data || [];
         set({
           patientList,
-          currentPage: pagination.page || 0,
-          totalPages: data?.totalPages || 1,
-          totalItems: data?.totalElements || patientList.length,
+          pagination: res.data.page || null,
         });
       }
 
@@ -93,9 +89,7 @@ export const usePatientStore = create<PatientState>((set) => ({
         const patientList = data?.content || data || [];
         set({
           patientList,
-          currentPage: pagination.page || 0,
-          totalPages: data?.totalPages || 1,
-          totalItems: data?.totalElements || patientList.length,
+          pagination: res.data.page || null,
         });
       }
 
@@ -116,9 +110,7 @@ export const usePatientStore = create<PatientState>((set) => ({
         const patientList = data?.content || data || [];
         set({
           patientList,
-          currentPage: pagination.page || 0,
-          totalPages: data?.totalPages || 1,
-          totalItems: data?.totalElements || patientList.length,
+          pagination: res.data.page || null,
         });
       }
 

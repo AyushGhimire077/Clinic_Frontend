@@ -1,9 +1,13 @@
 import { Users, Settings, UserPlus, Shield, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useStaffStore } from "./staff.helper/staff.store";
+import { useRoleStore } from "./role.helper/role.store";
 
 const StaffDashboard = () => {
   const [activeTab, setActiveTab] = useState<"staff" | "roles">("staff");
+  const { countStaff, count } = useStaffStore();
+   const { roles,getAllRoles } = useRoleStore();
 
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
@@ -53,12 +57,23 @@ const StaffDashboard = () => {
     },
   ];
 
+ 
   const currentTab = tabs.find((tab) => tab.id === activeTab);
+
+  useEffect(() => {
+    async function getCount() {
+      await countStaff();
+      await getAllRoles({page: 0, size: 10})
+    }
+
+
+
+    getCount();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-4xl mx-auto">
-
         {/* HEADER */}
         <div className="text-center mb-10">
           <div className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center bg-linear-to-br from-primary to-primary-dark shadow-soft">
@@ -68,9 +83,7 @@ const StaffDashboard = () => {
           <h1 className="text-3xl font-bold text-foreground mt-4">
             Staff Management
           </h1>
-          <p className="text-muted text-sm">
-            Manage your healthcare team
-          </p>
+          <p className="text-muted text-sm">Manage your healthcare team</p>
         </div>
 
         {/* TABS */}
@@ -79,16 +92,16 @@ const StaffDashboard = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex-1 py-2.5 px-4 text-sm duration-300  font-medium rounded-xl transition-colors ${activeTab === tab.id
-                ? "bg-primary text-white"
-                : "text-muted hover:bg-primary-light hover:text-foreground"
-                }`}
+              className={`flex-1 py-2.5 px-4 text-sm duration-300  font-medium rounded-xl transition-colors ${
+                activeTab === tab.id
+                  ? "bg-primary text-white"
+                  : "text-muted hover:bg-primary-light hover:text-foreground"
+              }`}
             >
               {tab.label}
             </button>
           ))}
         </div>
-
 
         {/* CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -101,7 +114,9 @@ const StaffDashboard = () => {
                 onClick={item.onClick}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-lg bg-linear-to-br ${item.color} flex items-center justify-center shadow-soft`}>
+                  <div
+                    className={`w-12 h-12 rounded-lg bg-linear-to-br ${item.color} flex items-center justify-center shadow-soft`}
+                  >
                     <Icon className="w-6 h-6 text-white" />
                   </div>
 
@@ -122,17 +137,21 @@ const StaffDashboard = () => {
         {/* OVERVIEW BOXES */}
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
-            <div className="text-3xl font-bold text-primary">24</div>
+            <div className="text-3xl font-bold text-primary">
+              {count?.allCount}
+            </div>
             <div className="text-sm text-muted">Active Staff</div>
           </div>
 
           <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
-            <div className="text-3xl font-bold text-success">5</div>
-            <div className="text-sm text-muted">Departments</div>
+            <div className="text-3xl font-bold text-success">
+              {(count?.allCount ?? 0) - (count?.activeCount ?? 0)}
+            </div>
+            <div className="text-sm text-muted">InActive Staff</div>
           </div>
 
           <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
-            <div className="text-3xl font-bold  text-info">8</div>
+            <div className="text-3xl font-bold  text-info">{roles.length}</div>
             <div className="text-sm text-muted">Roles</div>
           </div>
         </div>

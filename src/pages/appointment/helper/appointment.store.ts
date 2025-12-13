@@ -5,48 +5,25 @@ import {
   handleApiError,
   handleApiResponse,
 } from "../../../component/global/utils/global.utils.";
-import type { PaginationInfo } from "../../../component/global/utils/global.interface";
 
 export const useAppointmentStore = create<AppointmentState>((set) => ({
   appointments: [],
+  pagination: null,
+  startDate: null,
+  endDate: null,
 
+  setEndDate: (endDate) => set({ endDate }),
+  setStartDate: (startDate) => set({ startDate }),
+
+  setAppointment: (appointment) => set({ appointments: appointment }),
+  setPagination: (pagination) => set({ pagination }),
   // Create appointment
   create: async (data) => {
     try {
       const res = await axios_auth.post("/appointment/register", data);
-      set((state) => ({
-        appointments: [...state.appointments, res.data.data],
+      set((s) => ({
+        appointments: [...s.appointments, res.data.data],
       }));
-      return handleApiResponse(res);
-    } catch (err: any) {
-      return handleApiError(err);
-    }
-  },
-
-  // Get all appointments with pagination
-  getAllAppointments: async ({ page, size }) => {
-    try {
-      const res = await axios_auth.get(
-        `/appointment/all?page=${page}&size=${size}`
-      );
-      set({ appointments: res.data.data });
-      return handleApiResponse(res);
-    } catch (err: any) {
-      return handleApiError(err);
-    }
-  },
-
-  // Get appointments by status
-  filterByStatus: async (status, pagination) => {
-    try {
-      const res = await axios_auth.get(
-        `/appointment/all/by-status/${status}?page=${pagination.page}&size=${pagination.size}`
-      );
-
-      set({
-        appointments: res.data.data || [],
-      });
-
       return handleApiResponse(res);
     } catch (err: any) {
       return handleApiError(err);
@@ -68,8 +45,56 @@ export const useAppointmentStore = create<AppointmentState>((set) => ({
     }
   },
 
+  // Get all appointments
+  getAll: async (pagination, startDate, endDate) => {
+    try {
+      const res = await axios_auth.get(`/appointment/all`, {
+        params: { ...pagination, startDate, endDate },
+      });
+      set({ appointments: res.data.data, pagination: res.data.page });
+      return handleApiResponse(res);
+    } catch (err: any) {
+      return handleApiError(err);
+    }
+  },
+
+  // Get all active appointments
+  getAllActive: async (pagination, startDate, endDate) => {
+    try {
+      const res = await axios_auth.get(`/appointment/active`, {
+        params: {
+          ...pagination,
+          startDate,
+          endDate,
+        },
+      });
+      set({ appointments: res.data.data, pagination: res.data.page });
+      return handleApiResponse(res);
+    } catch (err: any) {
+      return handleApiError(err);
+    }
+  },
+
+  // Get appointments by status
+  filterByStatus: async (status, pagination, startDate, endDate) => {
+    try {
+      const res = await axios_auth.get(`/appointment/all/status`, {
+        params: { status, pagination, startDate, endDate },
+      });
+
+      set({
+        appointments: res.data.data || [],
+        pagination: res.data.page,
+      });
+
+      return handleApiResponse(res);
+    } catch (err: any) {
+      return handleApiError(err);
+    }
+  },
+
   // Get appointment by ID
-  getAppointmentById: async (id: string) => {
+  getById: async (id: string) => {
     try {
       const res = await axios_auth.get(`/appointment?id=${id}`);
       return handleApiResponse(res);

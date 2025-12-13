@@ -2,6 +2,7 @@ import type {
   AppointmentStatus,
   IResponse,
   PaginationInfo,
+  PaginationState,
 } from "../../../component/global/utils/global.interface";
 import type { IEpisode } from "../../episode/helper/episode.interface";
 
@@ -22,17 +23,32 @@ export interface IAppointmentRequest {
 
 export interface AppointmentState {
   appointments: IAppointment[];
+  pagination: PaginationState | null;
+
+  setPagination: (page: PaginationState | null) => void;
+  setAppointment: (appointment: IAppointment[]) => void;
 
   create: (data: IAppointmentRequest) => Promise<IResponse>;
-
-  getAllAppointments: (pagination: PaginationInfo) => Promise<IResponse>;
-
-  getAppointmentById: (id: string) => Promise<IResponse>;
-
-  filterByStatus: (stats: string, pagination: PaginationInfo) => void;
 
   update: (
     id: string,
     data: Partial<IAppointmentRequest>
   ) => Promise<IResponse>;
+  getAllActive: (
+    pagination: PaginationInfo,
+    startDate: string,
+    endDate: string
+  ) => Promise<IResponse>;
+  getAll: (
+    pagination: PaginationInfo,
+    startDate: string,
+    endDate: string
+  ) => Promise<IResponse>;
+  getById: (id: string) => Promise<IResponse>;
+  filterByStatus: (
+    stats: string,
+    pagination: PaginationInfo,
+    startDate: string,
+    endDate: string
+  ) => void;
 }

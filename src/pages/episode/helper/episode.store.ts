@@ -52,7 +52,9 @@ export const useEpisodeStore = create<EpisodeState>((set) => ({
 
   getAllEpisodes: async (pagination) => {
     try {
-      const res = await axios_auth.get("/episodes", { params: pagination });
+      const res = await axios_auth.get("/episodes/list", {
+        params: pagination,
+      });
 
       if (res.data?.status === 200) {
         const data = res.data.data;
@@ -71,9 +73,51 @@ export const useEpisodeStore = create<EpisodeState>((set) => ({
     }
   },
 
+  getAllActiveEpisode: async (pagination) => {
+    try {
+      const res = await axios_auth.get("/episodes/active", {
+        params: pagination,
+      });
+
+      if (res.data?.status === 200) {
+        const data = res.data.data;
+        const episodeList = data?.content || data || [];
+        set({
+          episodeList,
+          currentPage: pagination.page || 0,
+          totalPages: data?.totalPages || 1,
+          totalItems: data?.totalElements || episodeList.length,
+        });
+      }
+
+      return handleApiResponse(res);
+    } catch (error: any) {
+      return handleApiError(error);
+    }
+  },
+
+  //cancel ep
+  cancelEpisode: async (id: string) => {
+    try {
+      const res = await axios_auth.patch(`/episodes/${id}/cancel`);
+
+      if (res.data?.status === 200) {
+        set((state) => ({
+          episodeList: state.episodeList.map((e) =>
+            e.id === id ? { ...e, isActive: false } : e
+          ),
+        }));
+      }
+
+      return handleApiResponse(res);
+    } catch (error: any) {
+      return handleApiError(error);
+    }
+  },
+
   getAllEpisodeTemplates: async (pagination) => {
     try {
-      const res = await axios_auth.get("/episodes/templates", {
+      const res = await axios_auth.get("/episodes/templates/list", {
         params: pagination,
       });
 

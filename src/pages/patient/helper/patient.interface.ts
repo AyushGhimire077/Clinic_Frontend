@@ -2,6 +2,7 @@ import type {
   Gender,
   IResponse,
   PaginationInfo,
+  PaginationState,
 } from "../../../component/global/utils/global.interface";
 import type { IStaff } from "../../staff/staff.helper/staff.interface";
 
@@ -36,16 +37,16 @@ export interface IPatient {
 
 export interface PatientState {
   patientList: IPatient[];
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
   count: Map<string, object>;
-
   recentlyAddedPaitnet?: IPatient | null;
-  setRecentlyAddedPaitnet: (paitnet: IPatient) => void;
-  clearRecentlyAddedPatient: () => void;
+  pagination: PaginationState | null;
 
+  clearRecentlyAddedPatient: () => void;
+  setPagination: (page: PaginationState | null) => void;
+
+  setRecentlyAddedPaitnet: (paitnet: IPatient) => void;
   setPatientList: (patientList: IPatient[]) => void;
+
   createPatient: (patient: IPatientRequest) => Promise<IResponse>;
   editPatient: (
     id: string,

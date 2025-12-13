@@ -302,7 +302,7 @@ const AddPatient = () => {
               htmlFor="oneTimeFlag"
               className="text-sm font-medium text-foreground"
             >
-              One Time Patient
+              Walk In Patient
             </label>
           </div>
 

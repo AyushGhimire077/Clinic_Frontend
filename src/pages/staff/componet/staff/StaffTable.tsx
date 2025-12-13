@@ -7,20 +7,23 @@ import { formatCurrency } from "../../../../component/global/utils/global.utils.
 import { useStaffStore } from "../../staff.helper/staff.store";
 
 const StaffTable = () => {
-  const { staffList, getAllStaff, searchStaff } = useStaffStore();
-  const [page, setPage] = useState(1);
+  const { staffList, getAllStaff, searchStaff, pagination } = useStaffStore();
+
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(0);
+  const size = 10;
   const [loading, setLoading] = useState(false);
 
-  const pageSize = 10;
+  // { currentPage: 0, pageSize: 10, totalItems: 3, totalPages: 1 }
+  console.log(pagination);
 
-  const loadStaff = async (search = "") => {
+  const loadStaff = async () => {
     setLoading(true);
     try {
-      if (search.trim()) {
-        await searchStaff(search, { page: page - 1, size: pageSize });
+      if (searchQuery.trim()) {
+        await searchStaff(searchQuery, { page, size });
       } else {
-        await getAllStaff({ page: page - 1, size: pageSize });
+        await getAllStaff({ page, size });
       }
     } finally {
       setLoading(false);
@@ -28,24 +31,21 @@ const StaffTable = () => {
   };
 
   useEffect(() => {
-    loadStaff(searchQuery);
+    loadStaff();
   }, [page, searchQuery]);
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setPage(1); // Reset to first page on new search
+  const handleSearch = (q: string) => {
+    setSearchQuery(q);
+    setPage(0);
   };
 
-  const getInitials = (name: string) => {
-    return name
+  const getInitials = (name: string) =>
+    name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase()
       .substring(0, 2);
-  };
-
-
 
   return (
     <div className="max-w-[90em] mx-auto">
@@ -97,14 +97,13 @@ const StaffTable = () => {
             <button
               onClick={() => {
                 setSearchQuery("");
-                window.history.back()
+                window.history.back();
               }}
               className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition"
             >
               Back to All Staff
             </button>
           </div>
-
         ) : (
           <>
             <div className="overflow-x-auto">
@@ -167,10 +166,11 @@ const StaffTable = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${staff.isActive
-                            ? "bg-green-100 text-success"
-                            : "bg-gray-100 text-muted"
-                            }`}
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                            staff.isActive
+                              ? "bg-green-100 text-success"
+                              : "bg-gray-100 text-muted"
+                          }`}
                         >
                           {staff.isActive ? "Active" : "Inactive"}
                         </span>
@@ -184,8 +184,8 @@ const StaffTable = () => {
             {/* Pagination */}
             <div className="px-6 py-4 border-t border-border">
               <Pagination
-                currentPage={page}
-                totalPages={10} // You should get this from your API
+                currentPage={pagination?.currentPage || 0}
+                totalPages={pagination?.totalPages || 1}
                 onPageChange={setPage}
               />
             </div>

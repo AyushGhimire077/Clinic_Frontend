@@ -1,19 +1,27 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Activity, Edit2, Filter, Phone, Printer, RefreshCcw, Users } from "lucide-react";
+import {
+  Activity,
+  Edit2,
+  Filter,
+  Phone,
+  Printer,
+  RefreshCcw,
+  Users,
+} from "lucide-react";
 import { BackButton } from "../../../component/global/components/back/back";
 import { Pagination } from "../../../component/global/components/Pagination";
 import { SearchInput } from "../../../component/global/components/SearchInput";
 import { usePatientStore } from "../helper/patient.store";
 import { useToast } from "../../../component/toaster/useToast";
+import { calculateAge } from "../../../component/global/utils/global.utils.";
 
 const PatientTable = () => {
   const navigate = useNavigate();
   const {
     patientList,
-    totalPages,
-
+    pagination,
     getAllPatients,
     getAllActivePatients,
     searchPatients,
@@ -28,23 +36,20 @@ const PatientTable = () => {
 
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showActiveOnly, setShowActiveOnly] = useState(false);
+  const [showActiveOnly, setShowActiveOnly] = useState(true);
   const [loading, setLoading] = useState(false);
-  const pageSize = 10;
+  const size = 10;
 
   const loadData = async () => {
     setLoading(true);
     try {
       if (searchQuery.trim()) {
-        await searchPatients(searchQuery, { page, size: pageSize });
+        await searchPatients(searchQuery, { page, size });
       } else if (showActiveOnly) {
-        await getAllActivePatients({ page, size: pageSize });
+        await getAllActivePatients({ page, size });
       } else {
-        await getAllPatients({ page, size: pageSize });
+        await getAllPatients({ page, size });
       }
-
-
-      countPatients();
     } finally {
       setLoading(false);
     }
@@ -52,23 +57,24 @@ const PatientTable = () => {
 
   const handleEnable = async (id: string) => {
     const res = await enablePatient(id);
+    countPatients();
+
     showToast(res.message, res.severity);
   };
 
   const handleDisable = async (id: string) => {
     const res = await disablePatient(id);
+    countPatients();
+
     showToast(res.message, res.severity);
   };
-
 
   const refreshData = () => {
     setSearchQuery("");
     setShowActiveOnly(false);
     setPage(0);
     loadData();
-  }
-
-
+  };
 
   useEffect(() => {
     if (searchQuery !== "") {
@@ -76,7 +82,7 @@ const PatientTable = () => {
       loadData();
     }
 
-    return
+    return;
   }, [searchQuery]);
 
   const getInitials = (name: string) => {
@@ -94,7 +100,6 @@ const PatientTable = () => {
   const female = genderRatio.FEMALE ?? 0;
 
   const display = `M${male}/F${female}`;
-
 
   return (
     <div className="max-w-[90em] mx-auto">
@@ -156,16 +161,22 @@ const PatientTable = () => {
             />
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={refreshData} className="px-4 py-2 rounded-lg border border-border hover:bg-surface"><RefreshCcw className="w-4 h-4" /></button>
+            <button
+              onClick={refreshData}
+              className="px-4 py-2 rounded-lg border border-border hover:bg-surface"
+            >
+              <RefreshCcw className="w-4 h-4" />
+            </button>
           </div>
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-muted" />
             <button
               onClick={() => setShowActiveOnly(!showActiveOnly)}
-              className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${showActiveOnly
-                ? "bg-primary-light border-primary text-primary"
-                : "border-border hover:bg-surface"
-                }`}
+              className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
+                showActiveOnly
+                  ? "bg-primary-light border-primary text-primary"
+                  : "border-border hover:bg-surface"
+              }`}
             >
               <Activity className="w-4 h-4" />
               {showActiveOnly ? "Active Only" : "All Patients"}
@@ -262,7 +273,7 @@ const PatientTable = () => {
                       <td className="px-6 py-4">
                         {patient.oneTimeFlag ? (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-warning/10 text-warning">
-                            OneTime
+                            Walk In
                           </span>
                         ) : (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-success/10 text-success">
@@ -274,12 +285,14 @@ const PatientTable = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div
-                            className={`w-2 h-2 rounded-full ${patient.isActive ? "bg-success" : "bg-error"
-                              }`}
+                            className={`w-2 h-2 rounded-full ${
+                              patient.isActive ? "bg-success" : "bg-error"
+                            }`}
                           />
                           <span
-                            className={`text-sm font-medium ${patient.isActive ? "text-success" : "text-error"
-                              }`}
+                            className={`text-sm font-medium ${
+                              patient.isActive ? "text-success" : "text-error"
+                            }`}
                           >
                             {patient.isActive ? "Active" : "Inactive"}
                           </span>
@@ -298,7 +311,9 @@ const PatientTable = () => {
                           </button>
                           <button
                             onClick={() =>
-                              navigate(`/patient/edit/${patient.id}`, { state: { patient: patient } })
+                              navigate(`/patient/edit/${patient.id}`, {
+                                state: { patient: patient },
+                              })
                             }
                             className="p-2 text-muted hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                             title="Edit Patient"
@@ -336,37 +351,18 @@ const PatientTable = () => {
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-border">
-                <Pagination
-                  currentPage={page + 1}
-                  totalPages={totalPages}
-                  onPageChange={(newPage) => setPage(newPage - 1)}
-                />
-              </div>
-            )}
+            <div className="px-6 py-4 border-t border-border">
+              <Pagination
+                currentPage={pagination?.currentPage || 0}
+                totalPages={pagination?.totalPages || 1}
+                onPageChange={setPage}
+              />
+            </div>
           </>
         )}
       </div>
     </div>
   );
 };
-
-// Helper function to calculate age
-function calculateAge(dateOfBirth: string): number {
-  const today = new Date();
-  const birthDate = new Date(dateOfBirth);
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-
-  if (
-    monthDiff < 0 ||
-    (monthDiff === 0 && today.getDate() < birthDate.getDate())
-  ) {
-    age--;
-  }
-
-  return age;
-}
 
 export default PatientTable;

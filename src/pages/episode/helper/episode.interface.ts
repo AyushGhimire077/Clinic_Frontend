@@ -61,9 +61,12 @@ export interface EpisodeState {
   setEpisodeList: (episodeList: IEpisode[]) => void;
 
   createEpisode: (episode: EpisodeRequest) => Promise<IResponse>;
-  createEpisodeTemplate: (episode: EpisodeTempReq) => Promise<IResponse>;
-  getAllEpisodeTemplates: (pagination: PaginationInfo) => Promise<IResponse>;
   getAllEpisodes: (pagination: PaginationInfo) => Promise<IResponse>;
   getEpisodeById: (id: string) => Promise<IResponse>;
+  getAllActiveEpisode: (pagination: PaginationInfo) => Promise<IResponse>;
+  cancelEpisode: (id: string) => Promise<IResponse>;
+
+  createEpisodeTemplate: (episode: EpisodeTempReq) => Promise<IResponse>;
+  getAllEpisodeTemplates: (pagination: PaginationInfo) => Promise<IResponse>;
   getEpisodeTemplateById: (id: string) => Promise<IResponse>;
 }
