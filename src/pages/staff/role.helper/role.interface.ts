@@ -1,7 +1,7 @@
 import type {
   IResponse,
   PaginationInfo,
-} from "../../../component/global/utils/enums";
+} from "../../../component/constant/global.interface";
 
 export interface IRoleRequest {
   role: string;

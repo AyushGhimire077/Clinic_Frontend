@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { BackButton } from "../../../../component/global/components/back/back";
 import { Pagination } from "../../../../component/global/components/Pagination";
 import { SearchInput } from "../../../../component/global/components/SearchInput";
-import { formatCurrency } from "../../../../component/global/utils/global.utils.";
 import { useStaffStore } from "../../staff.helper/staff.store";
+import { formatCurrency } from "../../../../component/utils/ui.helpers";
 
 const StaffTable = () => {
   const { staffList, getAllStaff, searchStaff, pagination } = useStaffStore();
@@ -166,11 +166,10 @@ const StaffTable = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                            staff.isActive
-                              ? "bg-green-100 text-success"
-                              : "bg-gray-100 text-muted"
-                          }`}
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${staff.isActive
+                            ? "bg-green-100 text-success"
+                            : "bg-gray-100 text-muted"
+                            }`}
                         >
                           {staff.isActive ? "Active" : "Inactive"}
                         </span>

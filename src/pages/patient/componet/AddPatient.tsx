@@ -1,12 +1,12 @@
 import { Calendar, Home, Save, User, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { genderOptions } from "../../../component/constant/select";
 import { BackButton } from "../../../component/global/components/back/back";
 import { inputField } from "../../../component/global/components/customStyle";
 import { useToast } from "../../../component/toaster/useToast";
 import type { IPatient, IPatientRequest } from "../helper/patient.interface";
 import { usePatientStore } from "../helper/patient.store";
-import { genderOptions } from "../../../component/global/utils/select";
 
 const AddPatient = () => {
   const { showToast } = useToast();

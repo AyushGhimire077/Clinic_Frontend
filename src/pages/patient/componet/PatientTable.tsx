@@ -15,7 +15,7 @@ import { Pagination } from "../../../component/global/components/Pagination";
 import { SearchInput } from "../../../component/global/components/SearchInput";
 import { useToast } from "../../../component/toaster/useToast";
 import { usePatientStore } from "../helper/patient.store";
-import { calculateAge } from "../../../component/global/utils/global.utils.";
+import { calculateAge } from "../../../component/utils/ui.helpers";
 
 const PatientTable = () => {
   const navigate = useNavigate();
@@ -78,7 +78,7 @@ const PatientTable = () => {
   };
 
   useEffect(() => {
-     loadData();
+    loadData();
     return;
   }, [searchQuery, page]);
 
@@ -169,11 +169,10 @@ const PatientTable = () => {
             <Filter className="w-4 h-4 text-muted" />
             <button
               onClick={() => setShowActiveOnly(!showActiveOnly)}
-              className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
-                showActiveOnly
-                  ? "bg-primary-light border-primary text-primary"
-                  : "border-border hover:bg-surface"
-              }`}
+              className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${showActiveOnly
+                ? "bg-primary-light border-primary text-primary"
+                : "border-border hover:bg-surface"
+                }`}
             >
               <Activity className="w-4 h-4" />
               {showActiveOnly ? "Active Only" : "All Patients"}
@@ -270,7 +269,7 @@ const PatientTable = () => {
                       <td className="px-6 py-4">
                         {patient.oneTimeFlag ? (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-warning/10 text-warning">
-                            Walk-in  
+                            Walk-in
                           </span>
                         ) : (
                           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-success/10 text-success">
@@ -282,14 +281,12 @@ const PatientTable = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div
-                            className={`w-2 h-2 rounded-full ${
-                              patient.isActive ? "bg-success" : "bg-error"
-                            }`}
+                            className={`w-2 h-2 rounded-full ${patient.isActive ? "bg-success" : "bg-error"
+                              }`}
                           />
                           <span
-                            className={`text-sm font-medium ${
-                              patient.isActive ? "text-success" : "text-error"
-                            }`}
+                            className={`text-sm font-medium ${patient.isActive ? "text-success" : "text-error"
+                              }`}
                           >
                             {patient.isActive ? "Active" : "Completed"}
                           </span>

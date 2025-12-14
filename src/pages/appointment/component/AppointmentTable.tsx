@@ -2,11 +2,11 @@ import { Calendar, Edit, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { appointmentStatusOptions } from "../../../component/constant/global.interface";
 import { BackButton } from "../../../component/global/components/back/back";
+import { Pagination } from "../../../component/global/components/Pagination";
 import type { IAppointment } from "../helper/appointment.interface";
 import { useAppointmentStore } from "../helper/appointment.store";
-import { Pagination } from "../../../component/global/components/Pagination";
-import { appointmentStatusOptions } from "../../../component/global/utils/global.interface";
 
 const AppointmentTable = () => {
   const {

@@ -3,7 +3,7 @@ import type {
   IResponse,
   PaginationInfo,
   PaginationState,
-} from "../../../component/global/utils/global.interface";
+} from "../../../component/constant/global.interface";
 import type { IEpisode } from "../../episode/helper/episode.interface";
 
 export interface IAppointment {

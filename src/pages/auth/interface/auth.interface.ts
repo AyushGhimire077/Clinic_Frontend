@@ -1,4 +1,4 @@
-import type { IResponse } from "../../../component/global/utils/enums";
+import type { IResponse } from "../../../component/constant/global.interface";
 
 export interface AuthRequest {
   email: string;
@@ -23,7 +23,7 @@ export interface AuthState {
   user: IUser | null;
   token: string | null;
   error: string | null;
-  
+
   checkAuth: () => void;
   clearAuth: () => void;
   login: (data: AuthRequest) => Promise<IResponse>;

@@ -3,20 +3,20 @@ import { AlertCircle, Calendar, Clock, Info, Mail, Phone, Plus, Stethoscope, Use
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import { appointmentStatusOptions } from "../../../component/constant/select";
 import { BackButton } from "../../../component/global/components/back/back";
 import { useToast } from "../../../component/toaster/useToast";
-import { getLocalDateTime } from "../../../component/utils/datatime";
 import type { IEpisode } from "../../episode/helper/episode.interface";
 import { useEpisodeStore } from "../../episode/helper/episode.store";
 import type { IAppointmentRequest } from "../helper/appointment.interface";
 import { useAppointmentStore } from "../helper/appointment.store";
 import EpisodeSelect from "./EpisodeSelect";
-import { appointmentStatusOptions } from "../../../component/global/utils/select";
+import { getLocalDateTime } from "../../../component/utils/ui.helpers";
 
 const AddAppointment = () => {
     const { showToast } = useToast();
     const navigate = useNavigate();
-    const { create, update, getAppointmentById } = useAppointmentStore();
+    const { create, update, getById } = useAppointmentStore();
     const { getEpisodeById } = useEpisodeStore();
     const [selectedEpisode, setSelectedEpisode] = useState<IEpisode | null>(null);
 
@@ -48,7 +48,7 @@ const AddAppointment = () => {
                 if (appointmentId) {
                     // EDIT MODE: Load existing appointment
                     setIsEditMode(true);
-                    const appointment = await getAppointmentById(appointmentId);
+                    const appointment = await getById(appointmentId);
                     console.log(appointment.severity)
 
                     if (appointment.severity === "success" && appointment.data) {

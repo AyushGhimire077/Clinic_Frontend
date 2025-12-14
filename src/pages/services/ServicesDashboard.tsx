@@ -1,7 +1,7 @@
 import { Activity, CheckCircle, DollarSign, List, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { formatCurrency } from "../../component/global/utils/global.utils.";
 import { useServicesStore } from "./services.helper/services.store";
+import { formatCurrency } from "../../component/utils/ui.helpers";
 
 const ServicesDashboard = () => {
   const navigate = useNavigate();

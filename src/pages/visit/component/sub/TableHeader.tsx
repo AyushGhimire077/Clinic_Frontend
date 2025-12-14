@@ -1,7 +1,7 @@
 import { Filter, Search } from "lucide-react";
+import { visitStatusOptions } from "../../../../component/constant/select";
 import { inputField } from "../../../../component/global/components/customStyle";
-import DateSelector from "../../../../component/global/components/DateSelector";
-import { visitStatusOptions } from "../../../../component/global/utils/select";
+import DateSelector from "../../../../component/global/components/dateSelector/DateSelector";
 
 
 interface TableHeaderProps {

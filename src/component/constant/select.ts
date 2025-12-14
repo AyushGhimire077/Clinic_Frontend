@@ -1,12 +1,12 @@
 // select.ts
 import {
-  Gender,
-  BillingMode,
-  EpisodeType,
-  Status,
   AppointmentStatus,
+  BillingMode,
   DoctorType,
+  EpisodeType,
+  Gender,
   StaffType,
+  Status,
   VisitStatus,
 } from "./enums";
 

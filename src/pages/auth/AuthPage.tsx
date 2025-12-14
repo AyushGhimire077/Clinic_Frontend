@@ -6,18 +6,18 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  
+
   const { login, isLoading } = useAuthStore();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       return;
     }
-    
+
     const res = await login({ email, password });
-    
+
     if (res.severity === "success") {
       // Redirect to dashboard on successful login
       navigate("/");
@@ -31,7 +31,7 @@ function AuthPage() {
           <h2 className="text-2xl font-bold text-foreground">Clinic Login</h2>
           <p className="text-muted mt-2">Enter your credentials to access the system</p>
         </div>
-        
+
         <form className="space-y-6" onSubmit={handleLogin}>
           <div className="space-y-4">
             <div>
@@ -49,7 +49,7 @@ function AuthPage() {
                 disabled={isLoading}
               />
             </div>
-            
+
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
                 Password
@@ -73,8 +73,8 @@ function AuthPage() {
             className={`
               w-full py-3 font-medium text-white rounded-lg
               transition-colors duration-200
-              ${isLoading 
-                ? "bg-gray-400 cursor-not-allowed" 
+              ${isLoading
+                ? "bg-gray-400 cursor-not-allowed"
                 : "bg-primary hover:bg-primary-dark focus-ring"
               }
             `}

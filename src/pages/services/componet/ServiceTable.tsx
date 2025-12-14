@@ -5,8 +5,8 @@ import { Activity, Filter, Plus, RefreshCcw } from "lucide-react";
 import { BackButton } from "../../../component/global/components/back/back";
 import { Pagination } from "../../../component/global/components/Pagination";
 import { SearchInput } from "../../../component/global/components/SearchInput";
-import { formatCurrency } from "../../../component/global/utils/global.utils.";
 import { useServicesStore } from "../services.helper/services.store";
+import { formatCurrency } from "../../../component/utils/ui.helpers";
 
 const ServiceTable = () => {
   const navigate = useNavigate();

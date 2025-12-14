@@ -1,6 +1,6 @@
 import { Calendar, CreditCard, FileText, User } from "lucide-react";
+import { billingModeOptions, episodeTypeOptions, statusOptions } from "../../../../../component/constant/select";
 import { inputField } from "../../../../../component/global/components/customStyle";
-import { billingModeOptions, episodeTypeOptions, statusOptions } from "../../../../../component/global/utils/select";
 import type { EpisodeRequest } from "../../../helper/episode.interface";
 import DoctorStaffSelect from "../../../utils/DoctorStaffSelect";
 import PatientSelect from "../../../utils/PatientSelect";

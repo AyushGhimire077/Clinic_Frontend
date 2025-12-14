@@ -2,9 +2,9 @@ import { create } from "zustand";
 import { axios_auth } from "../../../component/global/config";
 import type { AppointmentState } from "./appointment.interface";
 import {
-  handleApiError,
   handleApiResponse,
-} from "../../../component/global/utils/global.utils.";
+  handleApiError,
+} from "../../../component/utils/ui.helpers";
 
 export const useAppointmentStore = create<AppointmentState>((set) => ({
   appointments: [],

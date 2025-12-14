@@ -1,10 +1,12 @@
 import type {
   DoctorType,
+  StaffType,
+} from "../../../component/constant/enums";
+import type {
   IResponse,
   PaginationInfo,
   PaginationState,
-  StaffType,
-} from "../../../component/global/utils/enums";
+} from "../../../component/constant/global.interface";
 
 export interface IStaffRequest {
   name: string;
@@ -32,7 +34,7 @@ export interface IStaff {
 export interface StaffState {
   staffList: IStaff[];
   pagination: PaginationState | null;
-  count: Record<string , number> | null;
+  count: Record<string, number> | null;
 
   setStaffList: (staffList: IStaff[]) => void;
   setPagination: (page: PaginationState | null) => void;

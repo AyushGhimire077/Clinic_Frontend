@@ -1,4 +1,40 @@
-import type { IResponse, Severity } from "./response";
+import { format, toZonedTime } from "date-fns-tz";
+import type { IResponse, Severity } from "../constant/global.interface";
+import { BILLING_MODE_TAGS, STATUS_COLORS, TYPE_COLORS } from "../constant/tag";
+
+export const getStatusColor = (status: string) =>
+  STATUS_COLORS[status] ?? "bg-surface text-foreground border border-border";
+
+export const getTypeColor = (type: string) =>
+  TYPE_COLORS[type] ?? "bg-surface text-foreground border border-border";
+
+export const getBillingModeTag = (mode: string) =>
+  BILLING_MODE_TAGS[mode] ?? {
+    label: "N/A",
+    className: "bg-surface text-muted",
+  };
+
+// formatters / helpers
+export const getTodayDateString = () => new Date().toISOString().split("T")[0];
+
+const TIME_ZONE = "Asia/Kathmandu";
+
+export const getLocalDateTime = (): string => {
+  const now = new Date();
+  const zonedDate = toZonedTime(now, TIME_ZONE);
+  return format(zonedDate, "yyyy-MM-dd'T'HH:mm", { timeZone: TIME_ZONE });
+};
+
+export const formatDateForDisplay = (dateString: string): string => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
 
 export const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("en-US", {
@@ -20,7 +56,6 @@ export const formatDateTime = (dateString: string) => {
   });
 };
 
-// Utility functions
 export const calculateAge = (dateOfBirth: string) => {
   const today = new Date();
   const birthDate = new Date(dateOfBirth);
@@ -36,6 +71,7 @@ export const calculateAge = (dateOfBirth: string) => {
   return age;
 };
 
+// api response handlers
 export const handleApiResponse = (res: any): IResponse => ({
   message: res.data?.message || "Request completed",
   status: res.data?.status || 500,

@@ -1,13 +1,6 @@
 // response.ts
 export type Severity = "success" | "error" | "info" | "warning";
 
-export interface IResponse {
-  status: number;
-  severity: Severity;
-  message: string;
-  data?: any;
-}
-
 export const getSeverityColor = (severity: Severity): string => {
   const colors = {
     success: "text-success",
@@ -18,7 +11,7 @@ export const getSeverityColor = (severity: Severity): string => {
   return colors[severity];
 };
 
- export interface PaginationInfo {
+export interface PaginationInfo {
   page: number;
   size: number;
   total?: number;

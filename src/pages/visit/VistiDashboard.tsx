@@ -1,11 +1,11 @@
 import { CalendarCheck, ChevronRight, ClipboardList } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useVisitStore } from "./helper/vist.store";
-import { visitStatusOptions } from "../../component/global/utils/select";
+import type { VisitStatus } from "../../component/constant/enums";
+import { visitStatusOptions } from "../../component/constant/select";
+import DateSelector from "../../component/global/components/dateSelector/DateSelector";
 import VisitTable from "./component/VistiTable";
-import type { VisitStatus } from "../../component/global/utils/enums";
-import DateSelector from "../../component/global/components/DateSelector";
+import { useVisitStore } from "./helper/vist.store";
 
 const VisitDashboard = () => {
     const [activeTab, setActiveTab] = useState<"visits" | "today">("visits");

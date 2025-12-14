@@ -1,11 +1,12 @@
 import { create } from "zustand";
+import type { VisitStatus } from "../../../component/constant/enums";
 import { axios_auth } from "../../../component/global/config";
-import type { VisitStatus } from "../../../component/global/utils/enums";
-import {
-  handleApiError,
-  handleApiResponse,
-} from "../../../component/global/utils/global.utils.";
+
 import type { IVisit, IVisitCreate, IVisitState } from "./vist.interface";
+import {
+  handleApiResponse,
+  handleApiError,
+} from "../../../component/utils/ui.helpers";
 
 export const useVisitStore = create<IVisitState>((set, get) => ({
   visitList: [],

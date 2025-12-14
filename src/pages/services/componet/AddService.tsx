@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { Activity, Save } from "lucide-react";
+import { doctorTypeOptions } from "../../../component/constant/select";
 import { BackButton } from "../../../component/global/components/back/back";
 import { inputField } from "../../../component/global/components/customStyle";
 import { useToast } from "../../../component/toaster/useToast";
 import type { IServicesRequest } from "../services.helper/services.interface";
 import { useServicesStore } from "../services.helper/services.store";
-import { doctorTypeOptions } from "../../../component/global/utils/select";
 
 const AddService = () => {
   const { showToast } = useToast();

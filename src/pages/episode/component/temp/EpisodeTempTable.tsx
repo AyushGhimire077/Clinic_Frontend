@@ -5,18 +5,18 @@ import { CreditCard, FileText, Package, Plus } from "lucide-react";
 import { BackButton } from "../../../../component/global/components/back/back";
 import { Pagination } from "../../../../component/global/components/Pagination";
 import { SearchInput } from "../../../../component/global/components/SearchInput";
-import { formatCurrency } from "../../../../component/global/utils/global.utils.";
 import { useEpisodeStore } from "../../helper/episode.store";
+import { formatCurrency } from "../../../../component/utils/ui.helpers";
 
 const EpisodeTemplateTable = () => {
   const navigate = useNavigate();
-  const { episodeTemplateList, totalPages, getAllEpisodeTemplates } =
+  const { episodeTemplateList, pagination, getAllEpisodeTemplates } =
     useEpisodeStore();
 
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const pageSize = 10;
+  const size = 10;
 
   useEffect(() => {
     loadTemplates();
@@ -25,7 +25,7 @@ const EpisodeTemplateTable = () => {
   const loadTemplates = async () => {
     setLoading(true);
     try {
-      await getAllEpisodeTemplates({ page, size: pageSize });
+      await getAllEpisodeTemplates({ page, size });
     } finally {
       setLoading(false);
     }
@@ -204,15 +204,12 @@ const EpisodeTemplateTable = () => {
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-border">
-                <Pagination
-                  currentPage={page + 1}
-                  totalPages={totalPages}
-                  onPageChange={(newPage) => setPage(newPage - 1)}
-                />
-              </div>
-            )}
+            <Pagination
+              currentPage={pagination?.currentPage || 0}
+              totalPages={pagination?.totalPages || 1}
+              onPageChange={setPage}
+
+            />
           </>
         )}
       </div>

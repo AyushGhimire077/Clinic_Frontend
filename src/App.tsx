@@ -31,6 +31,7 @@ import EditRole from "./pages/staff/componet/roles/EditRole";
 import VisitDashboard from "./pages/visit/VistiDashboard";
 import VisitTable from "./pages/visit/component/VistiTable";
 import VisitInfo from "./pages/visit/component/VisitInfo";
+import EpisodeDetail from "./pages/episode/component/episode/EpisodeDetail";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
@@ -141,6 +142,7 @@ const App = () => {
             <Route index element={<EpisodeDashboard />} />
             <Route path="view" element={<EpisodeTable />} />
             <Route path="add" element={<AddEpisode />} />
+            <Route path="view/:id" element={<EpisodeDetail />} />
             <Route path="add?patientId=:patientId" element={<AddEpisode />} />
             <Route path="add?template=:template" element={<AddEpisode />} />
             <Route path="templates/add" element={<AddEpisodeTemp />} />

@@ -4,12 +4,12 @@ import {
   getDecodedToken,
   getTokenFromCookies,
 } from "../../../component/global/config";
-import type { IResponse } from "../../../component/global/utils/enums";
 import type {
   AuthRequest,
   AuthState,
   IUser,
 } from "../interface/auth.interface";
+import type { IResponse } from "../../../component/constant/global.interface";
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,

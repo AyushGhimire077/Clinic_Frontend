@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { BackButton } from "../../../../component/global/components/back/back";
 import { inputField } from "../../../../component/global/components/customStyle";
 
+import { doctorTypeOptions, staffTypeOptions } from "../../../../component/constant/select";
 import { useToast } from "../../../../component/toaster/useToast";
 import { useRoleStore } from "../../role.helper/role.store";
 import type { IStaffRequest } from "../../staff.helper/staff.interface";
 import { useStaffStore } from "../../staff.helper/staff.store";
-import { doctorTypeOptions, staffTypeOptions } from "../../../../component/global/utils/select";
 
 const AddStaff = () => {
   const { showToast } = useToast();

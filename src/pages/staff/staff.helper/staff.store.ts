@@ -4,7 +4,7 @@ import { axios_auth } from "../../../component/global/config";
 import {
   handleApiError,
   handleApiResponse,
-} from "../../../component/global/utils/global.utils.";
+} from "../../../component/utils/ui.helpers";
 
 export const useStaffStore = create<StaffState>((set) => ({
   staffList: [],

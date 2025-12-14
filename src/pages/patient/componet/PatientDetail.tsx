@@ -15,9 +15,9 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BackButton } from "../../../component/global/components/back/back";
-import { calculateAge, formatDate } from "../../../component/global/utils/global.utils.";
 import { useToast } from "../../../component/toaster/useToast";
 import { usePatientStore } from "../helper/patient.store";
+import { calculateAge, formatDateForDisplay } from "../../../component/utils/ui.helpers";
 
 
 
@@ -247,7 +247,7 @@ const PatientDetail = () => {
               <div className="flex flex-wrap gap-4 text-sm text-muted">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  <span>Born {formatDate(patient.dateOfBirth)}</span>
+                  <span>Born {formatDateForDisplay(patient.dateOfBirth)}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <UserCheck className="w-4 h-4" />
@@ -260,7 +260,7 @@ const PatientDetail = () => {
                 {/* register on */}
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4" />
-                  <span>{formatDate(patient.createdAt)}</span>
+                  <span>{formatDateForDisplay(patient.createdAt)}</span>
                 </div>
               </div>
             </div>
@@ -301,7 +301,7 @@ const PatientDetail = () => {
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-muted" />
                     <span className="text-foreground font-medium">
-                      {formatDate(patient.dateOfBirth)}
+                      {formatDateForDisplay(patient.dateOfBirth)}
                     </span>
                   </div>
                 </div>

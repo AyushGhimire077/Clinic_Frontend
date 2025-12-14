@@ -10,16 +10,15 @@ import {
     XCircle
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import type { VisitStatus } from "../../../component/constant/enums";
 import { BackButton } from "../../../component/global/components/back/back";
-import type { VisitStatus } from "../../../component/global/utils/enums";
-import { formatDate } from "../../../component/global/utils/global.utils.";
 import { useToast } from "../../../component/toaster/useToast";
 import type { IVisit } from "../helper/vist.interface";
 import { useVisitStore } from "../helper/vist.store";
 import { TableHeader } from "./sub/TableHeader";
 import { VisitDetailsModal } from "./sub/VisitDetailsModal";
 import { VisitTableRow } from "./sub/VisitTableRow";
+import { formatDate } from "../../../component/utils/ui.helpers";
 
 // Constants and configuration
 const STATUS_CONFIG = {
@@ -54,7 +53,6 @@ const VisitTable = ({ status }: { status: string }) => {
         updateVisit,
     } = useVisitStore();
 
-    const navigate = useNavigate();
     const { showToast } = useToast();
 
     const [page, setPage] = useState(0);

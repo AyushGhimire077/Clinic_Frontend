@@ -1,6 +1,6 @@
 // vist.interface.ts
-import type { VisitStatus } from "../../../component/global/utils/enums";
-import type { IResponse } from "../../../component/global/utils/response";
+import type { VisitStatus } from "../../../component/constant/enums";
+import type { IResponse } from "../../../component/constant/global.interface";
 import type { IEpisode } from "../../episode/helper/episode.interface";
 import type { IPatient } from "../../patient/helper/patient.interface";
 import type { IServices } from "../../services/services.helper/services.interface";
@@ -19,7 +19,7 @@ export interface IVisit {
 
   prescribedMedicines: string[];
   services: IServices[];
- }
+}
 
 export interface IVisitCreate {
   episodeId: string;
