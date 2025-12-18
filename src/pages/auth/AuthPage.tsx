@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "./store/auth.store";
+import { useAuthStore } from "./auth.store/auth.store";
 
 function AuthPage() {
   const [email, setEmail] = useState("");

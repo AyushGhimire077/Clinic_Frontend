@@ -11,8 +11,8 @@ export type Severity = "success" | "error" | "info" | "warning";
 export interface PaginationState {
   currentPage: number;  
   pageSize: number;     
-  totalItems: number;   
-  totalPages: number;  
+  totalItems?: number;   
+  totalPages?: number;  
 }
 
 export interface PaginationInfo {

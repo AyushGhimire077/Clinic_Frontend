@@ -1,8 +1,8 @@
-import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
-import { useAuthStore } from "../auth/store/auth.store";
-import { Sidebar } from "./component/Sidebar";
+import { Outlet } from "react-router-dom";
+import { useAuthStore } from "../auth/auth.store/auth.store";
 import { AppBar } from "./component/AppBar";
+import { Sidebar } from "./component/Sidebar";
 
 const Layout = () => {
   const { checkAuth } = useAuthStore();

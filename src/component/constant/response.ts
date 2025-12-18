@@ -11,7 +11,7 @@ export const getSeverityColor = (severity: Severity): string => {
   return colors[severity];
 };
 
-export interface PaginationInfo {
+export interface PaginationInfoResponse {
   page: number;
   size: number;
   total?: number;

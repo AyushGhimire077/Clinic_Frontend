@@ -7,32 +7,33 @@ import { useStaffStore } from "../../staff.helper/staff.store";
 import { formatCurrency } from "../../../../component/utils/ui.helpers";
 
 const StaffTable = () => {
-  const { staffList, getAllStaff, searchStaff, pagination } = useStaffStore();
+  const { fetchAll, search, fetchCount, list, isLoading, count, pagination, setPage } = useStaffStore();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [page, setPage] = useState(0);
-  const size = 10;
-  const [loading, setLoading] = useState(false);
+  // const [filter, setFilter] = useState<string | null>(null);
 
-  // { currentPage: 0, pageSize: 10, totalItems: 3, totalPages: 1 }
-  console.log(pagination);
+
 
   const loadStaff = async () => {
-    setLoading(true);
     try {
       if (searchQuery.trim()) {
-        await searchStaff(searchQuery, { page, size });
+        await search(searchQuery);
       } else {
-        await getAllStaff({ page, size });
+        await fetchAll();
       }
-    } finally {
-      setLoading(false);
+
+    } catch (error) {
+      console.error("Error loading staff:", error);
     }
   };
 
-  useEffect(() => {
-    loadStaff();
-  }, [page, searchQuery]);
+  const getCount = async () => {
+    try {
+      await fetchCount();
+    } catch (error) {
+      console.error("Error loading staff count:", error);
+    }
+  };
 
   const handleSearch = (q: string) => {
     setSearchQuery(q);
@@ -46,6 +47,15 @@ const StaffTable = () => {
       .join("")
       .toUpperCase()
       .substring(0, 2);
+
+  useEffect(() => {
+    loadStaff();
+  }, [searchQuery, pagination.currentPage]);
+
+  useEffect(() => {
+    getCount();
+  }, []);
+
 
   return (
     <div className="max-w-[90em] mx-auto">
@@ -71,7 +81,7 @@ const StaffTable = () => {
               className="w-64"
             />
             <div className="text-sm text-muted">
-              Showing {staffList.length} staff members
+              Showing {list.length} staff members out of {count?.total ?? 0}
             </div>
           </div>
         </div>
@@ -79,11 +89,11 @@ const StaffTable = () => {
 
       {/* Table */}
       <div className="bg-surface border border-border rounded-lg overflow-hidden">
-        {loading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <div className="w-8 h-8 border-2 border-primary-light border-t-primary rounded-full animate-spin" />
           </div>
-        ) : staffList.length === 0 ? (
+        ) : list.length === 0 ? (
           <div className="py-12 text-center">
             <div className="w-16 h-16 mx-auto mb-4">
               <Users className="w-16 h-16 text-muted/30" />
@@ -131,7 +141,7 @@ const StaffTable = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {staffList.map((staff) => (
+                  {list.map((staff) => (
                     <tr
                       key={staff.id}
                       className="hover:bg-primary-light/5 transition-colors"

@@ -1,7 +1,7 @@
 import { IoLogoCapacitor } from "react-icons/io5";
 import { Link, useMatch } from "react-router-dom";
 import { getSidebarItems } from "../../../component/utils/sidebarUtils";
-import { useAuthStore } from "../../auth/store/auth.store";
+import { useAuthStore } from "../../auth/auth.store/auth.store";
 
 export const Sidebar = () => {
   const { user } = useAuthStore();

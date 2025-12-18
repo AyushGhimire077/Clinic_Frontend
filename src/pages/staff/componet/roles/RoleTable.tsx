@@ -1,64 +1,58 @@
-import { useEffect, useState } from "react";
-
 import { Activity, Edit2, Filter, Shield } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BackButton } from "../../../../component/global/components/back/back";
 import { Pagination } from "../../../../component/global/components/Pagination";
 import { SearchInput } from "../../../../component/global/components/SearchInput";
-import { useToast } from "../../../../component/toaster/useToast";
 import { useRoleStore } from "../../role.helper/role.store";
 
 const RoleTable = () => {
-  const { showToast } = useToast();
   const {
-    roles,
-    totalPages,
-    totalItems,
-     getAllActiveRoles,
-    enableRole,
-    disableRole,
+    fetchActive,
+    fetchAll,
+    disable,
+    enable,
+    list,
+    setPage,
+    isLoading,
+    search,
+    pagination,
   } = useRoleStore();
 
-  const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [showActiveOnly, setShowActiveOnly] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const pageSize = 100; // no need of pagination for roles, load all
 
   const navigate = useNavigate();
 
   const loadRoles = async () => {
-    setLoading(true);
     try {
-      if (showActiveOnly) {
-        await getAllActiveRoles({ page, size: pageSize });
-      } 
-    } finally {
-      setLoading(false);
+      if (searchQuery.trim()) {
+        await search(searchQuery);
+      } else if (showActiveOnly) {
+        await fetchActive();
+      } else {
+        await fetchAll();
+      }
+    } catch (error) {
+      console.error("Error loading roles:", error);
     }
   };
 
   useEffect(() => {
     loadRoles();
-  }, [page, showActiveOnly]);
-
-  const handleEnable = async (id: string) => {
-    const res = await enableRole(id);
-    showToast(res.message, res.severity);
-  };
+  }, [searchQuery, showActiveOnly, pagination.currentPage]);
 
   const handleDisable = async (id: string) => {
-    const res = await disableRole(id);
-    showToast(res.message, res.severity);
+    await disable(id);
+    loadRoles();
   };
 
-  const filteredRoles = roles.filter(
-    (role) =>
-      role.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      role.permissions.some((p) =>
-        p.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-  );
+  const handleEnable = async (id: string) => {
+    await enable(id);
+    loadRoles();
+  };
+
+  const totalPages = pagination.totalPages || 1;
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -100,44 +94,16 @@ const RoleTable = () => {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-surface border border-border rounded-lg p-4">
-          <div className="text-2xl font-bold text-foreground">{totalItems}</div>
-          <div className="text-sm text-muted">Total Roles</div>
-        </div>
-        <div className="bg-surface border border-border rounded-lg p-4">
-          <div className="text-2xl font-bold text-foreground">
-            {roles.filter((r) => r.isActive).length}
-          </div>
-          <div className="text-sm text-muted">Active Roles</div>
-        </div>
-        <div className="bg-surface border border-border rounded-lg p-4">
-          <div className="text-2xl font-bold text-foreground">
-            {roles.reduce((acc, role) => acc + role.permissions.length, 0)}
-          </div>
-          <div className="text-sm text-muted">Total Permissions</div>
-        </div>
-        <div className="bg-surface border border-border rounded-lg p-4">
-          <div className="text-2xl font-bold text-foreground">
-            {new Set(roles.flatMap((r) => r.permissions)).size}
-          </div>
-          <div className="text-sm text-muted">Unique Permissions</div>
-        </div>
-      </div>
-
       {/* Table */}
       <div className="bg-surface border border-border rounded-lg overflow-hidden">
-        {loading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <div className="w-8 h-8 border-2 border-primary-light border-t-primary rounded-full animate-spin" />
           </div>
-        ) : filteredRoles.length === 0 ? (
+        ) : list.length === 0 ? (
           <div className="py-12 text-center">
             <Shield className="w-16 h-16 mx-auto mb-4 text-muted/30" />
-            <p className="text-lg font-medium text-foreground">
-              No roles found
-            </p>
+            <p className="text-lg font-medium text-foreground">No roles found</p>
             <p className="text-muted">Create your first role to get started</p>
           </div>
         ) : (
@@ -146,45 +112,25 @@ const RoleTable = () => {
               <table className="w-full">
                 <thead className="bg-surface border-b border-border">
                   <tr>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
-                      Role
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
-                      Permissions
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
-                      Actions
-                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">Permissions</th>
+                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {filteredRoles.map((role) => (
-                    <tr
-                      key={role.id}
-                      className="hover:bg-primary-light/5 transition-colors"
-                    >
+                  {list.map((role) => (
+                    <tr key={role.id} className="hover:bg-primary-light/5 transition-colors">
                       <td className="px-6 py-4">
                         <div>
-                          <p className="font-medium text-foreground">
-                            {role.role}
-                          </p>
-                          <p className="text-[10px] text-muted">
-                            ID: {role.id.substring(0, 8)}...
-                          </p>
+                          <p className="font-medium text-foreground">{role.role}</p>
+                          <p className="text-[10px] text-muted">ID: {role.id.substring(0, 8)}...</p>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1 max-w-md">
                           {role.permissions.slice(0, 3).map((perm) => (
-                            <span
-                              key={perm}
-                              className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-primary-light text-primary"
-                            >
-                              {perm}
-                            </span>
+                            <span key={perm} className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-primary-light text-primary">{perm}</span>
                           ))}
                           {role.permissions.length > 3 && (
                             <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-surface text-muted">
@@ -195,14 +141,8 @@ const RoleTable = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div
-                            className={`w-2 h-2 rounded-full ${role.isActive ? "bg-success" : "bg-error"
-                              }`}
-                          />
-                          <span
-                            className={`text-sm font-medium ${role.isActive ? "text-success" : "text-error"
-                              }`}
-                          >
+                          <div className={`w-2 h-2 rounded-full ${role.isActive ? "bg-success" : "bg-error"}`} />
+                          <span className={`text-sm font-medium ${role.isActive ? "text-success" : "text-error"}`}>
                             {role.isActive ? "Active" : "Inactive"}
                           </span>
                         </div>
@@ -210,28 +150,15 @@ const RoleTable = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           {role.isActive ? (
-                            <button
-                              onClick={() => handleDisable(role.id)}
-                              className="p-2 text-error hover:text-error hover:bg-error/10 rounded-lg transition-colors" title="Disable Role"
-                            >
+                            <button onClick={() => handleDisable(role.id)} className="p-2 text-error hover:text-error hover:bg-error/10 rounded-lg transition-colors" title="Disable Role">
                               <Activity className="w-4 h-4" />
                             </button>
                           ) : (
-                            <button
-                              onClick={() => handleEnable(role.id)}
-                              className="p-2 text-success hover:text-success hover:bg-success/10 rounded-lg transition-colors"
-                              title="Enable Role"
-                            >
+                            <button onClick={() => handleEnable(role.id)} className="p-2 text-success hover:text-success hover:bg-success/10 rounded-lg transition-colors" title="Enable Role">
                               <Activity className="w-4 h-4" />
                             </button>
                           )}
-                          <button
-                            className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                            title="Edit Role"
-                            onClick={() => {
-                              navigate(`/staff/roles/edit/${role.id}`, { state: { data: role } });
-                            }}
-                          >
+                          <button className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit Role" onClick={() => navigate(`/staff/roles/edit/${role.id}`, { state: { data: role } })}>
                             <Edit2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -243,15 +170,13 @@ const RoleTable = () => {
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-border">
-                <Pagination
-                  currentPage={page + 1}
-                  totalPages={totalPages}
-                  onPageChange={(newPage) => setPage(newPage - 1)}
-                />
-              </div>
-            )}
+            <div className="px-6 py-4 border-t border-border">
+              <Pagination
+                currentPage={pagination?.currentPage || 0}
+                totalPages={pagination?.totalPages || 1}
+                onPageChange={setPage}
+              />
+            </div>
           </>
         )}
       </div>

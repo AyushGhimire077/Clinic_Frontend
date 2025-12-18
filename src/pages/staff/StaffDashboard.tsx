@@ -6,8 +6,8 @@ import { useRoleStore } from "./role.helper/role.store";
 
 const StaffDashboard = () => {
   const [activeTab, setActiveTab] = useState<"staff" | "roles">("staff");
-  const { countStaff, count } = useStaffStore();
-   const { roles,getAllRoles } = useRoleStore();
+  const { fetchCount, count } = useStaffStore();
+  const { list, fetchActive } = useRoleStore();
 
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
@@ -57,13 +57,16 @@ const StaffDashboard = () => {
     },
   ];
 
- 
+
   const currentTab = tabs.find((tab) => tab.id === activeTab);
 
   useEffect(() => {
     async function getCount() {
-      await countStaff();
-      await getAllRoles({page: 0, size: 10})
+      try {
+        await fetchCount();
+      } catch (error) {
+        console.error("Error loading staff count:", error);
+      }
     }
 
 
@@ -92,11 +95,10 @@ const StaffDashboard = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex-1 py-2.5 px-4 text-sm duration-300  font-medium rounded-xl transition-colors ${
-                activeTab === tab.id
-                  ? "bg-primary text-white"
-                  : "text-muted hover:bg-primary-light hover:text-foreground"
-              }`}
+              className={`flex-1 py-2.5 px-4 text-sm duration-300  font-medium rounded-xl transition-colors ${activeTab === tab.id
+                ? "bg-primary text-white"
+                : "text-muted hover:bg-primary-light hover:text-foreground"
+                }`}
             >
               {tab.label}
             </button>
@@ -138,20 +140,20 @@ const StaffDashboard = () => {
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
             <div className="text-3xl font-bold text-primary">
-              {count?.allCount}
+              {count?.active ?? 0}
             </div>
             <div className="text-sm text-muted">Active Staff</div>
           </div>
 
           <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
             <div className="text-3xl font-bold text-success">
-              {(count?.allCount ?? 0) - (count?.activeCount ?? 0)}
+              {(count?.total ?? 0) - (count?.active ?? 0)}
             </div>
             <div className="text-sm text-muted">InActive Staff</div>
           </div>
 
           <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
-            <div className="text-3xl font-bold  text-info">{roles.length}</div>
+            <div className="text-3xl font-bold  text-info">{list.length}</div>
             <div className="text-sm text-muted">Roles</div>
           </div>
         </div>

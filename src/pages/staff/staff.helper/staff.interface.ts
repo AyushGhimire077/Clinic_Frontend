@@ -1,13 +1,6 @@
-import type {
-  DoctorType,
-  StaffType,
-} from "../../../component/constant/enums";
-import type {
-  IResponse,
-  PaginationInfo,
-  PaginationState,
-} from "../../../component/constant/global.interface";
-
+import type { DoctorType, StaffType } from "../../../component/constant/enums";
+import type { PaginationInfo, PaginationState } from "../../../component/constant/global.interface";
+ 
 export interface IStaffRequest {
   name: string;
   email: string;
@@ -31,20 +24,30 @@ export interface IStaff {
   doctorSubType: DoctorType | "";
 }
 
+export interface StaffCount {
+  total: number;
+  active: number;
+}
+
 export interface StaffState {
-  staffList: IStaff[];
-  pagination: PaginationState | null;
-  count: Record<string, number> | null;
+  isLoading: boolean;
+  list: IStaff[];
+  
+ 
+  pagination: PaginationState;
+  count: StaffCount | null;
 
-  setStaffList: (staffList: IStaff[]) => void;
-  setPagination: (page: PaginationState | null) => void;
+  setPage: (page: number) => void;
 
-  createStaff: (staff: IStaffRequest) => Promise<IResponse>;
-  getAllStaff: (pagination: PaginationInfo) => Promise<IResponse>;
-  getAllActiveStaff: (pagination: PaginationInfo) => Promise<IResponse>;
-  countStaff: () => Promise<IResponse>;
-  searchStaff: (
-    query: string,
-    pagination: PaginationInfo
-  ) => Promise<IResponse>;
+  // commands
+  create: (staff: IStaffRequest) => Promise<void>;
+  update: (id: string, staff: IStaffRequest) => Promise<void>;
+  enable: (id: string) => Promise<void>;
+  disable: (id: string) => Promise<void>;
+  remove: (id: string) => Promise<void>;
+  //query
+  fetchAll: () => Promise<void>;
+  fetchActive: () => Promise<void>;
+  search: (name: string) => Promise<void>;
+  fetchCount: () => Promise<void>;
 }

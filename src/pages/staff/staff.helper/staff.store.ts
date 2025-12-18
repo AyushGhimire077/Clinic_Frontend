@@ -1,106 +1,132 @@
 import { create } from "zustand";
+import { StaffService } from "../../../component/api/services/staff.service";
 import type { StaffState } from "./staff.interface";
-import { axios_auth } from "../../../component/global/config";
-import {
-  handleApiError,
-  handleApiResponse,
-} from "../../../component/utils/ui.helpers";
 
-export const useStaffStore = create<StaffState>((set) => ({
-  staffList: [],
-  pagination: null,
+export const useStaffStore = create<StaffState>((set, get) => ({
+  isLoading: false,
+  list: [],
+  pagination: { currentPage: 0, pageSize: 10 },
   count: null,
 
-  setStaffList: (staffList) => set({ staffList }),
-  setPagination: (pagination) => set({ pagination }),
+  setPage: (page) => {
+    set((state) => ({
+      pagination: { ...state.pagination, currentPage: page },
+    }));
+    get().fetchAll();
+  },
 
-  // CREATE STAFF
-  createStaff: async (staff) => {
+  // commands
+  create: async (staff) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.post("/staff", staff);
-
-      if (res.data?.status === 201 || res.data?.status === 200) {
-        set((s) => ({
-          staffList: [...s.staffList, res.data.data],
-        }));
-      }
-
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+      await StaffService.create(staff);
+      await get().fetchAll();
+      await get().fetchCount();
+    } finally {
+      set({ isLoading: false });
     }
   },
 
-  // GET ALL STAFF (PAGINATION)
-  getAllStaff: async (pagination) => {
+  update: async (id, staff) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get("/staff/list", { params: pagination });
-
-      if (res.data?.status === 200) {
-        set({
-          staffList: res.data.data || [],
-          pagination: res.data.page || null,
-        });
-      }
-
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+      await StaffService.update(id, staff);
+      await get().fetchAll();
+    } finally {
+      set({ isLoading: false });
     }
   },
 
-  // GET ACTIVE STAFF (PAGINATION)
-  getAllActiveStaff: async (pagination) => {
+  enable: async (id) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get("/staff/active", { params: pagination });
-
-      if (res.data?.status === 200) {
-        set({
-          staffList: res.data.data || [],
-          pagination: res.data.page || null,
-        });
-      }
-
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+      await StaffService.enable(id);
+      await get().fetchAll();
+    } finally {
+      set({ isLoading: false });
     }
   },
 
-  // COUNT
-  countStaff: async () => {
+  disable: async (id) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get("/staff/count");
-
-      if (res.data.status == 200) {
-        set({
-          count: res.data.data,
-        });
-      }
-
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+      await StaffService.disable(id);
+      await get().fetchAll();
+    } finally {
+      set({ isLoading: false });
     }
   },
 
-  // SEARCH STAFF (PAGINATION)
-  searchStaff: async (query: string, pagination) => {
+  remove: async (id) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get("/staff/search", {
-        params: { name: query, ...pagination },
+      await StaffService.delete(id);
+      await get().fetchAll();
+      await get().fetchCount();
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  //query
+  fetchAll: async () => {
+    set({ isLoading: true });
+    try {
+      const { pagination } = get();
+      const res = await StaffService.getAll({
+        page: pagination.currentPage,
+        size: pagination.pageSize,
       });
+      set({
+        list: res.data.data,
+        pagination: res.data.page,
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 
-      if (res.data?.status === 200) {
-        set({
-          staffList: res.data.data || [],
-          pagination: res.data.page || null,
-        });
-      }
+  fetchActive: async () => {
+    set({ isLoading: true });
+    try {
+      const { pagination } = get();
+      const res = await StaffService.getActive({
+        page: pagination.currentPage,
+        size: pagination.pageSize,
+      });
+      set({
+        list: res.data.data,
+        pagination: res.data.page,
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+  search: async (name) => {
+    set({ isLoading: true });
+    try {
+      const { pagination } = get();
+      const res = await StaffService.searchByName(name, {
+        page: pagination.currentPage,
+        size: pagination.pageSize,
+      });
+      set({
+        list: res.data.data,
+        pagination: res.data.page,
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  fetchCount: async () => {
+    set({ isLoading: true });
+    try {
+      const res = await StaffService.count();
+      set({ count: res.data.data });
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));

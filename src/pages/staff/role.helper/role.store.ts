@@ -1,178 +1,117 @@
 import { create } from "zustand";
+import { RoleService } from "../../../component/api/services/role.service";
 import { axios_auth } from "../../../component/global/config";
-import type { IRole, IRoleRequest, RoleState } from "./role.interface";
+import type { RoleState, IRoleRequest, IRole } from "./role.interface";
 
-export const useRoleStore = create<RoleState>((set) => ({
-  roles: [],
-  currentPage: 0,
-  totalPages: 0,
-  totalItems: 0,
+export const useRoleStore = create<RoleState>((set, get) => ({
+  isLoading: false,
+  list: [],
+  pagination: { currentPage: 0, pageSize: 10 },
 
-  setRoles: (roles) => set({ roles }),
-
-  createRole: async (data) => {
+  setPage: (page: number) => {
+    set((state) => ({
+      pagination: { ...state.pagination, currentPage: page },
+    }));
+    get().fetchAll();
+  },
+  // commands
+  create: async (role: IRoleRequest) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.post("/role/register", data);
-
-      if (res.data?.status === 200) {
-        const newRole: IRole = {
-          id: res.data.data?.id || `role-${Date.now()}`,
-          role: data.role,
-          permissions: data.permissions,
-          isActive: data.isActive,
-        };
-
-        set((state) => ({
-          roles: [newRole, ...state.roles],
-          totalItems: state.totalItems + 1,
-        }));
-      }
-
-      return {
-        message: res.data.message,
-        status: res.data.status,
-        severity: res.data.severity?.toLowerCase() || "success",
-      };
-    } catch (err: any) {
-      return {
-        message: err?.response?.data?.message || "Failed to create role",
-        status: err?.response?.status || 500,
-        severity: "error",
-      };
+      await RoleService.create(role);
+    } catch (error) {
+      console.error("Error creating role:", error);
+    } finally {
+      set({ isLoading: false });
     }
   },
 
-  updateRole: async (id: string, data: IRoleRequest) => {
+  update: async (id: string, role: IRoleRequest) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.post(`/role/update/${id}`, data);
-
-      if (res.data?.status === 200) {
-        set((state) => ({
-          roles: state.roles.map((role) =>
-            role.id === id ? { ...role, ...data } : role
-          ),
-        }));
-      }
-
-      return {
-        message: res.data.message,
-        status: res.data.status,
-        severity: res.data.severity?.toLowerCase() || "success",
-      };
-    } catch (err: any) {
-      return {
-        message: err?.response?.data?.message || "Failed to update role",
-        status: err?.response?.status || 500,
-        severity: "error",
-      };
+      await RoleService.update(id, role);
+    } catch (error) {
+      console.error("Error updating role:", error);
+    } finally {
+      set({ isLoading: false });
     }
   },
 
-  enableRole: async (id: string) => {
+  enable: async (id: string) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get(`/role/${id}/enable`);
-
-      if (res.data?.status === 200) {
-        set((state) => ({
-          roles: state.roles.map((role) =>
-            role.id === id ? { ...role, isActive: true } : role
-          ),
-        }));
-      }
-
-      return {
-        message: res.data.message,
-        status: res.data.status,
-        severity: res.data.severity?.toLowerCase() || "success",
-      };
-    } catch (err: any) {
-      return {
-        message: err?.response?.data?.message || "Failed to enable role",
-        status: err?.response?.status || 500,
-        severity: "error",
-      };
+      await RoleService.enable(id);
+    } catch (error) {
+      console.error("Error enabling role:", error);
+    } finally {
+      set({ isLoading: false });
     }
   },
 
-  disableRole: async (id: string) => {
+  disable: async (id: string) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get(`/role/${id}/disable`);
-
-      if (res.data?.status === 200) {
-        set((state) => ({
-          roles: state.roles.map((role) =>
-            role.id === id ? { ...role, isActive: false } : role
-          ),
-        }));
-      }
-
-      return {
-        message: res.data.message,
-        status: res.data.status,
-        severity: res.data.severity?.toLowerCase() || "success",
-      };
-    } catch (err: any) {
-      return {
-        message: err?.response?.data?.message || "Failed to disable role",
-        status: err?.response?.status || 500,
-        severity: "error",
-      };
+      await axios_auth.patch(`/roles/${id}/disable`);
+    } catch (error) {
+      console.error("Error disabling role:", error);
+    } finally {
+      set({ isLoading: false });
     }
   },
 
-  getAllRoles: async (pagination) => {
+  //query
+  fetchAll: async () => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get("/role/all", { params: pagination });
-
-      if (res.data?.status === 200) {
-        const roles = res.data.data?.content || res.data.data || [];
-        set({
-          roles,
-          currentPage: pagination.page,
-          totalPages: res.data.data?.totalPages || 1,
-          totalItems: res.data.data?.totalElements || roles.length,
-        });
-      }
-
-      return {
-        message: res.data.message,
-        status: res.data.status,
-        severity: res.data.severity?.toLowerCase() || "success",
-      };
-    } catch (err: any) {
-      return {
-        message: err?.response?.data?.message || "Failed to fetch roles",
-        status: err?.response?.status || 500,
-        severity: "error",
-      };
+      const { pagination } = get();
+      const response = await RoleService.getAll({
+        page: pagination.currentPage,
+        size: pagination.pageSize,
+      });
+      set({ list: response.data });
+    } catch (error) {
+      console.error("Error fetching all roles:", error);
+    } finally {
+      set({ isLoading: false });
     }
   },
 
-  getAllActiveRoles: async (pagination) => {
+  fetchActive: async () => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get("/role/active", { params: pagination });
+      const { pagination } = get();
 
-      if (res.data?.status === 200) {
-        const roles = res.data.data?.content || res.data.data || [];
-        set({
-          roles,
-          currentPage: pagination.page,
-          totalPages: res.data.data?.totalPages || 1,
-          totalItems: res.data.data?.totalElements || roles.length,
-        });
-      }
-
-      return {
-        message: res.data.message,
-        status: res.data.status,
-        severity: res.data.severity?.toLowerCase() || "success",
-      };
-    } catch (err: any) {
-      return {
-        message: err?.response?.data?.message || "Failed to fetch active roles",
-        status: err?.response?.status || 500,
-        severity: "error",
-      };
+      const response = await RoleService.getActive({
+        page: pagination.currentPage,
+        size: pagination.pageSize,
+      });
+      set({ list: response.data });
+    } catch (error) {
+      console.error("Error fetching active roles:", error);
+    } finally {
+      set({ isLoading: false });
     }
+  },
+
+  search: async (name: string) => {
+    set({ isLoading: true });
+    try {
+      const { pagination } = get();
+      const response = await RoleService.searchByName(name, {
+        page: pagination.currentPage,
+        size: pagination.pageSize,
+      });
+      set({ list: response.data });
+    } catch (error) {
+      console.error("Error searching roles by name:", error);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  //  by id
+  fetchById: async (id: string) => {
+    const response = await RoleService.getById(id);
+    return response.data as IRole;
   },
 }));

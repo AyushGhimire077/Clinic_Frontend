@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import {
-  axios_no_auth,
   getDecodedToken,
   getTokenFromCookies,
 } from "../../../component/global/config";
@@ -8,8 +7,13 @@ import type {
   AuthRequest,
   AuthState,
   IUser,
-} from "../interface/auth.interface";
+} from "../auth.interface/auth.interface";
 import type { IResponse } from "../../../component/constant/global.interface";
+import { AuthService } from "../../../component/api/services/auth.service";
+import {
+  handleApiError,
+  handleApiResponse,
+} from "../../../component/utils/ui.helpers";
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
@@ -38,12 +42,13 @@ export const useAuthStore = create<AuthState>((set) => ({
       isAuthenticated: !!token,
     });
   },
+
   login: async (data: AuthRequest): Promise<IResponse> => {
     set({ isLoading: true, error: null });
 
     try {
-      const res = await axios_no_auth.post("/auth/login", data);
-      const responseData = res.data?.data;
+      const res = await AuthService.signin(data);
+      const responseData = res.data.data;
 
       set({
         user: responseData as IUser,
@@ -52,11 +57,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: true,
       });
 
-      return {
-        message: res.data.message,
-        status: res.data.status,
-        severity: res.data.severity.toLowerCase(),
-      };
+      return handleApiResponse(res);
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || "Login failed";
       set({
@@ -65,11 +66,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         isAuthenticated: false,
       });
 
-      return {
-        message: errorMessage,
-        status: err.response?.status || 500,
-        severity: "error",
-      };
+      return handleApiError(err);
     }
   },
 }));

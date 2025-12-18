@@ -11,10 +11,9 @@ import { useStaffStore } from "../../staff.helper/staff.store";
 
 const AddStaff = () => {
   const { showToast } = useToast();
-  const { createStaff } = useStaffStore();
-  const { roles, getAllActiveRoles } = useRoleStore();
+  const { create, isLoading } = useStaffStore();
+  const { fetchActive, list: roles } = useRoleStore();
 
-  const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState<IStaffRequest>({
     name: "",
     email: "",
@@ -26,12 +25,9 @@ const AddStaff = () => {
     doctorSubType: null,
   });
 
-  useEffect(() => {
-    getAllActiveRoles({ page: 0, size: 100 });
-  }, [getAllActiveRoles]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: any
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({
@@ -57,32 +53,21 @@ const AddStaff = () => {
       return;
     }
 
-    setIsLoading(true);
 
     try {
-      const res = await createStaff(form);
-      showToast(res.message, res.severity);
-
-      if (res.severity === "success") {
-        setForm({
-          name: "",
-          email: "",
-          password: "",
-          contactNumber: 0,
-          salary: 0,
-          roleId: "",
-          type: "NURSE",
-          doctorSubType: null,
-        });
-      }
+      await create(form);
     } catch (error) {
-      showToast("Failed to create staff member", "error");
-    } finally {
-      setIsLoading(false);
+      console.log("Unable to create staff", error)
     }
   };
 
   const isDoctor = form.type === "DOCTOR";
+
+
+  useEffect(() => {
+    fetchActive();
+  }, [fetchActive]);
+
 
   return (
     <div className="max-w-4xl mx-auto">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Save, Shield, Users } from "lucide-react";
@@ -11,7 +11,7 @@ import { useRoleStore } from "../../role.helper/role.store";
 
 const AddRole = () => {
   const { showToast } = useToast();
-  const { createRole, getAllRoles } = useRoleStore();
+  const { create, isLoading } = useRoleStore();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -19,11 +19,7 @@ const AddRole = () => {
     permissions: [] as string[],
     isActive: true,
   });
-  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    getAllRoles({ page: 0, size: 10 });
-  }, [getAllRoles]);
 
   const togglePermission = (permission: string) => {
     setForm((prev) => ({
@@ -52,20 +48,11 @@ const AddRole = () => {
       return;
     }
 
-    setIsLoading(true);
 
     try {
-      const res = await createRole(form);
-      showToast(res.message, res.severity);
-
-      if (res.severity === "success") {
-        setForm({ role: "", permissions: [], isActive: true });
-        await getAllRoles({ page: 0, size: 10 });
-      }
+      await create(form);
     } catch (error) {
-      showToast("Failed to create role", "error");
-    } finally {
-      setIsLoading(false);
+      console.log("eroor" + error)
     }
   };
 

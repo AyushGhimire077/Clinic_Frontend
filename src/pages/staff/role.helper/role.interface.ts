@@ -1,6 +1,5 @@
 import type {
-  IResponse,
-  PaginationInfo,
+  PaginationState
 } from "../../../component/constant/global.interface";
 
 export interface IRoleRequest {
@@ -17,16 +16,22 @@ export interface IRole {
 }
 
 export interface RoleState {
-  roles: IRole[];
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
+  isLoading: boolean;
 
-  setRoles: (roles: IRole[]) => void;
-  createRole: (role: IRoleRequest) => Promise<IResponse>;
-  updateRole: (id: string, role: IRoleRequest) => Promise<IResponse>;
-  enableRole: (id: string) => Promise<IResponse>;
-  disableRole: (id: string) => Promise<IResponse>;
-  getAllRoles: (pagination: PaginationInfo) => Promise<IResponse>;
-  getAllActiveRoles: (pagination: PaginationInfo) => Promise<IResponse>;
+  list: IRole[];
+  pagination: PaginationState;
+
+  setPage: (page: number) => void;
+
+  // commands
+  create: (role: IRoleRequest) => Promise<void>;
+  update: (id: string, role: IRoleRequest) => Promise<void>;
+  enable: (id: string) => Promise<void>;
+  disable: (id: string) => Promise<void>;
+  //query
+  fetchAll: () => Promise<void>;
+  fetchActive: () => Promise<void>;
+  search: (name: string) => Promise<void>;
+  //  by id
+  fetchById: (id: string) => Promise<IRole | null>;
 }
