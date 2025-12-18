@@ -5,14 +5,23 @@ import { Pagination } from "../../../../component/global/components/Pagination";
 import { SearchInput } from "../../../../component/global/components/SearchInput";
 import { useStaffStore } from "../../staff.helper/staff.store";
 import { formatCurrency } from "../../../../component/utils/ui.helpers";
+import { useRoleStore } from "../../role.helper/role.store";
 
 const StaffTable = () => {
-  const { fetchAll, search, fetchCount, list, isLoading, count, pagination, setPage } = useStaffStore();
+  const {
+    fetchAll,
+    search,
+    fetchCount,
+    list,
+    isLoading,
+    count,
+    pagination,
+    setPage,
+  } = useStaffStore();
+  const { fetchById } = useRoleStore();
 
   const [searchQuery, setSearchQuery] = useState("");
   // const [filter, setFilter] = useState<string | null>(null);
-
-
 
   const loadStaff = async () => {
     try {
@@ -21,7 +30,6 @@ const StaffTable = () => {
       } else {
         await fetchAll();
       }
-
     } catch (error) {
       console.error("Error loading staff:", error);
     }
@@ -40,6 +48,16 @@ const StaffTable = () => {
     setPage(0);
   };
 
+  const findRoleById = async (id: string) => {
+    try {
+      const role = await fetchById(id);
+      return role;
+    } catch (error) {
+      console.error("Error fetching role by ID:", error);
+      return "-";
+    }
+  }; 
+
   const getInitials = (name: string) =>
     name
       .split(" ")
@@ -56,6 +74,7 @@ const StaffTable = () => {
     getCount();
   }, []);
 
+  
 
   return (
     <div className="max-w-[90em] mx-auto">
@@ -168,7 +187,7 @@ const StaffTable = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-foreground">
-                        {staff.role}
+                         
                       </td>
                       <td className=" py-4 text-foreground">
                         {/* {formatCurrency(staff.salary)} */}
@@ -176,10 +195,11 @@ const StaffTable = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${staff.isActive
-                            ? "bg-green-100 text-success"
-                            : "bg-gray-100 text-muted"
-                            }`}
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                            staff.isActive
+                              ? "bg-green-100 text-success"
+                              : "bg-gray-100 text-muted"
+                          }`}
                         >
                           {staff.isActive ? "Active" : "Inactive"}
                         </span>

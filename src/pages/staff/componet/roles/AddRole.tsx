@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Save, Shield, Users } from "lucide-react";
@@ -8,18 +8,21 @@ import { useToast } from "../../../../component/toaster/useToast";
 import { permissionValues } from "../../../../component/utils/permissons";
 import { useRoleStore } from "../../role.helper/role.store";
 
-
 const AddRole = () => {
   const { showToast } = useToast();
-  const { create, isLoading } = useRoleStore();
+  const { create, isLoading, fetchById, update } = useRoleStore();
+
   const navigate = useNavigate();
+
+  // get params
+  const queryParams = new URLSearchParams(window.location.search);
+  const roleId = queryParams.get("id");
 
   const [form, setForm] = useState({
     role: "",
     permissions: [] as string[],
     isActive: true,
   });
-
 
   const togglePermission = (permission: string) => {
     setForm((prev) => ({
@@ -48,13 +51,36 @@ const AddRole = () => {
       return;
     }
 
-
     try {
-      await create(form);
+      if (roleId) await update(roleId, form);
+      else await create(form);
+
+      window.history.back();
     } catch (error) {
-      console.log("eroor" + error)
+      console.log("eroor" + error);
     }
   };
+
+  const getById = async (id: string) => {
+    try {
+      const response = await fetchById(id);
+      if (response) {
+        setForm({
+          role: response.role,
+          permissions: response.permissions,
+          isActive: response.isActive,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching role by ID:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (roleId) {
+      getById(roleId);
+    }
+  }, [roleId]);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -152,9 +178,10 @@ const AddRole = () => {
                   key={permission}
                   className={`
                     p-3 rounded-lg border cursor-pointer transition-all
-                    ${form.permissions.includes(permission)
-                      ? "border-primary bg-primary-light/10"
-                      : "border-border hover:border-primary/50"
+                    ${
+                      form.permissions.includes(permission)
+                        ? "border-primary bg-primary-light/10"
+                        : "border-border hover:border-primary/50"
                     }
                   `}
                   onClick={() => togglePermission(permission)}
@@ -163,10 +190,11 @@ const AddRole = () => {
                     <div
                       className={`
                       w-4 h-4 rounded border flex items-center justify-center
-                      ${form.permissions.includes(permission)
+                      ${
+                        form.permissions.includes(permission)
                           ? "bg-primary border-primary"
                           : "border-border"
-                        }
+                      }
                     `}
                     >
                       {form.permissions.includes(permission) && (
@@ -197,12 +225,12 @@ const AddRole = () => {
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Creating Role...
+                  {roleId ? "Updating Role..." : "Creating Role..."}
                 </>
               ) : (
                 <>
                   <Save className="w-5 h-5" />
-                  Create Role
+                  {roleId ? "Update Role" : "Create Role"}
                 </>
               )}
             </button>

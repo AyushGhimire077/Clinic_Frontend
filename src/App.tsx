@@ -24,8 +24,7 @@ import AddService from "./pages/services/componet/AddService";
 import ServiceTable from "./pages/services/componet/ServiceTable";
 import ServicesDashboard from "./pages/services/ServicesDashboard";
 import AddRole from "./pages/staff/componet/roles/AddRole";
-import EditRole from "./pages/staff/componet/roles/EditRole";
-import RoleTable from "./pages/staff/componet/roles/RoleTable";
+ import RoleTable from "./pages/staff/componet/roles/RoleTable";
 import AddStaff from "./pages/staff/componet/staff/AddStaff";
 import StaffTable from "./pages/staff/componet/staff/StaffTable";
 import StaffDashboard from "./pages/staff/StaffDashboard";
@@ -93,7 +92,7 @@ const App = () => {
             <Route path="roles">
               <Route index element={<AddRole />} />
               <Route path="view" element={<RoleTable />} />
-              <Route path="edit/:id" element={<EditRole />} />
+              <Route path="edit" element={<AddRole />} />
             </Route>
             <Route path="add-staff" element={<AddStaff />} />
             <Route path="table" element={<StaffTable />} />

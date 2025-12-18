@@ -68,7 +68,7 @@ export const useRoleStore = create<RoleState>((set, get) => ({
         page: pagination.currentPage,
         size: pagination.pageSize,
       });
-      set({ list: response.data });
+      set({ list: response?.data?.data });
     } catch (error) {
       console.error("Error fetching all roles:", error);
     } finally {
@@ -85,7 +85,7 @@ export const useRoleStore = create<RoleState>((set, get) => ({
         page: pagination.currentPage,
         size: pagination.pageSize,
       });
-      set({ list: response.data });
+      set({ list: response?.data?.data });
     } catch (error) {
       console.error("Error fetching active roles:", error);
     } finally {
@@ -101,7 +101,7 @@ export const useRoleStore = create<RoleState>((set, get) => ({
         page: pagination.currentPage,
         size: pagination.pageSize,
       });
-      set({ list: response.data });
+      set({ list: response?.data?.data });
     } catch (error) {
       console.error("Error searching roles by name:", error);
     } finally {
@@ -112,6 +112,6 @@ export const useRoleStore = create<RoleState>((set, get) => ({
   //  by id
   fetchById: async (id: string) => {
     const response = await RoleService.getById(id);
-    return response.data as IRole;
+    return response.data.data as IRole;
   },
 }));
