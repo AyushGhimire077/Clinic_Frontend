@@ -5,14 +5,14 @@ import { inputField } from "../../../../component/global/components/customStyle"
 
 import { billingModeOptions, episodeTypeOptions } from "../../../../component/constant/select";
 import { useToast } from "../../../../component/toaster/useToast";
-import type { EpisodeTempReq } from "../../helper/episode.interface";
-import { useEpisodeStore } from "../../helper/episode.store";
+import type { IEpisodeTempReq } from "../../helper/episode.interface";
+import { useEpisodeTemplateStore } from "../../helper/episode.template.store";
 
 const AddEpisodeTemplate = () => {
   const { showToast } = useToast();
-  const { createEpisodeTemplate } = useEpisodeStore();
+  const { create } = useEpisodeTemplateStore();
 
-  const [form, setForm] = useState<EpisodeTempReq>({
+  const [form, setForm] = useState<IEpisodeTempReq>({
     title: "",
     type: "ONE_TIME" as const,
     billingMode: "PER_VISIT" as const,
@@ -48,17 +48,9 @@ const AddEpisodeTemplate = () => {
     setLoading(true);
 
     try {
-      const res = await createEpisodeTemplate(form);
-      showToast(res.message, res.severity);
+        await create(form);
 
-      if (res.severity === "success") {
-        setForm({
-          title: "",
-          type: "ONE_TIME",
-          billingMode: "PER_VISIT",
-          packageCharge: 0,
-        });
-      }
+
     } catch (error) {
       showToast("Failed to create template", "error");
     } finally {

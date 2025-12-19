@@ -1,16 +1,13 @@
 import type {
   Gender,
-  IResponse,
-  PaginationInfo,
   PaginationState,
 } from "../../../component/constant/global.interface";
-} from "../../../component/global/utils/enums";
 import type { IStaff } from "../../staff/staff.helper/staff.interface";
 
 export interface IPatientRequest {
   name: string;
   email: string;
-  contactNumber: string;
+  contactNumber: number;
   address: string;
   gender: Gender;
   dob: string;
@@ -30,39 +27,34 @@ export interface IPatient {
   isActive: boolean;
   oneTimeFlag?: boolean;
 
-  staffRegisteredBy: IStaff;
-  adminRegisteredBy: IStaff;
+  registeredBy: IStaff | null;
   createdAt: string;
   updatedAt: string;
 }
+export interface IPatientCount {
+  total: number;
+  active: number;
+  oneTime: number;
+}
 
 export interface PatientState {
-  patientList: IPatient[];
-  count: Map<string, object>;
-  recentlyAddedPaitnet?: IPatient | null;
-  pagination: PaginationState | null;
+  isLoading: boolean;
+  list: IPatient[];
 
-  clearRecentlyAddedPatient: () => void;
-  setPagination: (page: PaginationState | null) => void;
+  pagination: PaginationState;
+  count: IPatientCount | null;
 
-  setRecentlyAddedPaitnet: (paitnet: IPatient) => void;
-  setPatientList: (patientList: IPatient[]) => void;
+  setPage: (page: number) => void;
 
-  createPatient: (patient: IPatientRequest) => Promise<IResponse>;
-  editPatient: (
-    id: string,
-    patient: Partial<IPatientRequest>
-  ) => Promise<IResponse>;
-  countPatients: () => Promise<IResponse>;
-  getAllPatients: (pagination: PaginationInfo) => Promise<IResponse>;
-  getAllActivePatients: (pagination: PaginationInfo) => Promise<IResponse>;
-  searchPatients: (
-    query: string,
-    pagination: PaginationInfo
-  ) => Promise<IResponse>;
-
-  disablePatient: (id: string) => Promise<IResponse>;
-  enablePatient: (id: string) => Promise<IResponse>;
-
-  getPatientById: (id: string) => Promise<IPatient | null>;
+  // commands
+  create: (staff: IPatientRequest) => Promise<void>;
+  update: (id: string, staff: IPatientRequest) => Promise<void>;
+  enable: (id: string) => Promise<void>;
+  disable: (id: string) => Promise<void>;
+  //query
+  fetchById: (id: string) => Promise<IPatient>;
+  fetchAll: () => Promise<void>;
+  fetchActive: () => Promise<void>;
+  search: (name: string) => Promise<void>;
+  fetchCount: () => Promise<void>;
 }

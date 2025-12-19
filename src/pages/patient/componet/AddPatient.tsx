@@ -1,6 +1,6 @@
 import { Calendar, Home, Save, User, Users } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { genderOptions } from "../../../component/constant/select";
 import { BackButton } from "../../../component/global/components/back/back";
 import { inputField } from "../../../component/global/components/customStyle";
@@ -10,16 +10,15 @@ import { usePatientStore } from "../helper/patient.store";
 
 const AddPatient = () => {
   const { showToast } = useToast();
-  const { createPatient, editPatient } = usePatientStore();
+  const { create, update, fetchById } = usePatientStore();
   const [isEditing, setIsEditing] = useState(false);
 
-  const location = useLocation();
-  const editPatientData = location.state?.patient as IPatient | undefined;
+  const patientId = useParams().id;
 
   const [form, setForm] = useState<IPatientRequest>({
     name: "",
     email: "",
-    contactNumber: "",
+    contactNumber: 0,
     address: "",
     gender: "MALE",
     dob: "",
@@ -49,25 +48,13 @@ const AddPatient = () => {
     setIsLoading(true);
 
     try {
-      const res = isEditing
-        ? await editPatient(editPatientData!.id, form)
-        : await createPatient(form);
-      showToast(res.message, res.severity);
+      isEditing
+        ? await update(patientId!, form)
+        : await create(form);
 
-      if (res.severity === "success") {
-        setForm({
-          name: "",
-          email: "",
-          contactNumber: "",
-          address: "",
-          gender: "MALE",
-          dob: "",
-          bloodGroup: "A+",
-          oneTimeFlag: true,
-        });
 
-        window.history.back();
-      }
+      window.history.back();
+
     } catch (error) {
       showToast("Failed to create patient", "error");
     } finally {
@@ -75,21 +62,27 @@ const AddPatient = () => {
     }
   };
 
-  useEffect(() => {
-    if (editPatientData) {
+  const fetchPatient = async () => {
+    if (patientId) {
+      const edit: IPatient = await fetchById(patientId);
       setForm({
-        name: editPatientData.name,
-        email: editPatientData.email,
-        contactNumber: editPatientData.contactNumber.toString(),
-        address: editPatientData.address,
-        gender: editPatientData.gender,
-        dob: editPatientData.dateOfBirth,
-        bloodGroup: editPatientData.bloodGroup,
-        oneTimeFlag: editPatientData.oneTimeFlag || false,
+        name: edit.name,
+        email: edit.email,
+        contactNumber: edit.contactNumber,
+        address: edit.address,
+        gender: edit.gender,
+        dob: edit.dateOfBirth,
+        bloodGroup: edit.bloodGroup,
+        oneTimeFlag: edit.oneTimeFlag || false,
       });
       setIsEditing(true);
     }
-  }, [editPatientData]);
+  };
+
+
+  useEffect(() => {
+    fetchPatient();
+  }, [patientId]);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -104,7 +97,7 @@ const AddPatient = () => {
           </div>
           <h1 className="text-2xl font-bold text-foreground">
             {isEditing
-              ? `Edit ${editPatientData?.name}`
+              ? `Edit ${form?.name}`
               : "Register New Patient"}
           </h1>
           <p className="text-muted">

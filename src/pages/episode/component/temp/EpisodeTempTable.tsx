@@ -1,38 +1,38 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { CreditCard, FileText, Package, Plus } from "lucide-react";
+
 import { BackButton } from "../../../../component/global/components/back/back";
 import { Pagination } from "../../../../component/global/components/Pagination";
 import { SearchInput } from "../../../../component/global/components/SearchInput";
-import { useEpisodeStore } from "../../helper/episode.store";
 import { formatCurrency } from "../../../../component/utils/ui.helpers";
+import { useEpisodeTemplateStore } from "../../helper/episode.template.store";
 
 const EpisodeTemplateTable = () => {
   const navigate = useNavigate();
-  const { episodeTemplateList, pagination, getAllEpisodeTemplates } =
-    useEpisodeStore();
+  const {
+    list: templates,
+    isLoading,
+    pagination,
+    fetchAll,
+  } = useEpisodeTemplateStore();
 
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(false);
   const size = 10;
+
+  // Fetch templates on page change
+  const loadTemplates = useCallback(async () => {
+    await fetchAll({ page, size });
+  }, [fetchAll, page, size]);
 
   useEffect(() => {
     loadTemplates();
-  }, [page]);
+  }, [loadTemplates]);
 
-  const loadTemplates = async () => {
-    setLoading(true);
-    try {
-      await getAllEpisodeTemplates({ page, size });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filteredTemplates = episodeTemplateList.filter((template) =>
-    template.title.toLowerCase().includes(searchQuery.toLowerCase())
+  // Filter templates client-side based on search
+  const filteredTemplates = templates.filter((t) =>
+    t.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -48,9 +48,7 @@ const EpisodeTemplateTable = () => {
             <h1 className="text-2xl font-bold text-foreground">
               Episode Templates
             </h1>
-            <p className="text-muted">
-              Reusable templates for treatment episodes
-            </p>
+            <p className="text-muted">Reusable templates for treatment episodes</p>
           </div>
 
           <button
@@ -65,21 +63,19 @@ const EpisodeTemplateTable = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-background border border-border rounded-lg p-4">
-            <div className="text-2xl font-bold text-foreground">
-              {episodeTemplateList.length}
-            </div>
+            <div className="text-2xl font-bold text-foreground">{templates.length}</div>
             <div className="text-sm text-muted">Total Templates</div>
           </div>
           <div className="bg-background border border-border rounded-lg p-4">
             <div className="text-2xl font-bold text-foreground">
-              {episodeTemplateList.filter((t) => t.type === "ONE_TIME").length}
+              {templates.filter((t) => t.type === "ONE_TIME").length}
             </div>
             <div className="text-sm text-muted">One-time</div>
           </div>
           <div className="bg-background border border-border rounded-lg p-4">
             <div className="text-2xl font-bold text-foreground">
               {formatCurrency(
-                episodeTemplateList.reduce((sum, t) => sum + t.packageCharge, 0)
+                templates.reduce((sum, t) => sum + t.packageCharge, 0)
               )}
             </div>
             <div className="text-sm text-muted">Total Value</div>
@@ -88,29 +84,25 @@ const EpisodeTemplateTable = () => {
 
         {/* Search */}
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <SearchInput
-              value={searchQuery}
-              onChange={setSearchQuery}
-              placeholder="Search templates..."
-              className="w-full"
-            />
-          </div>
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search templates..."
+            className="flex-1"
+          />
         </div>
       </div>
 
       {/* Table */}
       <div className="bg-surface border border-border rounded-lg overflow-hidden">
-        {loading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <div className="w-8 h-8 border-2 border-primary-light border-t-primary rounded-full animate-spin" />
           </div>
         ) : filteredTemplates.length === 0 ? (
           <div className="py-12 text-center">
             <FileText className="w-16 h-16 mx-auto mb-4 text-muted/30" />
-            <p className="text-lg font-medium text-foreground">
-              No templates found
-            </p>
+            <p className="text-lg font-medium text-foreground">No templates found</p>
             <p className="text-muted">
               {searchQuery
                 ? "Try adjusting your search criteria"
@@ -119,7 +111,6 @@ const EpisodeTemplateTable = () => {
           </div>
         ) : (
           <>
-            {/* Table */}
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-surface border-b border-border">
@@ -147,51 +138,35 @@ const EpisodeTemplateTable = () => {
                       key={template.id}
                       className="hover:bg-primary-light/5 transition-colors"
                     >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center">
-                            <FileText className="w-5 h-5 text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-foreground">
-                              {template.title}
-                            </p>
-                            <p className="text-sm text-muted">
-                              ID: {template.id.substring(0, 8)}...
-                            </p>
-                          </div>
+                      <td className="px-6 py-4 flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center">
+                          <FileText className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground">{template.title}</p>
+                          <p className="text-sm text-muted">
+                            ID: {template.id.substring(0, 8)}...
+                          </p>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <Package className="w-4 h-4 text-muted" />
-                          <span className="text-foreground">
-                            {template.type === "ONE_TIME"
-                              ? "One Time"
-                              : "Recurring"}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <CreditCard className="w-4 h-4 text-muted" />
-                          <span className="text-foreground">
-                            {template.billingMode === "PACKAGE"
-                              ? "Package"
-                              : "Per Visit"}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="font-bold text-foreground">
-                          {formatCurrency(template.packageCharge)}
+                      <td className="px-6 py-4 flex items-center gap-2">
+                        <Package className="w-4 h-4 text-muted" />
+                        <span className="text-foreground">
+                          {template.type === "ONE_TIME" ? "One Time" : "Recurring"}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 flex items-center gap-2">
+                        <CreditCard className="w-4 h-4 text-muted" />
+                        <span className="text-foreground">
+                          {template.billingMode === "PACKAGE" ? "Package" : "Per Visit"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 font-bold text-foreground">
+                        {formatCurrency(template.packageCharge)}
                       </td>
                       <td className="px-6 py-4">
                         <button
-                          onClick={() =>
-                            navigate(`/episode/add?template=${template.id}`)
-                          }
+                          onClick={() => navigate(`/episode/add?template=${template.id}`)}
                           className="px-4 py-2 text-primary border border-primary rounded-lg hover:bg-primary-light transition-colors"
                         >
                           Use Template
@@ -203,12 +178,10 @@ const EpisodeTemplateTable = () => {
               </table>
             </div>
 
-            {/* Pagination */}
             <Pagination
               currentPage={pagination?.currentPage || 0}
               totalPages={pagination?.totalPages || 1}
               onPageChange={setPage}
-
             />
           </>
         )}

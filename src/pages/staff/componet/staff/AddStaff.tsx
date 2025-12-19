@@ -6,13 +6,18 @@ import { inputField } from "../../../../component/global/components/customStyle"
 import { doctorTypeOptions, staffTypeOptions } from "../../../../component/constant/select";
 import { useToast } from "../../../../component/toaster/useToast";
 import { useRoleStore } from "../../role.helper/role.store";
-import type { IStaffRequest } from "../../staff.helper/staff.interface";
+import type { IStaff, IStaffRequest } from "../../staff.helper/staff.interface";
 import { useStaffStore } from "../../staff.helper/staff.store";
 
 const AddStaff = () => {
   const { showToast } = useToast();
-  const { create, isLoading } = useStaffStore();
+  const { create, isLoading, update, fetchById } = useStaffStore();
   const { fetchActive, list: roles } = useRoleStore();
+
+
+  // read parms
+  const searchParams = new URLSearchParams(window.location.search);
+  const staffId = searchParams.get("id");
 
   const [form, setForm] = useState<IStaffRequest>({
     name: "",
@@ -55,7 +60,14 @@ const AddStaff = () => {
 
 
     try {
+      if (staffId) {
+        await update(staffId, form);
+        window.history.back();
+        return;
+      }
       await create(form);
+      window.history.back();
+
     } catch (error) {
       console.log("Unable to create staff", error)
     }
@@ -67,6 +79,35 @@ const AddStaff = () => {
   useEffect(() => {
     fetchActive();
   }, [fetchActive]);
+
+  useEffect(() => {
+    if (staffId) {
+      setForm((prev) => ({
+        ...prev,
+        name: "",
+        email: "",
+        password: "",
+        contactNumber: 0,
+        salary: 0,
+        roleId: "",
+        type: "NURSE",
+        doctorSubType: null,
+      }));
+      fetchById(staffId).then((res) => {
+        const staffData = res as IStaff;
+        setForm({
+          name: staffData.name,
+          email: staffData.email,
+          password: "",
+          contactNumber: staffData.contactNumber,
+          salary: staffData.salary,
+          type: staffData.type,
+          roleId: roles.find((role) => role.role === staffData.role)?.id || "",
+          doctorSubType: staffData.doctorSubType,
+        });
+      });
+    }
+  }, [staffId]);
 
 
   return (
@@ -81,9 +122,9 @@ const AddStaff = () => {
             <Users className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">
-            Add New Staff Member
+            {staffId ? "Edit Staff Member" : "Add New Staff Member"}
           </h1>
-          <p className="text-muted">Register a new healthcare professional</p>
+          <p className="text-muted">{staffId ? "Edit an existing staff member" : "Add a new staff member to your organization"}</p>
         </div>
 
         <hr className="border-border mb-6" />
@@ -293,12 +334,12 @@ const AddStaff = () => {
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Adding Staff Member...
+                  {staffId ? "Updating..." : " Adding Staff Member..."}
                 </>
               ) : (
                 <>
                   <Plus className="w-5 h-5" />
-                  Add Staff Member
+                  {staffId ? "Update Staff Member" : "Add Staff Member"}
                 </>
               )}
             </button>

@@ -6,31 +6,26 @@ import { STAFF_ENDPOINTS } from "../endpoints/staff.endpoint";
 
 export const StaffService = {
   // Command
-  create  : (data: IStaffRequest) =>
+  create: (data: IStaffRequest) =>
     axios_auth.post(STAFF_ENDPOINTS.CREATE, data),
 
   update: (id: string, data: IStaffRequest) =>
-    axios_auth.put(
-      STAFF_ENDPOINTS.UPDATE.replace("{id}", id),
-      data
-    ),
+    axios_auth.put(STAFF_ENDPOINTS.UPDATE.replace("{id}", id), data),
 
   enable: (id: string) =>
-    axios_auth.patch(
-      STAFF_ENDPOINTS.ENABLE.replace("{id}", id)
-    ),
+    axios_auth.patch(STAFF_ENDPOINTS.ENABLE.replace("{id}", id)),
 
   disable: (id: string) =>
-    axios_auth.patch(
-      STAFF_ENDPOINTS.DISABLE.replace("{id}", id)
-    ),
+    axios_auth.patch(STAFF_ENDPOINTS.DISABLE.replace("{id}", id)),
 
   delete: (id: string) =>
-    axios_auth.patch(
-      STAFF_ENDPOINTS.DELETE.replace("{id}", id)
-    ),
+    axios_auth.patch(STAFF_ENDPOINTS.DELETE.replace("{id}", id)),
 
   // Query
+
+  getById: (id: string) =>
+    axios_auth.get(STAFF_ENDPOINTS.GET_BY_ID.replace("{id}", id)),
+
   getAll: (pagination: PaginationInfo) =>
     axios_auth.get(STAFF_ENDPOINTS.GET_ALL, {
       params: pagination,

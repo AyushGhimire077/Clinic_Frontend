@@ -1,210 +1,82 @@
 import { create } from "zustand";
-import { axios_auth } from "../../../component/global/config";
-
-import type { EpisodeState } from "./episode.interface";
+import { EpisodeService } from "../../../component/api/services/episdoe.service";
 import {
-  handleApiResponse,
-  handleApiError,
-} from "../../../component/utils/ui.helpers";
+  commandWrapper,
+  getPagination,
+  queryWrapper,
+} from "../../../component/global/utils/global.store.helper";
+import type { EpisodeState } from "./episode.interface";
 
 export const useEpisodeStore = create<EpisodeState>((set, get) => ({
-  episodeList: [],
-  episodeTemplateList: [],
-  pagination: null,
-  startDate: null,
-  endDate: null,
-  count: null,
+  list: [],
+  isLoading: false,
+  pagination: { currentPage: 0, pageSize: 10 },
+  range: { startDate: null, endDate: null },
+  count: { total: 0, active: 0, completed: 0, cancelled: 0 },
 
-  /* STATE SETTERS */
-  setStartDate: (startDate) => set({ startDate }),
-  setEndDate: (endDate) => set({ endDate }),
-  setPagination: (pagination) => set({ pagination }),
-  setEpisodeList: (episodeList) => set({ episodeList }),
-  setEpisodeTemplateList: (episodeTemplateList) => set({ episodeTemplateList }),
+  setPage: (page: number) =>
+    set((state) => ({
+      pagination: { ...state.pagination, currentPage: page },
+    })),
 
-  /* CREATE */
-  createEpisode: async (payload) => {
-    try {
-      const res = await axios_auth.post("/episodes", payload);
+  /* -------- Commands -------- */
+  create: async (data) =>
+    commandWrapper(set, get, async () => await EpisodeService.create(data), get().fetchAll),
+  
+  remove: async (id) =>
+    commandWrapper(set, get, async () => await EpisodeService.delete(id), get().fetchAll),
+  changeStatus: async (id, status) =>
+    commandWrapper(set, get, async () => await EpisodeService.changeStatus(id, status), get().fetchAll),
+  changeType: async (id, type) =>
+    commandWrapper(set, get, async () => await EpisodeService.changeType(id, type), get().fetchAll),
+  changeBillingMode: async (id, billingMode) =>
+    commandWrapper(set, get, async () => await EpisodeService.changeBillingMode(id, billingMode), get().fetchAll),
+  /* -------- Queries -------- */
+  fetchAll: async () =>
+    queryWrapper(set, get, async ()  =>  { 
+        const params = getPagination(get);
+        await EpisodeService.getAll(params); 
+    }, get().countAll ),
+  fetchActive: async () =>
+    queryWrapper(set, get, async ()  => {
+        const params = getPagination(get);
+        await EpisodeService.getActive(params); 
+    }),
 
-      if (res.data?.status === 200) {
-        set((s) => ({
-          episodeList: [res.data.data, ...s.episodeList],
-        }));
-      }
-
-      return handleApiResponse(res);
-    } catch (e) {
-      return handleApiError(e);
+  fetchByStatus: async (status) =>
+    queryWrapper(set, get, async ()  => {
+        const params = getPagination(get);
+        await EpisodeService.getByStatus(status, params);
+    }),
+  fetchByRange: async (range) => {
+    const r = range || get().range;
+    await queryWrapper(set, get, async ()  => {
+        const params = getPagination(get);
+        await EpisodeService.getByRange(r, params);
+    });
+  },
+  fetchByStatusRange: async (status: string, range) => {
+    const r = range || get().range;
+    await queryWrapper(set, get, () => {
+        const params = getPagination(get);
+        return EpisodeService.getByStatusRange(status, r, params); 
     }
+    );
   },
 
-  createEpisodeTemplate: async (payload) => {
-    try {
-      const res = await axios_auth.post("/episodes/templates", payload);
+  /* -------- Counts -------- */
+countAll: async () =>
+  queryWrapper(set, get, async () => {
+    const res = await EpisodeService.countAllTime();
+    set({ count: res.data.data });
+  }),
+  
 
-      if (res.data?.status === 200) {
-        set((s) => ({
-          episodeTemplateList: [res.data.data, ...s.episodeTemplateList],
-        }));
-      }
-
-      return handleApiResponse(res);
-    } catch (e) {
-      return handleApiError(e);
-    }
-  },
-
-  countEpisodes: async () => {
-    try {
-      const res = await axios_auth.get("/episodes/count", {
-        params: {
-          startDate: get().startDate,
-          endDate: get().endDate,
-        },
-      });
-
-      if (res.data?.status === 200) {
-        set({ count: res.data.data });
-      }
-
-      return handleApiResponse(res);
-    } catch (e) {
-      return handleApiError(e);
-    }
-  },
-
-  // SEARCH
-  searchEpisodes: async (query, pagination) => {
-    try {
-      const res = await axios_auth.get("/episodes/search", {
-        params: {
-          query,
-          pagination,
-        },
-      });
-      if (res.data?.status === 200) {
-        set({
-          episodeList: res.data.data,
-          pagination: res.data.page,
-        });
-      }
-      return handleApiResponse(res);
-    } catch (e) {
-      return handleApiError(e);
-    }
-  },
-
-  /* GET LIST  */
-
-  filterByStatus: async (status, pagination) => {
-    try {
-      const res = await axios_auth.get("/episodes/status", {
-        params: {
-          status,
-          pagination,
-          startDate: get().startDate,
-          endDate: get().endDate,
-        },
-      });
-
-      if (res.data?.status === 200) {
-        set({
-          episodeList: res.data.data,
-          pagination: res.data.page,
-        });
-      }
-
-      return handleApiResponse(res);
-    } catch (e) {
-      return handleApiError(e);
-    }
-  },
-
-  getAllEpisodes: async (pagination) => {
-    try {
-      const res = await axios_auth.get("/episodes/list", {
-        params: {
-          pagination,
-          startDate: get().startDate,
-          endDate: get().endDate,
-        },
-      });
-
-      if (res.data?.status === 200) {
-        set({
-          episodeList: res.data.data,
-          pagination: res.data.page,
-          startDate: get().startDate,
-          endDate: get().endDate,
-        });
-      }
-
-      return handleApiResponse(res);
-    } catch (e) {
-      return handleApiError(e);
-    }
-  },
-
-  /* SINGLE */
-  getEpisodeById: async (id) => {
-    try {
-      const res = await axios_auth.get(`/episodes/${id}`);
-      return handleApiResponse(res);
-    } catch (e) {
-      return handleApiError(e);
-    }
-  },
-
-  /* CANCEL */
-  cancelEpisode: async (id) => {
-    try {
-      const res = await axios_auth.patch(`/episodes/${id}/cancel`);
-
-      if (res.data?.status === 200) {
-        set((s) => ({
-          episodeList: s.episodeList.map((e: any) =>
-            e.id === id ? { ...e, status: "CANCELLED", isActive: false } : e
-          ),
-        }));
-      }
-
-      return handleApiResponse(res);
-    } catch (e) {
-      return handleApiError(e);
-    }
-  },
-
-  /* TEMPLATES */
-  getAllEpisodeTemplates: async (pagination) => {
-    try {
-      const res = await axios_auth.get("/episodes/templates/list", {
-        params: {
-          pagination,
-          startDate: get().startDate,
-          endDate: get().endDate,
-        },
-      });
-
-      if (res.data?.status === 200) {
-        set({
-          episodeTemplateList: res.data.data,
-          pagination: res.data.page,
-        });
-      }
-
-      return handleApiResponse(res);
-    } catch (e) {
-      return handleApiError(e);
-    }
-  },
-
-  getEpisodeTemplateById: async (id) => {
-    try {
-      const res = await axios_auth.get(`/episodes/templates/${id}`);
-      return handleApiResponse(res);
-    } catch (e) {
-      return handleApiError(e);
-    }
+  countByRange: async (range) => {
+    const r = range || get().range;
+    await queryWrapper(set, get, async () => {
+      const res = await EpisodeService.countByRange(r);
+      set({ count: res.data.data });
+    });
   },
 }));

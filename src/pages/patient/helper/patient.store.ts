@@ -1,193 +1,114 @@
 import { create } from "zustand";
-import { axios_auth } from "../../../component/global/config";
 import type { PatientState } from "./patient.interface";
+import { PatientService } from "../../../component/api/services/patient.service";
 
-const handleApiResponse = (res: any) => ({
-  message: res.data?.message || "Request completed",
-  status: res.data?.status || 500,
-  severity: res.data?.severity?.toLowerCase() || "error",
-});
+export const usePatientStore = create<PatientState>((set, get) => ({
+  isLoading: false,
+  list: [],
+  pagination: { currentPage: 0, pageSize: 10 },
+  count: null,
 
-const handleApiError = (error: any) => ({
-  message: error?.response?.data?.message || error?.message || "Request failed",
-  status: error?.response?.status || 500,
-  severity: "error",
-});
+  setPage: (page: number) =>
+    set((state) => ({
+      pagination: { ...state.pagination, currentPage: page },
+    })),
 
-export const usePatientStore = create<PatientState>((set) => ({
-  patientList: [],
-  recentlyAddedPaitnet: null,
-  count: new Map<string, object>(),
-  pagination: null,
-
-  setPagination: (pagination) => set({ pagination }),
-  setRecentlyAddedPaitnet: (p: any) => set({ recentlyAddedPaitnet: p }),
-  clearRecentlyAddedPatient: () => set({ recentlyAddedPaitnet: null }),
-
-  setPatientList: (patientList) => set({ patientList }),
-
-  createPatient: async (patient) => {
+  // commands
+  create: async (patient) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.post("/patient/register", patient);
-
-      if (res.data?.status === 200 || res.data?.status === 201) {
-        set((state) => ({
-          patientList: [...state.patientList, res.data.data],
-          recentlyAddedPaitnet: res.data.data,
-        }));
-      }
-
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+      await PatientService.create(patient);
+      await get().fetchAll();
+      await get().fetchCount();
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  update: async (id, patient) => {
+    set({ isLoading: true });
+    try {
+      await PatientService.update(id, patient);
+      await get().fetchAll();
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  enable: async (id) => {
+    set({ isLoading: true });
+    try {
+      await PatientService.enable(id);
+      await get().fetchAll();
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  disable: async (id) => {
+    set({ isLoading: true });
+    try {
+      await PatientService.disable(id);
+      await get().fetchAll();
+    } finally {
+      set({ isLoading: false });
     }
   },
 
-  editPatient: async (id, patient) => {
+  //query
+  fetchById: async (id) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.put(`/patient/update/${id}`, patient);
-      if (res.data?.status === 200) {
-        set((state) => ({
-          patientList: state.patientList.map((p) =>
-            p.id === id ? res.data.data : p
-          ),
-        }));
-      }
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+      const res = await PatientService.getById(id);
+      return res.data.data;
+    } finally {
+      set({ isLoading: false });
     }
   },
-
-  getAllPatients: async (pagination) => {
+  fetchAll: async () => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get("/patient/all", { params: pagination });
+      const { pagination } = get();
 
-      if (res.data?.status === 200) {
-        const data = res.data.data;
-        const patientList = data?.content || data || [];
-        set({
-          patientList,
-          pagination: res.data.page || null,
-        });
-      }
-
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
-    }
-  },
-
-  getAllActivePatients: async (pagination) => {
-    try {
-      const res = await axios_auth.get("/patient/active", {
-        params: pagination,
+      const res = await PatientService.getAll({
+        page: pagination.currentPage,
+        size: pagination.pageSize,
       });
-
-      if (res.data?.status === 200) {
-        const data = res.data.data;
-        const patientList = data?.content || data || [];
-        set({
-          patientList,
-          pagination: res.data.page || null,
-        });
-      }
-
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+      set({ list: res.data.data });
+    } finally {
+      set({ isLoading: false });
     }
   },
-
-  searchPatients: async (query, pagination) => {
+  fetchActive: async () => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get("/patient/search", {
-        params: { name: query, ...pagination },
+      const { pagination } = get();
+      const res = await PatientService.getActive({
+        page: pagination.currentPage,
+        size: pagination.pageSize,
       });
-
-      if (res.data?.status === 200) {
-        const data = res.data.data;
-        const patientList = data?.content || data || [];
-        set({
-          patientList,
-          pagination: res.data.page || null,
-        });
-      }
-
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+      set({ list: res.data.data });
+    } finally {
+      set({ isLoading: false });
     }
   },
-
-  getPatientById: async (id) => {
+  search: async (name) => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get(`/patient/${id}`);
-      if (res.data) {
-        return res.data.data;
-      } else {
-        return null;
-      }
-    } catch (error: any) {
-      return handleApiError(error);
-    }
-  },
-
-  // count section
-  countPatients: async () => {
-    try {
-      const res = await axios_auth.get("/patient/count");
-
-      set((state) => {
-        state.count.clear();
-        const data = res.data.data;
-        for (const key in data) {
-          state.count.set(key, data[key]);
-        }
-        return { count: state.count };
+      const { pagination } = get();
+      const res = await PatientService.searchByName(name, {
+        page: pagination.currentPage,
+        size: pagination.pageSize,
       });
-
-      console.log(res.data.data);
-
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+      set({ list: res.data.data });
+    } finally {
+      set({ isLoading: false });
     }
   },
-
-  // enable disable section
-  enablePatient: async (id) => {
+  fetchCount: async () => {
+    set({ isLoading: true });
     try {
-      const res = await axios_auth.get(`/patient/enable/${id}`);
-
-      if (res.data?.status === 200) {
-        set((state) => ({
-          patientList: state.patientList.map((patient) =>
-            patient.id === id ? { ...patient, isActive: true } : patient
-          ),
-        }));
-      }
-
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
-    }
-  },
-  disablePatient: async (id) => {
-    try {
-      const res = await axios_auth.get(`/patient/disable/${id}`);
-
-      if (res.data?.status === 200) {
-        set((state) => ({
-          patientList: state.patientList.map((patient) =>
-            patient.id === id ? { ...patient, isActive: false } : patient
-          ),
-        }));
-      }
-
-      return handleApiResponse(res);
-    } catch (error: any) {
-      return handleApiError(error);
+      const res = await PatientService.count();
+      set({ count: res.data.data });
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));

@@ -15,12 +15,16 @@ export interface PaginationState {
   totalPages?: number;  
 }
 
+
 export interface PaginationInfo {
   page: number; // 0-based
   size: number;
 }
 
-
+export interface DateRange {
+  startDate: string | null;
+  endDate: string | null;
+}
 export const Gender = {
   MALE: "MALE",
   FEMALE: "FEMALE",

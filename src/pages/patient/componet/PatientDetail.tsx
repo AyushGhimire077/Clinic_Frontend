@@ -15,7 +15,6 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BackButton } from "../../../component/global/components/back/back";
-import { useToast } from "../../../component/toaster/useToast";
 import { usePatientStore } from "../helper/patient.store";
 import { calculateAge, formatDateForDisplay } from "../../../component/utils/ui.helpers";
 
@@ -76,8 +75,7 @@ const LoadingSkeleton = () => (
 const PatientDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { showToast } = useToast();
-  const { getPatientById, patientList } = usePatientStore();
+  const { fetchById, list } = usePatientStore();
 
   const [patient, setPatient] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -95,13 +93,13 @@ const PatientDetail = () => {
 
     try {
       // Try cache first for instant feedback
-      const cachedPatient = patientList.find((p) => p.id === id);
+      const cachedPatient = list.find((p) => p.id === id);
       if (cachedPatient) {
         setPatient(cachedPatient);
       }
 
       // Always fetch fresh data in background
-      const freshPatient = await getPatientById(id);
+      const freshPatient = await fetchById(id);
 
       // Only update if data differs from cache
       if (!cachedPatient || JSON.stringify(cachedPatient) !== JSON.stringify(freshPatient)) {
@@ -111,18 +109,16 @@ const PatientDetail = () => {
       console.error("Failed to load patient:", error);
 
       // If we have cached data, show it with a warning
-      const cachedPatient = patientList.find((p) => p.id === id);
+      const cachedPatient = list.find((p) => p.id === id);
       if (cachedPatient) {
         setPatient(cachedPatient);
-        showToast("Showing cached data. Could not refresh patient details.", "warning");
       } else {
         setError("Failed to load patient data. Please try again.");
-        showToast("Failed to load patient", "error");
       }
     } finally {
       setLoading(false);
     }
-  }, [id, getPatientById, patientList, showToast]);
+  }, [id, fetchById, list]);
 
   useEffect(() => {
     loadPatient();
@@ -338,7 +334,7 @@ const PatientDetail = () => {
                       href={`mailto:${patient.email}`}
                       className="text-foreground font-medium hover:text-primary transition-colors"
                     >
-                      {patient.email}
+                      {patient?.email || "N/A"}
                     </a>
                   </div>
                 </div>

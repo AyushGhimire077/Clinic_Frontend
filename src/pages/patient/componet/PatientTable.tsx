@@ -1,6 +1,3 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
 import {
   Activity,
   Edit2,
@@ -10,93 +7,80 @@ import {
   RefreshCcw,
   Users,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { BackButton } from "../../../component/global/components/back/back";
 import { Pagination } from "../../../component/global/components/Pagination";
 import { SearchInput } from "../../../component/global/components/SearchInput";
 import { useToast } from "../../../component/toaster/useToast";
-import { usePatientStore } from "../helper/patient.store";
 import { calculateAge } from "../../../component/utils/ui.helpers";
+import { usePatientStore } from "../helper/patient.store";
 
 const PatientTable = () => {
   const navigate = useNavigate();
-  const {
-    patientList,
-    pagination,
-    getAllPatients,
-    getAllActivePatients,
-    searchPatients,
-    disablePatient,
-    enablePatient,
-    countPatients,
-
-    count,
-  } = usePatientStore();
-
   const { showToast } = useToast();
 
-  const [page, setPage] = useState(0);
+  const {
+    list,
+    pagination,
+    count,
+    isLoading,
+    fetchAll,
+    fetchActive,
+    search,
+    enable,
+    disable,
+    fetchCount,
+    setPage,
+  } = usePatientStore();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [showActiveOnly, setShowActiveOnly] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const size = 10;
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      if (searchQuery.trim()) {
-        await searchPatients(searchQuery, { page, size });
-      } else if (showActiveOnly) {
-        await getAllActivePatients({ page, size });
-      } else {
-        await getAllPatients({ page, size });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handleEnable = async (id: string) => {
-    const res = await enablePatient(id);
-    countPatients();
+  useEffect(() => {
+    fetchCount();
+  }, []);
 
-    showToast(res.message, res.severity);
-  };
-
-  const handleDisable = async (id: string) => {
-    const res = await disablePatient(id);
-    countPatients();
-
-    showToast(res.message, res.severity);
-  };
-
-  const refreshData = () => {
+  const refresh = () => {
     setSearchQuery("");
     setShowActiveOnly(true);
     setPage(0);
-    countPatients();
-    loadData();
+    fetchAll();
+    fetchCount();
   };
 
-  useEffect(() => {
-    loadData();
-    return;
-  }, [searchQuery, page]);
+  const handleEnable = async (id: string) => {
+    await enable(id);
+    fetchCount();
+    showToast("Patient enabled", "success");
+  };
 
-  const getInitials = (name: string) => {
-    return name
+  const handleDisable = async (id: string) => {
+    await disable(id);
+    fetchCount();
+    showToast("Patient disabled", "success");
+  };
+
+  const getInitials = (name: string) =>
+    name
       .split(" ")
       .map((n) => n[0])
       .join("")
-      .toUpperCase()
-      .substring(0, 2);
-  };
+      .substring(0, 2)
+      .toUpperCase();
 
-  type GenderRatio = { MALE?: number; FEMALE?: number };
-  const genderRatio: GenderRatio = count.get("genderRatio") || {};
-  const male = genderRatio.MALE ?? 0;
-  const female = genderRatio.FEMALE ?? 0;
 
-  const display = `M${male}/F${female}`;
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      search(searchQuery);
+    } else if (showActiveOnly) {
+      fetchActive();
+    } else {
+      fetchAll();
+    }
+  }, [searchQuery, pagination.currentPage, showActiveOnly]);
 
   return (
     <div className="max-w-[90em] mx-auto">
@@ -129,22 +113,17 @@ const PatientTable = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-background border border-border rounded-lg p-4">
             <div className="text-2xl font-bold text-foreground">
-              {count.get("total")?.toString() || "0"}
+              {count?.total}
             </div>
             <div className="text-sm text-muted">Total Patients</div>
           </div>
           <div className="bg-background border border-border rounded-lg p-4">
             <div className="text-2xl font-bold text-foreground">
-              {count.get("active")?.toString() || "0"}
+              {count?.active}
             </div>
             <div className="text-sm text-muted">Active Patients</div>
           </div>
-          <div className="bg-background border border-border rounded-lg p-4">
-            <div className="text-2xl font-semibold pb-1 text-foreground">
-              {display}
-            </div>
-            <div className="text-sm text-muted">Gender Distribution</div>
-          </div>
+
         </div>
 
         {/* Search and Filter */}
@@ -159,7 +138,7 @@ const PatientTable = () => {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={refreshData}
+              onClick={refresh}
               className="px-4 py-2 rounded-lg border border-border hover:bg-surface"
             >
               <RefreshCcw className="w-4 h-4" />
@@ -183,11 +162,11 @@ const PatientTable = () => {
 
       {/* Table Container */}
       <div className="bg-surface border border-border rounded-lg overflow-hidden">
-        {loading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <div className="w-8 h-8 border-2 border-primary-light border-t-primary rounded-full animate-spin" />
           </div>
-        ) : patientList.length === 0 ? (
+        ) : list.length === 0 ? (
           <div className="py-12 text-center">
             <Users className="w-16 h-16 mx-auto mb-4 text-muted/30" />
             <p className="text-lg font-medium text-foreground">
@@ -227,7 +206,7 @@ const PatientTable = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {patientList.map((patient) => (
+                  {list.map((patient) => (
                     <tr
                       key={patient.id}
                       className="hover:bg-primary-light/5 transition-colors"
@@ -358,5 +337,12 @@ const PatientTable = () => {
     </div>
   );
 };
+
+const Stat = ({ label, value }: any) => (
+  <div className="bg-background border border-border rounded-lg p-4">
+    <div className="text-2xl font-bold">{value}</div>
+    <div className="text-sm text-muted">{label}</div>
+  </div>
+);
 
 export default PatientTable;

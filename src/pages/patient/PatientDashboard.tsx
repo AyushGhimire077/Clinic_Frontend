@@ -6,13 +6,8 @@ import PatientPopup from "./componet/PatientPopup";
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
-  const { getAllPatients, patientList, countPatients, count } =
+  const { fetchCount, count, fetchAll, list } =
     usePatientStore();
-
-  useEffect(() => {
-    getAllPatients({ page: 0, size: 10 });
-    countPatients();
-  }, [getAllPatients, countPatients]);
 
   const cards = [
     {
@@ -30,6 +25,14 @@ const PatientDashboard = () => {
       onClick: () => navigate("view"),
     },
   ];
+
+  useEffect(() => {
+    fetchCount();
+  }, [fetchCount]);
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
@@ -80,35 +83,35 @@ const PatientDashboard = () => {
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
             <div className="text-3xl font-bold text-primary">
-              {count.get("total")?.toString() || "0"}
+              {count?.total ?? "0"}
             </div>
             <div className="text-sm text-muted">Total Patients</div>
           </div>
 
           <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
             <div className="text-3xl font-bold text-success">
-              {count.get("active")?.toString() || "0"}
+              {count?.active ?? "0"}
             </div>
             <div className="text-sm text-muted">Active Patients</div>
           </div>
 
           <div className="p-4 bg-surface border border-border rounded-xl shadow-soft">
             <div className="text-3xl font-bold text-primary-dark">
-              {count.get("oneTime")?.toString() || "0"}
+              {count?.oneTime ?? "0"}
             </div>
             <div className="text-sm text-muted">One-Time Patients</div>
           </div>
         </div>
 
         {/* recntly  top 3 */}
-        {patientList.length > 0 && (
+        {list.length > 0 && (
           <div className="mt-8">
             <h3 className="text-lg font-semibold text-foreground mb-4">
               Recent Patients
             </h3>
             <div className="bg-surface border border-border rounded-lg overflow-hidden">
               <div className="divide-y divide-border">
-                {patientList.slice(0, 3).map((patient) => (
+                {list.slice(0, 3).map((patient) => (
                   <div
                     key={patient.id}
                     className="p-4 flex items-center justify-between hover:bg-primary-light/5 transition-colors"
@@ -127,24 +130,23 @@ const PatientDashboard = () => {
                       </div>
                     </div>
                     <div
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        patient.isActive
-                          ? "bg-success/10 text-success"
-                          : "bg-error/10 text-error"
-                      }`}
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${patient.isActive
+                        ? "bg-success/10 text-success"
+                        : "bg-error/10 text-error"
+                        }`}
                     >
                       {patient.isActive ? "Active" : "Inactive"}
                     </div>
                   </div>
                 ))}
               </div>
-              {patientList.length > 3 && (
+              {list.length > 3 && (
                 <div className="p-4 border-t border-border text-center">
                   <button
                     onClick={() => navigate("view")}
                     className="text-primary hover:text-primary-dark font-medium text-sm"
                   >
-                    View all {patientList.length} patients
+                    View all {list.length} patients
                   </button>
                 </div>
               )}

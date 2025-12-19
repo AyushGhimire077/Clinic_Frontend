@@ -19,7 +19,7 @@ const PatientSelect = ({
     required = false,
     error,
 }: PatientSelectProps) => {
-    const { getAllActivePatients, patientList } = usePatientStore();
+    const { fetchActive, list } = usePatientStore();
     const [searchTerm, setSearchTerm] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -31,13 +31,13 @@ const PatientSelect = ({
     const loadPatients = async () => {
         setLoading(true);
         try {
-            await getAllActivePatients({ page: 0, size: 100 });
+            await fetchActive();
         } finally {
             setLoading(false);
         }
     };
 
-    const filteredPatients = patientList.filter((patient) => {
+    const filteredPatients = list.filter((patient) => {
         return (
             searchTerm === "" ||
             patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -46,7 +46,7 @@ const PatientSelect = ({
         );
     });
 
-    const selectedPatient = patientList.find((patient) => patient.id === value);
+    const selectedPatient = list.find((patient) => patient.id === value);
 
     const getInitials = (name: string) => {
         return name

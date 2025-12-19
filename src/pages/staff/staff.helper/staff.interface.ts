@@ -46,6 +46,7 @@ export interface StaffState {
   disable: (id: string) => Promise<void>;
   remove: (id: string) => Promise<void>;
   //query
+  fetchById: (id: string) => Promise<IStaff  >;
   fetchAll: () => Promise<void>;
   fetchActive: () => Promise<void>;
   search: (name: string) => Promise<void>;

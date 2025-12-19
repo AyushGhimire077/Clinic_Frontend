@@ -69,6 +69,17 @@ export const useStaffStore = create<StaffState>((set, get) => ({
   },
 
   //query
+
+  fetchById: async (id) => {
+    set({ isLoading: true });
+    try {
+      const res = await StaffService.getById(id);
+      return res.data.data;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
   fetchAll: async () => {
     set({ isLoading: true });
     try {
@@ -121,7 +132,7 @@ export const useStaffStore = create<StaffState>((set, get) => ({
   },
 
   fetchCount: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true }); 
     try {
       const res = await StaffService.count();
       set({ count: res.data.data });

@@ -1,11 +1,10 @@
-import { Users } from "lucide-react";
+import { Activity, Pencil, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BackButton } from "../../../../component/global/components/back/back";
 import { Pagination } from "../../../../component/global/components/Pagination";
 import { SearchInput } from "../../../../component/global/components/SearchInput";
-import { useStaffStore } from "../../staff.helper/staff.store";
 import { formatCurrency } from "../../../../component/utils/ui.helpers";
-import { useRoleStore } from "../../role.helper/role.store";
+import { useStaffStore } from "../../staff.helper/staff.store";
 
 const StaffTable = () => {
   const {
@@ -17,8 +16,9 @@ const StaffTable = () => {
     count,
     pagination,
     setPage,
+    disable,
+    enable
   } = useStaffStore();
-  const { fetchById } = useRoleStore();
 
   const [searchQuery, setSearchQuery] = useState("");
   // const [filter, setFilter] = useState<string | null>(null);
@@ -48,15 +48,18 @@ const StaffTable = () => {
     setPage(0);
   };
 
-  const findRoleById = async (id: string) => {
+  const handleToggleStatus = async (id: string, isActive: boolean) => {
     try {
-      const role = await fetchById(id);
-      return role;
+      if (isActive) {
+        await disable(id);
+      } else {
+        await enable(id);
+      }
     } catch (error) {
-      console.error("Error fetching role by ID:", error);
-      return "-";
+      console.error("Error toggling staff status:", error);
     }
-  }; 
+  };
+
 
   const getInitials = (name: string) =>
     name
@@ -74,7 +77,7 @@ const StaffTable = () => {
     getCount();
   }, []);
 
-  
+
 
   return (
     <div className="max-w-[90em] mx-auto">
@@ -148,14 +151,15 @@ const StaffTable = () => {
                     <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
                       Type
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
-                      Role
-                    </th>
+
                     <th className="px6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
                       Salary
                     </th>
                     <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
                       Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-medium text-muted uppercase tracking-wider">
+                      Action
                     </th>
                   </tr>
                 </thead>
@@ -185,9 +189,8 @@ const StaffTable = () => {
                         <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-light text-primary">
                           {staff.type}
                         </span>
-                      </td>
-                      <td className="px-6 py-4 text-foreground">
-                         
+
+
                       </td>
                       <td className=" py-4 text-foreground">
                         {/* {formatCurrency(staff.salary)} */}
@@ -195,14 +198,34 @@ const StaffTable = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                            staff.isActive
-                              ? "bg-green-100 text-success"
-                              : "bg-gray-100 text-muted"
-                          }`}
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${staff.isActive
+                            ? "bg-green-100 text-success"
+                            : "bg-gray-100 text-muted"
+                            }`}
                         >
                           {staff.isActive ? "Active" : "Inactive"}
                         </span>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={async () => {
+                            await handleToggleStatus(staff.id, staff.isActive);
+                          }}
+                          className={`p-2  ${staff.isActive ? "text-error hover:text-error hover:bg-error/10" : "text-success hover:text-success hover:bg-success/10"} rounded-lg transition-colors`}
+                          title="Enable Patient"
+                        >
+                          <Activity className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            window.location.href = `/staff/edit?id=${staff.id}`;
+                          }}
+                          className="ml-2 p-2 text-primary hover:text-primary-dark hover:bg-primary-light/50 rounded-lg transition-colors"
+                          title="Edit Staff"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}

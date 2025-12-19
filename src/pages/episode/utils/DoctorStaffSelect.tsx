@@ -22,7 +22,7 @@ const DoctorStaffSelect = ({
   error,
   filterType,
 }: DoctorStaffSelectProps) => {
-  const { getAllActiveStaff, staffList } = useStaffStore();
+  const { fetchActive, list } = useStaffStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,13 +34,13 @@ const DoctorStaffSelect = ({
   const loadStaff = async () => {
     setLoading(true);
     try {
-      await getAllActiveStaff({ page: 0, size: 100 });
+      await fetchActive();
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredStaff = staffList.filter((staff) => {
+  const filteredStaff = list.filter((staff) => {
     if (filterType && staff.type !== filterType) return false;
 
     return (
@@ -51,7 +51,7 @@ const DoctorStaffSelect = ({
     );
   });
 
-  const selectedStaff = staffList.find((staff) => staff.id === value);
+  const selectedStaff = list.find((staff) => staff.id === value);
 
   const getInitials = (name: string) => {
     return name

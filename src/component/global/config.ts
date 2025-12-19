@@ -58,6 +58,7 @@ axios_auth.interceptors.response.use(
 
     if (message) {
       useToastStore.getState().showToast(message, severity?.toLowerCase());
+ 
     }
 
     return response;
