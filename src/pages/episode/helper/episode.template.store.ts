@@ -1,7 +1,11 @@
 import { create } from "zustand";
 import type { EpisodeTempState } from "./episode.interface";
 import { EpisodeTemplateService } from "../../../component/api/services/episode.template.service";
-import { commandWrapper, getPagination, queryWrapper } from "../../../component/global/utils/global.store.helper";
+import {
+  commandWrapper,
+  getPagination,
+  queryWrapper,
+} from "../../../component/global/utils/global.store.helper";
 
 export const useEpisodeTemplateStore = create<EpisodeTempState>((set, get) => ({
   isLoading: false,
@@ -17,20 +21,45 @@ export const useEpisodeTemplateStore = create<EpisodeTempState>((set, get) => ({
   },
 
   // commands
-  create: async (data) => 
-    commandWrapper(set, get, async () => await EpisodeTemplateService.create(data), get().fetchAll),
+  create: async (data) =>
+    commandWrapper(
+      set,
+      get,
+      async () => await EpisodeTemplateService.create(data),
+      get().fetchAll
+    ),
 
-  update: async (id, data) => 
-    commandWrapper(set, get, async () => await EpisodeTemplateService.update(id, data), get().fetchAll),
+  update: async (id, data) =>
+    commandWrapper(
+      set,
+      get,
+      async () => await EpisodeTemplateService.update(id, data),
+      get().fetchAll
+    ),
 
-  enable: async (id) =>  
-    commandWrapper(set, get, async () => await EpisodeTemplateService.enable(id), get().fetchAll),
+  enable: async (id) =>
+    commandWrapper(
+      set,
+      get,
+      async () => await EpisodeTemplateService.enable(id),
+      get().fetchAll
+    ),
 
-  disable: async (id) =>  
-    commandWrapper(set, get, async () => await EpisodeTemplateService.disable(id), get().fetchAll),
+  disable: async (id) =>
+    commandWrapper(
+      set,
+      get,
+      async () => await EpisodeTemplateService.disable(id),
+      get().fetchAll
+    ),
 
-  remove: async (id) =>  
-    commandWrapper(set, get, async () => await EpisodeTemplateService.delete(id), get().fetchAll),
+  remove: async (id) =>
+    commandWrapper(
+      set,
+      get,
+      async () => await EpisodeTemplateService.delete(id),
+      get().fetchAll
+    ),
 
   // query
   fetchById: async (id) => {
@@ -46,19 +75,22 @@ export const useEpisodeTemplateStore = create<EpisodeTempState>((set, get) => ({
   fetchAll: async () => {
     queryWrapper(set, get, async () => {
       const params = getPagination(get);
-      await EpisodeTemplateService.getAll(params);
+      const res = await EpisodeTemplateService.getAll(params);
+      set({ list: res.data.data, pagination: res.data.page });
     });
   },
 
-  fetchActive: async () => 
+  fetchActive: async () =>
     queryWrapper(set, get, async () => {
       const params = getPagination(get);
-      await EpisodeTemplateService.getActive(params);
+      const res = await EpisodeTemplateService.getActive(params);
+      set({ list: res.data.data, pagination: res.data.page });
     }),
 
-  searchByName: async (name) =>  
+  searchByName: async (name) =>
     queryWrapper(set, get, async () => {
       const params = getPagination(get);
-      await EpisodeTemplateService.searchByName(name, params);
-  })
+      const res = await EpisodeTemplateService.searchByName(name, params);
+      set({ list: res.data.data, pagination: res.data.page });
+    }),
 }));

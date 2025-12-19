@@ -73,19 +73,7 @@ export interface EpisodeState {
   // counts
   countAll: () => Promise<void>;
   countByRange: (range?: DateRange) => Promise<void>;
-  
 }
-
-
-
-
-
-
-
-
-
-
-
 
 // -------------------------------------------------
 // Template Interfaces
@@ -100,6 +88,9 @@ export interface IEpisodeTempReq {
 export interface IEpisodeTemp {
   data: IEpisodeTemp | PromiseLike<IEpisodeTemp>;
   id: string;
+  isActive?: boolean;
+
+  description: string;
   title: string;
   type: EpisodeType;
   billingMode: BillingMode;
